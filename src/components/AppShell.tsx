@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { User } from "@supabase/supabase-js";
 import { SearchForm } from "./SearchForm";
 import { Sidebar } from "./Sidebar";
 import { createClient } from "@/lib/supabase/server";
@@ -10,8 +11,15 @@ export async function AppShell({
   children: React.ReactNode;
   active?: string;
 }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Degrade gracefully if Supabase isn't configured (missing env) — content
+  // pages must render signed-out rather than 500.
+  let user: User | null = null;
+  try {
+    const supabase = await createClient();
+    user = (await supabase.auth.getUser()).data.user;
+  } catch {
+    user = null;
+  }
 
   return (
     <div className="grid min-h-screen md:grid-cols-[220px_1fr]">

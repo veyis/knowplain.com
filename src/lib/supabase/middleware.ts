@@ -6,9 +6,15 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Without Supabase configured, skip session handling so a missing env var
+  // doesn't make every route 500 (MIDDLEWARE_INVOCATION_FAILED).
+  if (!url || !key) return supabaseResponse
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
