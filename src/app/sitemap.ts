@@ -4,7 +4,7 @@ import { pillars, site } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Indexable routes only — /forum and /search are noindex, so keep them out.
-  const staticRoutes = ["", "/tools", "/watch", "/about", "/disclosure", "/privacy"];
+  const staticRoutes = ["", "/tools", "/watch", "/about", "/disclosure", "/privacy", "/glossary", "/editorial-policy"];
   const pillarRoutes = Object.values(pillars).map((p) => p.path);
 
   const staticEntries = [...staticRoutes, ...pillarRoutes].map((path) => ({

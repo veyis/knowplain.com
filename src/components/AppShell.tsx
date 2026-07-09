@@ -49,6 +49,8 @@ export async function AppShell({
         <footer className="mx-auto w-full max-w-shell border-t border-line px-4 py-8 text-xs text-muted md:px-6">
           <div className="mb-3 flex flex-wrap gap-4">
             <Link href="/about">About</Link>
+            <Link href="/editorial-policy">Editorial standards</Link>
+            <Link href="/glossary">Glossary</Link>
             <Link href="/disclosure">Disclosure</Link>
             <Link href="/privacy">Privacy</Link>
             <a href="https://www.youtube.com/@explainstudio9" rel="noopener noreferrer">

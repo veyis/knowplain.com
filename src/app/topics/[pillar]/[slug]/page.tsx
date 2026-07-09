@@ -76,7 +76,11 @@ export default async function ArticlePage({
           {article.title}
         </h1>
         <p className="mb-6 text-sm text-muted">
-          By Know Plain Editorial · Updated {article.updated} · Educational only
+          By{" "}
+          <Link href="/about" className="hover:underline">
+            Know Plain Editorial
+          </Link>{" "}
+          · Updated {article.updated} · Educational only
         </p>
         <p className="mb-4 leading-relaxed text-[#2a2a2a]">{article.description}</p>
         <div className="my-5 border-l-[3px] border-ink bg-white px-4 py-3 text-[0.95rem]">
