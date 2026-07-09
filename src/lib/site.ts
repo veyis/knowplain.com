@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export const site = {
   name: "Know Plain",
   tagline: "Big ideas, known plain.",
@@ -12,6 +14,22 @@ export const site = {
   amazonTag: process.env.NEXT_PUBLIC_AMAZON_TAG || "explainstudio-20",
   legacyRoadmapUrl: "/retirement-roadmap/",
 } as const;
+
+/** Per-page metadata with a self-canonical and matching OpenGraph. */
+export function pageMeta(path: string, title: string, description: string): Metadata {
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      title,
+      description,
+      url: `${site.url}${path}`,
+    },
+  };
+}
 
 export type PillarId = "retirement" | "money-psychology" | "decision-tools";
 
