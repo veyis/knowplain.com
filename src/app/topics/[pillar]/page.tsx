@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { getArticlesByPillar, isPillarId } from "@/lib/content";
-import { breadcrumbJsonLd } from "@/lib/schema";
+import { breadcrumbJsonLd, itemListJsonLd } from "@/lib/schema";
 import { pillars, site } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -42,10 +42,18 @@ export default async function PillarPage({
   return (
     <AppShell active={pillar}>
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: "Home", url: site.url },
-          { name: p.title, url: `${site.url}${p.path}` },
-        ])}
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: site.url },
+            { name: p.title, url: `${site.url}${p.path}` },
+          ]),
+          itemListJsonLd(
+            list.map((a) => ({
+              name: a.title,
+              url: `${site.url}/topics/${a.pillar}/${a.slug}`,
+            })),
+          ),
+        ]}
       />
       <div className="mb-4 rounded-2xl border border-line bg-surface p-6">
         <h1 className="mb-2 text-[1.35rem] font-semibold tracking-tight">{p.title}, known plain</h1>

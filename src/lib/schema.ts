@@ -6,6 +6,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: site.name,
     url: site.url,
+    logo: `${site.url}/icon`,
     description: site.description,
     sameAs: [site.youtube],
   };
@@ -44,6 +45,19 @@ export function articleJsonLd(input: {
     author: { "@type": "Organization", name: `${site.name} Editorial`, url: site.url },
     publisher: { "@type": "Organization", name: site.name, url: site.url },
     mainEntityOfPage: input.url,
+  };
+}
+
+export function itemListJsonLd(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: item.url,
+    })),
   };
 }
 

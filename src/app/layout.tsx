@@ -28,7 +28,17 @@ export const metadata: Metadata = {
     title: site.name,
     description: site.description,
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

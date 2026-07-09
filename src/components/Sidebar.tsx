@@ -18,7 +18,7 @@ export function Sidebar({ active }: { active?: string }) {
         </Link>
         <nav className="flex flex-wrap gap-2 md:hidden">
           {explore.slice(1).map((item) => (
-            <Link key={item.href} href={item.href} className="rounded-lg bg-chip px-2.5 py-1 text-xs text-muted">
+            <Link key={item.href} href={item.href} className="rounded-lg bg-chip px-2.5 py-1 text-xs text-ink">
               {item.label}
             </Link>
           ))}

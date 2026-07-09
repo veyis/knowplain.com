@@ -24,9 +24,9 @@ export function AppShell({
             </Link>
           </div>
         </div>
-        <div className="mx-auto w-full max-w-shell flex-1 px-4 py-6 md:px-6 md:py-8">
+        <main className="mx-auto w-full max-w-shell flex-1 px-4 py-6 md:px-6 md:py-8">
           {children}
-        </div>
+        </main>
         <footer className="mx-auto w-full max-w-shell border-t border-line px-4 py-8 text-xs text-muted md:px-6">
           <div className="mb-3 flex flex-wrap gap-4">
             <Link href="/about">About</Link>
