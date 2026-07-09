@@ -10,7 +10,7 @@ export const site = {
   boldinUrl: "https://www.boldin.com/retirement/planner/",
   ynabUrl: "https://www.ynab.com",
   amazonTag: process.env.NEXT_PUBLIC_AMAZON_TAG || "explainstudio-20",
-  legacyRoadmapUrl: "https://knowplain.com/retirement-roadmap/",
+  legacyRoadmapUrl: "/retirement-roadmap/",
 } as const;
 
 export type PillarId = "retirement" | "money-psychology" | "decision-tools";
