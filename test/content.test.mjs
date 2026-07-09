@@ -11,6 +11,8 @@ const REQUIRED = ["title", "description", "plainAnswer", "updated"];
 function walk(dir) {
   const out = [];
   for (const name of readdirSync(dir)) {
+    // videos/ is a separate collection with its own schema (validated by CC).
+    if (name === "videos") continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) out.push(...walk(p));
     else if (name.endsWith(".mdx")) out.push(p);
