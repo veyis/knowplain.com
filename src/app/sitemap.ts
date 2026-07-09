@@ -10,10 +10,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticEntries = [...staticRoutes, ...pillarRoutes].map((path) => ({
     url: `${site.url}${path}`,
   }));
-  const articleEntries = articles.map((a) => ({
-    url: `${site.url}/topics/${a.pillar}/${a.slug}`,
-    lastModified: new Date(a.updated),
-  }));
+  const articleEntries = articles.map((a) => {
+    // Tolerate non-ISO `updated` values: omit lastModified rather than emit an invalid date.
+    const d = new Date(a.updated);
+    return {
+      url: `${site.url}/topics/${a.pillar}/${a.slug}`,
+      ...(Number.isNaN(d.getTime()) ? {} : { lastModified: d }),
+    };
+  });
 
   return [...staticEntries, ...articleEntries];
 }
