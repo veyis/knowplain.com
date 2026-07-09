@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { SearchForm } from "./SearchForm";
 import { Sidebar } from "./Sidebar";
+import { createClient } from "@/lib/supabase/server";
 
-export function AppShell({
+export async function AppShell({
   children,
   active,
 }: {
   children: React.ReactNode;
   active?: string;
 }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <div className="grid min-h-screen md:grid-cols-[220px_1fr]">
       <Sidebar active={active} />
@@ -19,6 +23,21 @@ export function AppShell({
             <Link href="/about" className="kp-btn hidden sm:inline-flex">
               About
             </Link>
+            {user ? (
+              <form action="/login" method="POST">
+                <button formAction={async () => {
+                  'use server'
+                  const { signout } = await import('@/app/login/actions')
+                  await signout()
+                }} className="kp-btn">
+                  Sign out ({user.email})
+                </button>
+              </form>
+            ) : (
+              <Link href="/login" className="kp-btn">
+                Sign in
+              </Link>
+            )}
             <Link href="/tools" className="kp-btn-primary">
               Get roadmap
             </Link>

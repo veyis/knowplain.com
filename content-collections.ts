@@ -6,6 +6,7 @@ const articles = defineCollection({
   name: "articles",
   directory: "content",
   include: "**/*.mdx",
+  exclude: ["videos/**/*.mdx"],
   schema: z.object({
     content: z.string(),
     title: z.string(),
@@ -24,4 +25,24 @@ const articles = defineCollection({
   },
 });
 
-export default defineConfig({ content: [articles] });
+const videos = defineCollection({
+  name: "videos",
+  directory: "content",
+  include: "videos/**/*.mdx",
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    youtubeId: z.string(),
+    updated: z.string(),
+    chapters: z
+      .array(z.object({ timestamp: z.string(), label: z.string() }))
+      .optional(),
+  }),
+  transform: async (doc, context) => {
+    const mdx = await compileMDX(context, doc);
+    const slug = doc._meta.path.replace(/^videos\//, "");
+    return { ...doc, mdx, slug, url: `/watch/${slug}` };
+  },
+});
+
+export default defineConfig({ content: [articles, videos] });

@@ -66,9 +66,7 @@ export function Sidebar({ active }: { active?: string }) {
       </nav>
 
       <p className="mt-auto hidden px-2 text-xs leading-relaxed text-muted md:block">
-        Big ideas, known plain.
-        <br />
-        Educational only.
+        Demo shell · Sanity models + Typesense would power these surfaces in production.
       </p>
     </aside>
   );

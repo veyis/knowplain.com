@@ -50,11 +50,11 @@ export default function ToolsPage() {
           <strong>Boldin</strong>
           <p className="text-sm text-muted">DIY stress-test planner.</p>
         </a>
-        <a className="kp-card" href={site.ynabUrl} rel="noopener noreferrer" target="_blank">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Tool</div>
-          <strong>YNAB</strong>
-          <p className="text-sm text-muted">Budgeting that sticks.</p>
-        </a>
+        <Link href="/tools/withdrawal-simulator" className="kp-card">
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Coming</div>
+          <strong>Withdrawal simulator</strong>
+          <p className="text-sm text-muted">Owned interactive tool.</p>
+        </Link>
       </div>
       <p className="mt-6 rounded-xl border border-dashed border-line bg-white p-4 text-sm text-muted">
         Some links are affiliates. If you use them, Know Plain may earn a commission at no extra cost
