@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
-import { site } from "@/lib/site";
+import { pageMeta, site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Videos",
-  description: "Know Plain YouTube explainers with chapters and transcript pages for SEO.",
-};
+export const metadata = pageMeta(
+  "/watch",
+  "Videos",
+  "Know Plain YouTube explainers with chapters and transcript pages for SEO.",
+);
 
 const chapters = [
   "0:00 Hook — retirement isn’t a date",

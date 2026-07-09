@@ -1,12 +1,12 @@
 import Link from "next/link";
-import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
-import { site } from "@/lib/site";
+import { pageMeta, site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Tools",
-  description: "Retirement roadmap pack and planning tools Know Plain recommends.",
-};
+export const metadata = pageMeta(
+  "/tools",
+  "Tools",
+  "Retirement roadmap pack and planning tools Know Plain recommends.",
+);
 
 export default function ToolsPage() {
   return (

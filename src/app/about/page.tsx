@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
-import { site } from "@/lib/site";
+import { pageMeta, site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Know Plain explains big ideas plainly — retirement, money psychology, and decision tools.",
-};
+export const metadata = pageMeta(
+  "/about",
+  "About",
+  "Know Plain explains big ideas plainly — retirement, money psychology, and decision tools.",
+);
 
 export default function AboutPage() {
   return (

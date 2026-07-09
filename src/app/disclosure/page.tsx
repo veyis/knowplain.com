@@ -1,7 +1,11 @@
-import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
+import { pageMeta } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Disclosure" };
+export const metadata = pageMeta(
+  "/disclosure",
+  "Disclosure",
+  "Educational-only content and affiliate disclosure for Know Plain.",
+);
 
 export default function DisclosurePage() {
   return (

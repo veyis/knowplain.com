@@ -1,7 +1,11 @@
-import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
+import { pageMeta } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Privacy" };
+export const metadata = pageMeta(
+  "/privacy",
+  "Privacy",
+  "How Know Plain handles analytics and account data.",
+);
 
 export default function PrivacyPage() {
   return (

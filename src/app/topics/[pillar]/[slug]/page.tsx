@@ -18,7 +18,21 @@ export async function generateMetadata({
   const { pillar, slug } = await params;
   const article = getArticle(pillar, slug);
   if (!article) return {};
-  return { title: article.title, description: article.description };
+  const path = `/topics/${pillar}/${slug}`;
+  return {
+    title: article.title,
+    description: article.description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "article",
+      siteName: site.name,
+      title: article.title,
+      description: article.description,
+      url: `${site.url}${path}`,
+      publishedTime: article.updated,
+      modifiedTime: article.updated,
+    },
+  };
 }
 
 export default async function ArticlePage({
@@ -41,6 +55,8 @@ export default async function ArticlePage({
             title: article.title,
             description: article.description,
             url,
+            image: `${site.url}/opengraph-image`,
+            datePublished: article.updated,
             dateModified: article.updated,
           }),
           breadcrumbJsonLd([

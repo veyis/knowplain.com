@@ -14,7 +14,18 @@ export function generateMetadata({ params }: { params: Promise<{ pillar: string 
   return params.then(({ pillar }) => {
     if (!isPillarId(pillar)) return {};
     const p = pillars[pillar];
-    return { title: p.title, description: p.lede };
+    return {
+      title: p.title,
+      description: p.lede,
+      alternates: { canonical: p.path },
+      openGraph: {
+        type: "website",
+        siteName: site.name,
+        title: p.title,
+        description: p.lede,
+        url: `${site.url}${p.path}`,
+      },
+    };
   });
 }
 
