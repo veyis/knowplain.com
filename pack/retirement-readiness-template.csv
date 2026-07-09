@@ -1,0 +1,11 @@
+Field,Value,Notes
+Age today,45,Edit yellow/user cells after import
+Target retirement age,65,
+Current investable nest egg,350000,Taxable + IRA + 401k estimate
+Monthly contributions,1500,Employee + employer match if known
+Expected annual return real %,5,After inflation — illustrative
+Target annual spending,60000,Today's dollars
+Other annual income in retirement,18000,SS / pension estimate optional
+Planned withdrawal rate %,4,Try 3 and 4.5 as a band
+Years to retirement,=B3-B2,Formula example for Sheets: =B3-B2
+Disclaimer,Educational only — not financial advice. Markets are uncertain.,

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free Retirement Roadmap Pack — Know Plain</title>
+  <meta name="description" content="Free Retirement Roadmap Pack: readiness calculator, one-page plan, and pre-retirement checklist." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="/">Know Plain</a>
+      <nav class="nav">
+        <a href="/retirement-roadmap/">Roadmap</a>
+        <a href="/tools/">Tools</a>
+        <a href="/books/">Books</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <span class="pill">Lead magnet</span>
+      <h1>Free Retirement Roadmap Pack</h1>
+      <p class="lede">Know if you are on track — and what to fix — in under 30 minutes. Calculator + one-page plan + checklist.</p>
+      <ul class="micro" style="color:var(--muted); padding-left:1.1rem; margin:0;">
+        <li>Estimate years-to-FI from savings rate and portfolio size</li>
+        <li>Stress-test a 3–4% withdrawal band (illustrative)</li>
+        <li>One-page investment rules you can actually follow</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Get the pack</h2>
+      <p class="sub">Leave your email when the list is live — or download the files now.</p>
+      <div class="panel" style="max-width:28rem;">
+        <form class="form-grid" data-newsletter-form>
+          <label>First name
+            <input type="text" name="first_name" data-name placeholder="Alex" autocomplete="given-name" />
+          </label>
+          <label>Email
+            <input type="email" name="email" data-email required placeholder="you@email.com" autocomplete="email" />
+          </label>
+          <button class="btn btn-primary" type="submit">Send me the free pack</button>
+          <p class="micro">Educational only. Not financial advice. Unsubscribe anytime. Some tool links later are affiliates.</p>
+          <p class="micro" data-form-status hidden></p>
+        </form>
+      </div>
+      <div id="pack-downloads" class="download-row">
+        <a class="btn btn-ghost" href="/pack/one-page-investment-plan.html" target="_blank" rel="noopener">Open one-page plan (print/PDF)</a>
+        <a class="btn btn-ghost" href="/pack/pre-retirement-checklist.html" target="_blank" rel="noopener">Open checklist (print/PDF)</a>
+        <a class="btn btn-ghost" href="/pack/retirement-readiness-template.csv" download>Download sheet template (CSV)</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Retirement readiness calculator</h2>
+      <p class="sub">Illustrative model only. Markets are uncertain. For a live multi-account view, use Empower after you run these numbers.</p>
+      <div class="calc-layout">
+        <form id="readiness-form" class="panel form-grid">
+          <label>Your age today
+            <input id="age" type="number" min="18" max="90" value="45" />
+          </label>
+          <label>Target retirement age
+            <input id="retire-age" type="number" min="30" max="95" value="65" />
+          </label>
+          <label>Current investable nest egg ($)
+            <input id="nest-egg" type="number" min="0" step="1000" value="350000" />
+          </label>
+          <label>Monthly contributions ($)
+            <input id="monthly" type="number" min="0" step="50" value="1500" />
+          </label>
+          <label>Expected annual return, real (%)
+            <input id="real-return" type="number" min="0" max="12" step="0.1" value="5" />
+          </label>
+          <label>Target annual spending in retirement ($)
+            <input id="spend" type="number" min="0" step="1000" value="60000" />
+          </label>
+          <label>Other annual income in retirement ($)
+            <input id="other-income" type="number" min="0" step="1000" value="18000" />
+          </label>
+          <label>Planned withdrawal rate (%)
+            <input id="withdraw" type="number" min="2" max="6" step="0.1" value="4" />
+          </label>
+        </form>
+        <div class="panel">
+          <div class="stat-grid">
+            <div class="stat"><div class="k">Years to retirement</div><div class="v" id="out-years">—</div></div>
+            <div class="stat"><div class="k">Projected nest egg</div><div class="v" id="out-projected">—</div></div>
+            <div class="stat"><div class="k">Portfolio needed</div><div class="v" id="out-needed">—</div></div>
+            <div class="stat"><div class="k">Surplus / shortfall</div><div class="v" id="out-gap">—</div></div>
+            <div class="stat"><div class="k">Needed at 3%</div><div class="v" id="out-band3">—</div></div>
+            <div class="stat"><div class="k">Needed at 4%</div><div class="v" id="out-band4">—</div></div>
+          </div>
+          <p class="micro" id="calc-note" style="margin-top:1rem;"></p>
+          <div class="cta-row" style="margin-top:1rem;">
+            <a class="btn btn-primary" data-link="empower" href="https://empower.sjv.io/7XDD2Q" target="_blank" rel="noopener sponsored">Open Empower (free dashboard)</a>
+            <a class="btn btn-ghost" href="/tools/">All tools</a>
+          </div>
+          <p class="micro" style="margin-top:0.75rem;">Affiliate link — I may earn a commission at no extra cost to you.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="/disclosure/">Disclosure</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/">Home</a>
+      </div>
+      <p>Educational model only. Not financial advice. Consult a qualified professional.</p>
+    </footer>
+  </div>
+  <script src="/assets/config.js"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/calculator.js"></script>
+</body>
+</html>

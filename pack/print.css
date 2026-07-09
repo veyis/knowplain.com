@@ -1,0 +1,52 @@
+:root {
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #d1d5db;
+  --accent: #1d4ed8;
+}
+@page { margin: 0.6in; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  line-height: 1.45;
+  max-width: 7.5in;
+  margin-inline: auto;
+  padding: 1rem;
+}
+h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+h2 { font-size: 1.1rem; margin: 1.1rem 0 0.4rem; border-bottom: 1px solid var(--line); padding-bottom: 0.2rem; }
+.sub { color: var(--muted); margin: 0 0 1rem; font-size: 0.95rem; }
+table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; }
+td, th { border: 1px solid var(--line); padding: 0.45rem 0.5rem; vertical-align: top; }
+th { text-align: left; background: #f3f4f6; width: 42%; }
+ul { margin: 0.3rem 0 0.8rem; padding-left: 1.2rem; }
+.checks li { margin: 0.25rem 0; }
+.footer {
+  margin-top: 1.2rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-family: system-ui, sans-serif;
+}
+.toolbar button, .toolbar a {
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+@media print {
+  .toolbar { display: none; }
+  body { padding: 0; }
+}
