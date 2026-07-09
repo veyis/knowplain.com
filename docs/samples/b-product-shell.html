@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>B — Product shell · Know Plain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f7f5; --surface: #fff; --ink: #121212; --muted: #667085;
+      --line: #e6e6e1; --accent: #1c4ed8; --accent-soft: #eef2ff;
+      --chip: #efeee9; --ok: #067647; --font: "Instrument Sans", system-ui, sans-serif;
+      --max: 1080px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    .sample-bar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 0.65rem 1.25rem; background: #111; color: #fff; font-size: 0.8rem;
+    }
+    .sample-bar a { color: #bbb; } .sample-bar a:hover { color: #fff; }
+    .sample-bar .links { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .shell { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 42px); }
+    @media (max-width: 860px) { .shell { grid-template-columns: 1fr; } .side { display: none; } }
+
+    .side {
+      background: var(--surface); border-right: 1px solid var(--line);
+      padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1.5rem;
+    }
+    .side .brand { font-weight: 700; letter-spacing: -0.03em; font-size: 1.15rem; padding: 0.25rem 0.5rem; }
+    .nav-group { display: grid; gap: 0.2rem; }
+    .nav-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0.4rem 0.5rem; }
+    .nav a, .nav button {
+      display: flex; align-items: center; gap: 0.55rem; width: 100%; text-align: left;
+      border: 0; background: transparent; font: inherit; font-size: 0.9rem;
+      padding: 0.5rem 0.6rem; border-radius: 8px; color: var(--ink); cursor: pointer;
+    }
+    .nav a:hover, .nav button:hover { background: var(--chip); }
+    .nav a.on, .nav button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .side-foot { margin-top: auto; font-size: 0.75rem; color: var(--muted); padding: 0.5rem; line-height: 1.4; }
+
+    .main { display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--line);
+      padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .search {
+      flex: 1; max-width: 560px; display: flex; align-items: center; gap: 0.6rem;
+      background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+      padding: 0.55rem 0.95rem;
+    }
+    .search:focus-within { border-color: var(--ink); background: #fff; }
+    .search svg { opacity: 0.4; flex-shrink: 0; }
+    .search input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; font-size: 0.95rem; }
+    .top-actions { margin-left: auto; display: flex; gap: 0.5rem; align-items: center; }
+    .btn {
+      border: 1px solid var(--line); background: #fff; font: inherit; font-size: 0.82rem; font-weight: 500;
+      padding: 0.45rem 0.85rem; border-radius: 8px; cursor: pointer;
+    }
+    .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .content { padding: 1.5rem 1.5rem 3rem; max-width: var(--max); width: 100%; margin: 0 auto; }
+    .view { display: none; } .view.on { display: block; }
+
+    /* Home view — still search-led but with architecture visible */
+    .hero {
+      text-align: center; padding: 2.5rem 0 2rem;
+      display: grid; gap: 1.25rem; justify-items: center;
+    }
+    .hero h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.4rem); letter-spacing: -0.04em; font-weight: 650; }
+    .hero p { margin: 0; color: var(--muted); max-width: 42ch; line-height: 1.5; }
+    .hero-search {
+      width: min(100%, 580px); display: flex; align-items: center; gap: 0.65rem;
+      background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      padding: 0.85rem 1.1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .hero-search input { flex: 1; border: 0; outline: 0; font: inherit; font-size: 1.05rem; }
+    .hero-search button { border: 0; background: var(--ink); color: #fff; font: inherit; font-size: 0.85rem; font-weight: 500; padding: 0.45rem 0.95rem; border-radius: 999px; cursor: pointer; }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.45rem; }
+    .chip { border: 0; background: var(--chip); font: inherit; font-size: 0.82rem; padding: 0.4rem 0.8rem; border-radius: 999px; cursor: pointer; }
+    .chip:hover { background: #e5e4de; }
+
+    .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 2rem 0 0.85rem; }
+    .section-title h2 { margin: 0; font-size: 1rem; letter-spacing: -0.02em; }
+    .section-title span { font-size: 0.8rem; color: var(--muted); }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+    @media (max-width: 720px) { .grid-3 { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 1rem 1.05rem; display: grid; gap: 0.4rem; cursor: pointer; transition: border-color .15s;
+    }
+    .card:hover { border-color: #cfcfc8; }
+    .card .kicker { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+    .card strong { font-size: 0.98rem; letter-spacing: -0.02em; }
+    .card p { margin: 0; font-size: 0.85rem; color: var(--muted); line-height: 1.45; }
+
+    .split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 0.85rem; }
+    @media (max-width: 720px) { .split { grid-template-columns: 1fr; } }
+
+    /* Topics */
+    .pillar {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+      padding: 1.35rem 1.4rem; margin-bottom: 0.85rem;
+    }
+    .pillar h3 { margin: 0 0 0.35rem; font-size: 1.2rem; letter-spacing: -0.03em; }
+    .pillar .lede { color: var(--muted); font-size: 0.92rem; margin: 0 0 1rem; line-height: 1.5; }
+    .spokes { display: grid; gap: 0.45rem; }
+    .spoke {
+      display: flex; justify-content: space-between; gap: 1rem; align-items: center;
+      padding: 0.7rem 0.75rem; border-radius: 10px; background: var(--bg);
+    }
+    .spoke span { font-size: 0.78rem; color: var(--muted); }
+
+    /* Tools */
+    .tool-hero {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+      padding: 1.5rem; display: grid; gap: 0.75rem;
+    }
+    .tool-hero h2 { margin: 0; font-size: 1.35rem; letter-spacing: -0.03em; }
+    .tool-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pill { font-size: 0.72rem; font-weight: 600; padding: 0.25rem 0.55rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+    .pill.ok { background: #ecfdf3; color: var(--ok); }
+
+    /* Forum */
+    .thread {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 1rem 1.1rem; display: grid; gap: 0.35rem; margin-bottom: 0.65rem;
+    }
+    .thread .stats { font-size: 0.78rem; color: var(--muted); }
+
+    /* Article mock */
+    .article { max-width: 680px; }
+    .article .crumb { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+    .article h1 { margin: 0 0 0.75rem; font-size: clamp(1.6rem, 3vw, 2rem); letter-spacing: -0.035em; line-height: 1.15; }
+    .byline { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .article p { line-height: 1.65; color: #2a2a2a; margin: 0 0 1rem; }
+    .callout {
+      border-left: 3px solid var(--ink); padding: 0.75rem 1rem; background: #fff;
+      margin: 1.25rem 0; font-size: 0.95rem;
+    }
+    .related { margin-top: 2rem; display: grid; gap: 0.5rem; }
+    .related a { padding: 0.75rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: 0.9rem; }
+
+    .note {
+      margin-top: 2rem; padding: 1rem 1.1rem; border: 1px dashed var(--line);
+      border-radius: 12px; font-size: 0.85rem; color: var(--muted); line-height: 1.5; background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="sample-bar">
+    <strong>Sample B — Product shell (Astro/CMS trajectory)</strong>
+    <div class="links">
+      <a href="index.html">Compare</a>
+      <a href="a-search-prototype.html">Open A</a>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">Know Plain</div>
+      <nav class="nav">
+        <div class="nav-group">
+          <div class="nav-label">Explore</div>
+          <button type="button" class="on" data-view="home">Search home</button>
+          <button type="button" data-view="topics">Topics</button>
+          <button type="button" data-view="tools">Tools</button>
+          <button type="button" data-view="watch">Videos</button>
+          <button type="button" data-view="forum">Forum</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Pillars</div>
+          <button type="button" data-view="topics">Retirement</button>
+          <button type="button" data-view="topics">Money psychology</button>
+          <button type="button" data-view="article">Decision tools</button>
+        </div>
+      </nav>
+      <div class="side-foot">Demo shell · Sanity models + Typesense would power these surfaces in production.</div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <form class="search" id="globalSearch" autocomplete="off">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Search explainers, videos, tools…" aria-label="Global search" />
+        </form>
+        <div class="top-actions">
+          <button class="btn" type="button">Sign in</button>
+          <button class="btn primary" type="button" data-view="tools">Get roadmap</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- HOME -->
+        <section class="view on" id="view-home">
+          <div class="hero">
+            <h1>Know Plain</h1>
+            <p>Big ideas, known plain. Search across explainers, videos, tools, and community.</p>
+            <form class="hero-search" id="heroSearch">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.4"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="search" placeholder="Ask anything…" />
+              <button type="submit">Search</button>
+            </form>
+            <div class="chips">
+              <button type="button" class="chip" data-view="article">Retirement math</button>
+              <button type="button" class="chip" data-view="tools">Roadmap pack</button>
+              <button type="button" class="chip" data-view="watch">Watch playbook</button>
+              <button type="button" class="chip" data-view="forum">Ask the forum</button>
+            </div>
+          </div>
+
+          <div class="section-title"><h2>Topic hubs</h2><span>Pillar pages for SEO authority</span></div>
+          <div class="grid-3">
+            <div class="card" data-view="topics"><div class="kicker">Pillar</div><strong>Retirement</strong><p>Enough, withdrawal, Social Security, sequence risk.</p></div>
+            <div class="card" data-view="topics"><div class="kicker">Pillar</div><strong>Money psychology</strong><p>Biases, habits, anxiety — why plans fail in practice.</p></div>
+            <div class="card" data-view="tools"><div class="kicker">Pillar</div><strong>Decision tools</strong><p>Calculators and frameworks you can use today.</p></div>
+          </div>
+
+          <div class="section-title"><h2>Continue</h2><span>Mixed content types</span></div>
+          <div class="split">
+            <div class="card" data-view="article"><div class="kicker">Explainer</div><strong>Retirement isn’t a date — it’s math</strong><p>Plain model for “enough” and why the calendar is the wrong target.</p></div>
+            <div class="card" data-view="watch"><div class="kicker">Video</div><strong>Complete Retirement Playbook</strong><p>18 min · chapters + transcript page for SEO.</p></div>
+          </div>
+
+          <div class="note"><strong style="color:var(--ink)">What B is:</strong> Same search-first brand, but the full product architecture is visible — sidebar IA, topic hubs, tools, videos, forum, article template, auth CTA. This is the Astro + Sanity + Typesense trajectory (slower to ship, correct for a $200k site).</div>
+        </section>
+
+        <!-- TOPICS -->
+        <section class="view" id="view-topics">
+          <div class="section-title"><h2>Topics</h2><span>/topics/retirement/</span></div>
+          <div class="pillar">
+            <h3>Retirement, known plain</h3>
+            <p class="lede">Hub page: overview + spokes. This is the topical-authority anchor Google needs — not a thin category list.</p>
+            <div class="spokes">
+              <div class="spoke"><strong>How much is enough?</strong><span>Explainer</span></div>
+              <div class="spoke"><strong>The 4% rule in 2026</strong><span>Explainer</span></div>
+              <div class="spoke"><strong>Sequence of returns risk</strong><span>Explainer</span></div>
+              <div class="spoke"><strong>Free Retirement Roadmap</strong><span>Tool</span></div>
+              <div class="spoke"><strong>Complete Retirement Playbook</strong><span>Video</span></div>
+            </div>
+          </div>
+          <div class="pillar">
+            <h3>Money psychology</h3>
+            <p class="lede">Second pillar — differentiates Know Plain from calculator farms.</p>
+            <div class="spokes">
+              <div class="spoke"><strong>Present bias & under-saving</strong><span>Explainer</span></div>
+              <div class="spoke"><strong>Why we freeze on money decisions</strong><span>Explainer</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOOLS -->
+        <section class="view" id="view-tools">
+          <div class="tool-hero">
+            <div class="tool-meta"><span class="pill">Tool</span><span class="pill ok">Free</span></div>
+            <h2>Retirement Roadmap Pack</h2>
+            <p style="margin:0;color:var(--muted);line-height:1.5;max-width:52ch">Spreadsheet + one-page plan + checklist. Same conversion surface as today — redesigned inside the product shell with SoftwareApplication schema.</p>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+              <button class="btn primary" type="button">Open calculator</button>
+              <button class="btn" type="button">Download pack</button>
+            </div>
+          </div>
+          <div class="section-title"><h2>More tools</h2><span>/tools/</span></div>
+          <div class="grid-3">
+            <div class="card"><div class="kicker">Affiliate</div><strong>Empower dashboard</strong><p>Net worth + retirement planner.</p></div>
+            <div class="card"><div class="kicker">Affiliate</div><strong>Boldin</strong><p>DIY stress-test planner.</p></div>
+            <div class="card"><div class="kicker">Coming</div><strong>Withdrawal simulator</strong><p>Owned interactive tool.</p></div>
+          </div>
+        </section>
+
+        <!-- WATCH -->
+        <section class="view" id="view-watch">
+          <div class="section-title"><h2>Videos</h2><span>/watch/ — YT embed + transcript</span></div>
+          <div class="card" style="aspect-ratio:16/9;display:grid;place-items:center;background:#111;color:#fff;border:0">
+            <div style="text-align:center"><div style="opacity:.5;font-size:.8rem;margin-bottom:.5rem">VIDEO PLAYER</div><strong>The Complete Retirement Playbook</strong></div>
+          </div>
+          <div class="section-title"><h2>Chapters</h2></div>
+          <div class="spokes">
+            <div class="spoke"><strong>0:00 Hook — retirement isn’t a date</strong><span>Chapter</span></div>
+            <div class="spoke"><strong>3:12 Compound growth</strong><span>Chapter</span></div>
+            <div class="spoke"><strong>8:40 Sequence risk</strong><span>Chapter</span></div>
+            <div class="spoke"><strong>14:05 The plain playbook</strong><span>Chapter</span></div>
+          </div>
+        </section>
+
+        <!-- FORUM -->
+        <section class="view" id="view-forum">
+          <div class="section-title"><h2>Forum</h2><span>Phase 2 surface — shown for architecture</span></div>
+          <div class="thread">
+            <strong>Starting late at 45 — what’s realistic?</strong>
+            <div class="stats">12 replies · Retirement · Moderated</div>
+          </div>
+          <div class="thread">
+            <strong>Does the 4% rule still hold with higher valuations?</strong>
+            <div class="stats">8 replies · Linked to explainer</div>
+          </div>
+          <div class="thread">
+            <strong>How do you talk money with a spouse who avoids it?</strong>
+            <div class="stats">21 replies · Money psychology</div>
+          </div>
+          <p style="color:var(--muted);font-size:.85rem">Ship forums only after pillar density + moderation. Schema: QAPage / DiscussionForumPosting.</p>
+        </section>
+
+        <!-- ARTICLE -->
+        <section class="view" id="view-article">
+          <article class="article">
+            <div class="crumb">Topics › Retirement › Explainer</div>
+            <h1>Retirement isn’t a date — it’s math</h1>
+            <div class="byline">By Know Plain Editorial · Updated Jul 2026 · Reviewed for accuracy</div>
+            <p>Most people pick a birthday and call it a plan. The better question is whether the math works — savings rate, withdrawal rate, and what happens if markets are ugly in the first decade.</p>
+            <div class="callout"><strong>Plain answer:</strong> Treat retirement as a funding problem. The date is an output, not an input.</div>
+            <p>This article template shows E-E-A-T: byline, last updated, answer-first block (AEO), and related spokes for internal linking.</p>
+            <div class="related">
+              <a href="#" data-view="tools">Related tool → Retirement Roadmap Pack</a>
+              <a href="#" data-view="watch">Related video → Complete Playbook</a>
+              <a href="#" data-view="topics">Back to hub → Retirement</a>
+            </div>
+          </article>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function show(view) {
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "view-" + view));
+      document.querySelectorAll(".nav button").forEach(b => {
+        b.classList.toggle("on", b.dataset.view === view && ["home","topics","tools","watch","forum"].includes(view));
+      });
+      // keep home nav highlight for article under decision tools loosely
+      if (view === "article") {
+        document.querySelectorAll(".nav button").forEach(b => b.classList.remove("on"));
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    document.body.addEventListener("click", (e) => {
+      const el = e.target.closest("[data-view]");
+      if (!el) return;
+      e.preventDefault();
+      show(el.dataset.view);
+    });
+    document.getElementById("heroSearch").addEventListener("submit", (e) => {
+      e.preventDefault();
+      show("article");
+    });
+    document.getElementById("globalSearch").addEventListener("submit", (e) => {
+      e.preventDefault();
+      show("article");
+    });
+  </script>
+</body>
+</html>

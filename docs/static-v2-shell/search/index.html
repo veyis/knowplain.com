@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search — Know Plain</title>
+  <meta name="description" content="Search Know Plain explainers, videos, and tools." />
+  <link rel="canonical" href="https://knowplain.com/search/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/site.css" />
+  <meta name="robots" content="noindex,follow" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <a class="brand" href="/">Know Plain</a>
+      <div class="mobile-nav">
+        <a href="/topics/retirement/">Topics</a>
+        <a href="/tools/">Tools</a>
+        <a href="/watch/">Videos</a>
+        <a href="/forum/">Forum</a>
+      </div>
+      <nav class="nav">
+        <div class="nav-group">
+          <div class="nav-label">Explore</div>
+          <a href="/" data-nav="home">Search home</a>
+          <a href="/topics/retirement/" data-nav="topics">Topics</a>
+          <a href="/tools/" data-nav="tools">Tools</a>
+          <a href="/watch/" data-nav="watch">Videos</a>
+          <a href="/forum/" data-nav="forum">Forum</a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Pillars</div>
+          <a href="/topics/retirement/">Retirement</a>
+          <a href="/topics/money-psychology/">Money psychology</a>
+          <a href="/topics/decision-tools/">Decision tools</a>
+        </div>
+      </nav>
+      <div class="side-foot">Big ideas, known plain.<br>Educational only.</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <form class="search" id="globalSearch" autocomplete="off" action="/search/" method="get">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input type="search" name="q" placeholder="Search explainers, videos, tools…" aria-label="Search Know Plain" />
+        </form>
+        <div class="top-actions">
+          <a class="btn" href="/about/">About</a>
+          <a class="btn primary" href="/tools/">Get roadmap</a>
+        </div>
+      </div>
+      <div class="content">
+
+          <div class="section-title"><h2>Search results</h2><span id="qLabel">demo</span></div>
+          <div id="results"></div>
+          <p class="note">Production will use Typesense/Algolia. This page should be <strong>noindex</strong> so result URLs don’t pollute Google.</p>
+     
+      </div>
+      <footer class="site-footer">
+        <div class="links">
+          <a href="/about/">About</a>
+          <a href="/disclosure/">Disclosure</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="https://www.youtube.com/@explainstudio9">YouTube</a>
+        </div>
+        <p>Educational content only. Not financial, tax, medical, or legal advice. Some links are affiliates.</p>
+      </footer>
+    </div>
+  </div>
+  <script src="/assets/config.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+const DATA=[
+ {t:"Explainer",title:"Retirement isn’t a date — it’s math",url:"/topics/retirement/retirement-isnt-a-date/",s:"Funding problem, not a birthday."},
+ {t:"Tool",title:"Retirement Roadmap Pack",url:"/tools/",s:"Spreadsheet + checklist + calculator."},
+ {t:"Video",title:"Complete Retirement Playbook",url:"/watch/",s:"18-minute explainer with chapters."},
+ {t:"Explainer",title:"Sequence of returns risk",url:"/topics/retirement/sequence-of-returns/",s:"Why early retirement crashes hurt more."},
+ {t:"Explainer",title:"Present bias & under-saving",url:"/topics/money-psychology/present-bias/",s:"Automate so willpower isn’t the plan."},
+];
+const q=new URLSearchParams(location.search).get("q")||"";
+document.getElementById("qLabel").textContent=q?`for “${q}”`:"all demo";
+const ql=q.toLowerCase();
+const hits=DATA.filter(d=>!ql||(d.title+d.s).toLowerCase().includes(ql)||"retirement".includes(ql));
+document.getElementById("results").innerHTML=(hits.length?hits:DATA).map(d=>`<a class="result-row" href="${d.url}"><div><span class="badge">${d.t}</span><span class="path">knowplain.com</span></div><div class="title">${d.title}</div><div class="snippet">${d.s}</div></a>`).join("");
+</script>
+</body>
+</html>

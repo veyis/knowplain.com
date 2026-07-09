@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Know Plain — A vs B samples</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --ink:#111; --muted:#666; --line:#e8e8e8; --bg:#fafafa; --font:"Instrument Sans",system-ui,sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--ink); padding: 2.5rem 1.25rem 4rem; }
+    .wrap { max-width: 820px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+    .lede { color: var(--muted); line-height: 1.5; margin: 0 0 2rem; max-width: 52ch; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    a.card {
+      display: grid; gap: 0.5rem; padding: 1.35rem 1.4rem; background: #fff;
+      border: 1px solid var(--line); border-radius: 16px; text-decoration: none; color: inherit;
+      transition: border-color .15s;
+    }
+    a.card:hover { border-color: #111; }
+    .tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    a.card strong { font-size: 1.15rem; letter-spacing: -0.02em; }
+    a.card p { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+    ul { margin: 0.35rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+    .hint { margin-top: 2rem; font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Know Plain redesign — pick A or B</h1>
+    <p class="lede">Two HTML samples for the same brand. Open both, click around, then tell me which direction to build.</p>
+    <div class="grid">
+      <a class="card" href="a-search-prototype.html">
+        <span class="tag">Option A</span>
+        <strong>Search prototype</strong>
+        <p>Google-calm homepage. Search → typed results. Fastest visual proof.</p>
+        <ul>
+          <li>Almost empty first viewport</li>
+          <li>Result badges: Explainer / Video / Tool / Thread</li>
+          <li>No sidebar, CMS, or forum UI yet</li>
+        </ul>
+      </a>
+      <a class="card" href="b-product-shell.html">
+        <span class="tag">Option B</span>
+        <strong>Product shell</strong>
+        <p>Search-first + full IA: topics, tools, videos, forum, article.</p>
+        <ul>
+          <li>Sidebar navigation</li>
+          <li>Pillar hubs + article E-E-A-T template</li>
+          <li>Astro / Sanity / Typesense trajectory</li>
+        </ul>
+      </a>
+    </div>
+    <p class="hint">Files live in <code>exports/knowplain-samples/</code>. Reply <strong>A</strong> or <strong>B</strong> (or a hybrid) when you’ve decided.</p>
+  </div>
+</body>
+</html>

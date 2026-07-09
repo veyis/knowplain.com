@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #f7f7f5;
+  --color-surface: #ffffff;
+  --color-ink: #121212;
+  --color-muted: #667085;
+  --color-line: #e6e6e1;
+  --color-accent: #1c4ed8;
+  --color-accent-soft: #eef2ff;
+  --color-chip: #efeee9;
+  --color-ok: #067647;
+  --font-sans: var(--font-instrument-sans), system-ui, sans-serif;
+  --max-width-shell: 1080px;
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-canvas text-ink antialiased;
+}
+
+@layer components {
+  .kp-chip {
+    @apply rounded-full bg-chip px-3.5 py-1.5 text-sm text-ink transition hover:bg-[#e5e4de];
+  }
+  .kp-card {
+    @apply grid gap-1.5 rounded-[14px] border border-line bg-surface p-4 transition hover:border-[#cfcfc8];
+  }
+  .kp-btn {
+    @apply inline-flex items-center justify-center rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition hover:border-[#cfcfc8];
+  }
+  .kp-btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg border border-ink bg-ink px-3.5 py-2 text-sm font-medium text-white transition hover:opacity-90;
+  }
+  .kp-spoke {
+    @apply flex items-center justify-between gap-4 rounded-[10px] bg-canvas px-3 py-2.5 text-sm;
+  }
+  .kp-badge {
+    @apply rounded px-1.5 py-0.5 text-[0.68rem] font-semibold uppercase tracking-wide bg-accent-soft text-accent;
+  }
+}

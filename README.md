@@ -1,48 +1,42 @@
-# Know Plain
+# Know Plain (`knowplain.com`)
 
-Static funnel site for **Know Plain** (`knowplain.com`) — the consumer / email / affiliate hub for the Explain Studio YouTube channel.
+Canonical app location: **`~/Desktop/knowplain`**
 
-| Path | Job |
-|------|-----|
-| `/` | Brand + route |
-| `/retirement-roadmap/` | Lead magnet + calculator + downloads |
-| `/tools/` | Affiliate hub (Empower first) |
-| `/books/` | Amazon reading list |
-| `/disclosure/` · `/privacy/` | Compliance |
-| `/pack/*` | Print/PDF worksheets + CSV template |
+Next.js 15 + Tailwind + TypeScript. Supabase-ready for auth/forum.
 
-## Stack
-
-- Static HTML/CSS/JS (no build step)
-- Hosted on **Vercel** (project: `site`)
-- Domain on **Cloudflare** (DNS only → Vercel; grey-cloud proxy)
-
-## Local preview
+## Quick start
 
 ```bash
-python3 -m http.server 8787
-# open http://127.0.0.1:8787/
+cd ~/Desktop/knowplain
+cp .env.example .env.local
+npm install
+npm run dev
+# http://localhost:3000
 ```
+
+## Routes
+
+| Path | Role |
+|------|------|
+| `/` | Search-first home |
+| `/topics/[pillar]` | Pillar hubs |
+| `/topics/[pillar]/[slug]` | Explainers |
+| `/tools` | Roadmap + affiliates |
+| `/watch` | Video + chapters |
+| `/forum` | Phase 2 preview |
+| `/search` | Demo search (noindex) |
+| `/about` | Entity home |
+
+## Folders
+
+| Path | What |
+|------|------|
+| `src/` | Next.js app |
+| `legacy-static/` | Previous static funnel (roadmap calculator, packs) |
+| `docs/seo/` | 90-day calendar + schema checklist |
+| `docs/samples/` | A/B HTML samples |
+| `docs/static-v2-shell/` | Earlier static shell prototype |
 
 ## Deploy
 
-```bash
-vercel --prod
-```
-
-Production: https://knowplain.com
-
-## Config
-
-Edit affiliate / newsletter URLs in `assets/config.js`.
-
-## Brand split
-
-| Surface | Brand |
-|---------|--------|
-| Website / email / affiliates | **Know Plain** |
-| YouTube channel | Explain Studio (`@explainstudio9`) |
-
-## Spoken CTA
-
-> Free Retirement Roadmap — knowplain.com
+Vercel should build from this repo root (`next build`). Keep `legacy-static/` out of the Next output.

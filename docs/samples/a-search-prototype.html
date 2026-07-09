@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A — Search prototype · Know Plain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #fafafa; --ink: #111; --muted: #6b6b6b; --line: #e8e8e8;
+      --chip: #f3f3f3; --chip-hover: #ebebeb;
+      --badge-explainer: #eef2ff; --badge-video: #fff1e8;
+      --badge-tool: #e8f7ef; --badge-thread: #f5eef8;
+      --radius: 999px; --font: "Instrument Sans", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    .sample-bar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 0.65rem 1.25rem; background: #111; color: #fff; font-size: 0.8rem;
+    }
+    .sample-bar a { color: #bbb; } .sample-bar a:hover { color: #fff; }
+    .sample-bar .links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .home { min-height: calc(100vh - 42px); display: flex; flex-direction: column; align-items: center; padding: 0 1.25rem 2rem; }
+    .home-main {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 100%; max-width: 640px; gap: 1.75rem; transform: translateY(-6vh);
+    }
+    .wordmark { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 600; letter-spacing: -0.04em; margin: 0; }
+    .search-wrap { width: 100%; }
+    .search {
+      display: flex; align-items: center; gap: 0.75rem; width: 100%;
+      padding: 0.85rem 1.15rem; background: #fff; border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,17,0.08); }
+    .search svg { flex-shrink: 0; opacity: 0.45; }
+    .search input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; font-size: 1.05rem; }
+    .search input::placeholder { color: #a3a3a3; }
+    .search button {
+      border: 0; background: var(--ink); color: #fff; font: inherit; font-size: 0.85rem; font-weight: 500;
+      padding: 0.45rem 0.95rem; border-radius: var(--radius); cursor: pointer;
+    }
+    .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+    .chip { border: 0; background: var(--chip); font: inherit; font-size: 0.85rem; padding: 0.45rem 0.9rem; border-radius: var(--radius); cursor: pointer; }
+    .chip:hover { background: var(--chip-hover); }
+    .home-foot { display: flex; gap: 1.25rem; flex-wrap: wrap; justify-content: center; font-size: 0.8rem; color: var(--muted); }
+    .home-foot a:hover { color: var(--ink); }
+    .results { display: none; min-height: calc(100vh - 42px); }
+    .results.on { display: block; } .home.off { display: none; }
+    .top { border-bottom: 1px solid var(--line); background: #fff; padding: 0.85rem 1.25rem; }
+    .top-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
+    .mini-mark { font-weight: 600; letter-spacing: -0.03em; font-size: 1.15rem; white-space: nowrap; cursor: pointer; }
+    .top .search { padding: 0.55rem 0.9rem; box-shadow: none; }
+    .top .search input { font-size: 0.95rem; }
+    .modes { max-width: 720px; margin: 0 auto; padding: 0.75rem 1.25rem 0; display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .mode { border: 0; background: transparent; font: inherit; font-size: 0.85rem; color: var(--muted); padding: 0.45rem 0.75rem; border-radius: 8px; cursor: pointer; }
+    .mode.on { color: var(--ink); background: var(--chip); font-weight: 500; }
+    .list { max-width: 720px; margin: 0 auto; padding: 0.5rem 1.25rem 3rem; }
+    .meta-line { font-size: 0.8rem; color: var(--muted); padding: 0.75rem 0 0.25rem; }
+    .row { display: grid; gap: 0.35rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+    .row:hover .title { text-decoration: underline; text-underline-offset: 3px; }
+    .badges { display: flex; gap: 0.4rem; align-items: center; }
+    .badge { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.2rem 0.45rem; border-radius: 4px; }
+    .badge.explainer { background: var(--badge-explainer); }
+    .badge.video { background: var(--badge-video); }
+    .badge.tool { background: var(--badge-tool); }
+    .badge.thread { background: var(--badge-thread); }
+    .title { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; }
+    .snippet { color: var(--muted); font-size: 0.95rem; line-height: 1.5; max-width: 58ch; }
+    .path { font-size: 0.78rem; color: #8a8a8a; }
+    .note { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="sample-bar">
+    <strong>Sample A — Search prototype</strong>
+    <div class="links">
+      <a href="index.html">Compare</a>
+      <a href="b-product-shell.html">Open B</a>
+    </div>
+  </div>
+  <section class="home" id="home">
+    <div class="home-main">
+      <h1 class="wordmark">Know Plain</h1>
+      <form class="search-wrap" id="homeForm" autocomplete="off">
+        <div class="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="homeQ" type="search" placeholder="Ask anything…" aria-label="Search Know Plain" />
+          <button type="submit">Search</button>
+        </div>
+      </form>
+      <div class="chips" id="chips">
+        <button type="button" class="chip" data-q="How much do I need to retire?">Retirement math</button>
+        <button type="button" class="chip" data-q="Why index funds beat most managers">Index funds</button>
+        <button type="button" class="chip" data-q="Why do I procrastinate on money?">Procrastination</button>
+        <button type="button" class="chip" data-q="How do black holes bend time?">Black holes</button>
+        <button type="button" class="chip" data-q="Free retirement roadmap">Roadmap tool</button>
+      </div>
+    </div>
+    <div class="home-foot">
+      <a href="#">About</a><a href="#">Topics</a><a href="#">YouTube</a><a href="#">Disclosure</a>
+    </div>
+  </section>
+  <section class="results" id="results">
+    <div class="top"><div class="top-inner">
+      <div class="mini-mark" id="backHome">Know Plain</div>
+      <form class="search-wrap" id="resForm" style="flex:1"><div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input id="resQ" type="search" aria-label="Search" />
+      </div></form>
+    </div></div>
+    <div class="modes" id="modes">
+      <button type="button" class="mode on" data-mode="all">All</button>
+      <button type="button" class="mode" data-mode="explainer">Explainers</button>
+      <button type="button" class="mode" data-mode="video">Videos</button>
+      <button type="button" class="mode" data-mode="tool">Tools</button>
+      <button type="button" class="mode" data-mode="thread">Forum</button>
+    </div>
+    <div class="list">
+      <div class="meta-line" id="metaLine">About 6 results · demo data</div>
+      <div id="rows"></div>
+      <div class="note"><strong style="color:var(--ink)">What A is:</strong> Pure search-first proof. Minimal chrome, Google-calm homepage, typed results. Fastest path to validate brand feel. No CMS, topic hubs, or forum shell yet.</div>
+    </div>
+  </section>
+  <script>
+    const DATA = [
+      { type: "explainer", title: "Retirement isn’t a date — it’s math", path: "knowplain.com › topics › retirement", snippet: "A plain model for “enough,” withdrawal rates, and why the calendar date is the wrong target." },
+      { type: "tool", title: "Free Retirement Roadmap Pack", path: "knowplain.com › tools › roadmap", snippet: "Spreadsheet + one-page plan + checklist. Know if you’re roughly on track in under 30 minutes." },
+      { type: "video", title: "The Complete Retirement Playbook", path: "knowplain.com › watch", snippet: "18-minute explainer covering compound growth, inflation, sequence risk, and the 4% rule." },
+      { type: "explainer", title: "Why index funds beat most managers", path: "knowplain.com › topics › investing", snippet: "SPIVA data, fees, and the boring playbook that actually compounds." },
+      { type: "thread", title: "Starting late at 45 — what’s realistic?", path: "knowplain.com › forum", snippet: "Community answers + a pinned explainer on catch-up contributions and savings rate." },
+      { type: "explainer", title: "Sequence of returns risk, known plain", path: "knowplain.com › topics › retirement", snippet: "Why a crash at 65 hits harder than the same crash at 35 — with a simple diagram." },
+    ];
+    const home = document.getElementById("home"), results = document.getElementById("results");
+    const homeQ = document.getElementById("homeQ"), resQ = document.getElementById("resQ");
+    const rows = document.getElementById("rows"), metaLine = document.getElementById("metaLine");
+    let mode = "all";
+    const label = t => ({ explainer: "Explainer", video: "Video", tool: "Tool", thread: "Thread" })[t] || t;
+    function render(q) {
+      const filtered = DATA.filter(d => mode === "all" || d.type === mode);
+      rows.innerHTML = filtered.map(d => `<article class="row"><div class="badges"><span class="badge ${d.type}">${label(d.type)}</span><span class="path">${d.path}</span></div><div class="title">${d.title}</div><div class="snippet">${d.snippet}</div></article>`).join("");
+      metaLine.textContent = `About ${filtered.length} results` + (q ? ` for “${q}”` : "") + " · demo data";
+    }
+    function showResults(q) { home.classList.add("off"); results.classList.add("on"); resQ.value = q; render(q); resQ.focus(); }
+    function showHome() { results.classList.remove("on"); home.classList.remove("off"); homeQ.focus(); }
+    document.getElementById("homeForm").addEventListener("submit", e => { e.preventDefault(); showResults(homeQ.value.trim() || "How much do I need to retire?"); });
+    document.getElementById("resForm").addEventListener("submit", e => { e.preventDefault(); render(resQ.value.trim()); });
+    document.getElementById("backHome").addEventListener("click", showHome);
+    document.getElementById("chips").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; homeQ.value = b.dataset.q; showResults(b.dataset.q); });
+    document.getElementById("modes").addEventListener("click", e => { const b = e.target.closest(".mode"); if (!b) return; mode = b.dataset.mode; document.querySelectorAll(".mode").forEach(m => m.classList.toggle("on", m === b)); render(resQ.value.trim()); });
+  </script>
+</body>
+</html>
