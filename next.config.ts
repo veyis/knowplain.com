@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withContentCollections } from "@content-collections/next";
 
 // ponytail: 'unsafe-inline' for scripts/styles — this content site renders no
 // user-supplied HTML (no XSS sink) and the App Router uses inline bootstrap
@@ -50,4 +51,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// withContentCollections must be the last wrapper applied to the config.
+export default withContentCollections(nextConfig);

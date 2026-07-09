@@ -20,3 +20,6 @@ yarn-debug.log*
 yarn-error.log*
 next-env.d.ts
 *.tsbuildinfo
+
+# content collections generated output
+.content-collections

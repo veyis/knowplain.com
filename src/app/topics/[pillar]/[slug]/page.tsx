@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MDXContent } from "@content-collections/mdx/react";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
+import { mdxComponents } from "@/components/mdx-components";
 import { articles, getArticle, isPillarId } from "@/lib/content";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/schema";
 import { pillars, site } from "@/lib/site";
@@ -80,11 +82,7 @@ export default async function ArticlePage({
         <div className="my-5 border-l-[3px] border-ink bg-white px-4 py-3 text-[0.95rem]">
           <strong>Plain answer:</strong> {article.plainAnswer}
         </div>
-        {article.body.map((para) => (
-          <p key={para.slice(0, 24)} className="mb-4 leading-relaxed text-[#2a2a2a]">
-            {para}
-          </p>
-        ))}
+        <MDXContent code={article.mdx} components={mdxComponents} />
         {article.related && (
           <div className="mt-8 grid gap-2">
             {article.related.map((r) => (

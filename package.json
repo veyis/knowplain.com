@@ -12,12 +12,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@content-collections/mdx": "^0.2.2",
     "@supabase/supabase-js": "^2.110.1",
     "next": "^16.2.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@content-collections/core": "^0.15.2",
+    "@content-collections/next": "^0.2.11",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^24",
     "@types/react": "^19.2.0",
@@ -26,7 +29,8 @@
     "eslint-config-next": "^16.2.10",
     "postcss": "^8",
     "tailwindcss": "^4.3.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "zod": "^4.4.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { articles, getArticle } from "@/lib/content";
+import { articles, getArticle, isPillarId } from "@/lib/content";
 import { pillars, site } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
@@ -17,7 +17,8 @@ export default async function Image({
 }) {
   const { pillar, slug } = await params;
   const article = getArticle(pillar, slug);
-  const kicker = article ? pillars[article.pillar].title : site.tagline;
+  const kicker =
+    article && isPillarId(article.pillar) ? pillars[article.pillar].title : site.tagline;
   const title = article?.title ?? site.name;
 
   return new ImageResponse(
