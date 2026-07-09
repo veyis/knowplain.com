@@ -2,7 +2,7 @@
 window.EXPLAIN_STUDIO = {
   siteName: "Know Plain",
   youtube: "https://www.youtube.com/@explainstudio9",
-  youtubeBrand: "Explain Studio",
+  youtubeBrand: "Know Plain",
   empowerUrl: "https://empower.sjv.io/7XDD2Q",
   boldinUrl: "https://www.boldin.com/retirement/planner/",
   ynabUrl: "https://www.ynab.com",
