@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { pageMeta } from "@/lib/site";
 import { Simulator } from "./Simulator";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = pageMeta(
   "/tools/withdrawal-simulator",
@@ -9,7 +10,10 @@ export const metadata = pageMeta(
   "Interactive tool to stress-test your retirement withdrawals against inflation and growth.",
 );
 
-export default function WithdrawalSimulatorPage() {
+export default async function WithdrawalSimulatorPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <AppShell active="tools">
       <div className="mb-4 text-sm text-muted">
@@ -22,7 +26,7 @@ export default function WithdrawalSimulatorPage() {
         </p>
       </div>
 
-      <Simulator />
+      <Simulator user={user} />
 
       <p className="mt-8 rounded-xl border border-dashed border-line bg-white p-4 text-sm text-muted">
         Educational tool only. Real market returns do not follow a flat straight line. 

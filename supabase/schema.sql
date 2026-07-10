@@ -61,3 +61,44 @@ create table public.knowplain_search_index (
 alter table public.knowplain_search_index enable row level security;
 create policy "Search index is viewable by everyone." on knowplain_search_index for select using (true);
 create policy "Only service role can manage search index." on knowplain_search_index for all using (false);
+
+-- 5. Videos (Synced from YouTube)
+create table public.knowplain_videos (
+  id text primary key,
+  title text not null,
+  description text,
+  transcript text,
+  published_at timestamp with time zone not null,
+  thumbnail_url text
+);
+alter table public.knowplain_videos enable row level security;
+create policy "Videos are viewable by everyone." on knowplain_videos for select using (true);
+create policy "Only service role can manage videos." on knowplain_videos for all using (false);
+
+-- 6. Saved Simulations
+create table public.knowplain_saved_simulations (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users not null,
+  name text not null,
+  balance numeric not null,
+  withdrawal numeric not null,
+  growth numeric not null,
+  inflation numeric not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table public.knowplain_saved_simulations enable row level security;
+create policy "Users can view their own saved simulations." on knowplain_saved_simulations for select using (auth.uid() = user_id);
+create policy "Users can insert their own saved simulations." on knowplain_saved_simulations for insert with check (auth.uid() = user_id);
+create policy "Users can update their own saved simulations." on knowplain_saved_simulations for update using (auth.uid() = user_id);
+create policy "Users can delete their own saved simulations." on knowplain_saved_simulations for delete using (auth.uid() = user_id);
+-- 7. Forum Likes
+create table public.knowplain_forum_likes (
+  user_id uuid references auth.users not null,
+  thread_id uuid references public.knowplain_forum_threads(id) on delete cascade not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (user_id, thread_id)
+);
+alter table public.knowplain_forum_likes enable row level security;
+create policy "Likes are viewable by everyone." on knowplain_forum_likes for select using (true);
+create policy "Users can insert their own likes." on knowplain_forum_likes for insert with check (auth.uid() = user_id);
+create policy "Users can delete their own likes." on knowplain_forum_likes for delete using (auth.uid() = user_id);

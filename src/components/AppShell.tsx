@@ -32,15 +32,20 @@ export async function AppShell({
               About
             </Link>
             {user ? (
-              <form action="/login" method="POST">
-                <button formAction={async () => {
-                  'use server'
-                  const { signout } = await import('@/app/login/actions')
-                  await signout()
-                }} className="kp-btn">
-                  Sign out ({user.email})
-                </button>
-              </form>
+              <div className="flex items-center gap-2">
+                <Link href="/profile" className="kp-btn">
+                  Profile
+                </Link>
+                <form action="/login" method="POST">
+                  <button formAction={async () => {
+                    'use server'
+                    const { signout } = await import('@/app/login/actions')
+                    await signout()
+                  }} className="kp-btn border-transparent bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-muted">
+                    Sign out
+                  </button>
+                </form>
+              </div>
             ) : (
               <Link href="/login" className="kp-btn">
                 Sign in

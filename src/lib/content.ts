@@ -1,12 +1,10 @@
-import { allArticles, allVideos } from "content-collections";
+import { allArticles } from "content-collections";
 import { pillars, type PillarId } from "./site";
 
 export type Article = (typeof allArticles)[number];
-export type Video = (typeof allVideos)[number];
 export type ContentType = "explainer" | "tool" | "video" | "thread";
 
 export const articles = allArticles;
-export const videos = allVideos;
 
 export function getArticle(pillar: string, slug: string) {
   return articles.find((a) => a.pillar === pillar && a.slug === slug);
@@ -14,10 +12,6 @@ export function getArticle(pillar: string, slug: string) {
 
 export function getArticlesByPillar(pillar: PillarId) {
   return articles.filter((a) => a.pillar === pillar);
-}
-
-export function getVideo(slug: string) {
-  return videos.find((v) => v.slug === slug);
 }
 
 export function isPillarId(value: string): value is PillarId {
@@ -39,12 +33,6 @@ export const searchIndex: SearchDoc[] = [
     href: a.url,
     snippet: a.description,
     pillar: a.pillar as PillarId,
-  })),
-  ...videos.map((v) => ({
-    type: "video" as const,
-    title: v.title,
-    href: v.url,
-    snippet: v.description,
   })),
   {
     type: "tool",

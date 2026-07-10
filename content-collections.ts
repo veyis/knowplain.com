@@ -25,24 +25,4 @@ const articles = defineCollection({
   },
 });
 
-const videos = defineCollection({
-  name: "videos",
-  directory: "content",
-  include: "videos/**/*.mdx",
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    youtubeId: z.string(),
-    updated: z.string(),
-    chapters: z
-      .array(z.object({ timestamp: z.string(), label: z.string() }))
-      .optional(),
-  }),
-  transform: async (doc, context) => {
-    const mdx = await compileMDX(context, doc);
-    const slug = doc._meta.path.replace(/^videos\//, "");
-    return { ...doc, mdx, slug, url: `/watch/${slug}` };
-  },
-});
-
-export default defineConfig({ content: [articles, videos] });
+export default defineConfig({ content: [articles] });

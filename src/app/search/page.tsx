@@ -4,6 +4,14 @@ import { AppShell } from "@/components/AppShell";
 import { SearchForm } from "@/components/SearchForm";
 import { createClient } from "@/lib/supabase/server";
 
+type SearchHit = {
+  id: string;
+  href: string;
+  type: string;
+  title: string;
+  snippet: string;
+};
+
 export const metadata: Metadata = {
   title: "Search",
   robots: { index: false, follow: true },
@@ -17,7 +25,7 @@ export default async function SearchPage({
   const { q = "" } = await searchParams;
   const supabase = await createClient();
 
-  let hits: any[] = [];
+  let hits: SearchHit[] = [];
   let errorMsg = null;
 
   if (q) {
