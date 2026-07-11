@@ -1,3 +1,7 @@
+-- BOOTSTRAP for a FRESH Supabase project. Running this against a database that already
+-- has these tables fails with 42P07 ("relation already exists") — that is expected, not
+-- a bug. To add something to an existing project, use a file in supabase/migrations/.
+
 -- 1. Profiles Table (syncs with auth.users)
 create table public.knowplain_profiles (
   id uuid references auth.users not null primary key,
@@ -102,3 +106,19 @@ alter table public.knowplain_forum_likes enable row level security;
 create policy "Likes are viewable by everyone." on knowplain_forum_likes for select using (true);
 create policy "Users can insert their own likes." on knowplain_forum_likes for insert with check (auth.uid() = user_id);
 create policy "Users can delete their own likes." on knowplain_forum_likes for delete using (auth.uid() = user_id);
+
+-- 8. Leads (email capture from the checkup and checklists)
+-- Write-only from the client: anyone may insert, nobody may read back. Lead
+-- emails are only readable with the service role. `notes` stores the checkup's
+-- generic summary sentence — never the user's balances, income, or debt.
+create table public.knowplain_leads (
+  id uuid default gen_random_uuid() primary key,
+  email text not null,
+  source text not null,
+  notes text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique (email, source)
+);
+alter table public.knowplain_leads enable row level security;
+create policy "Anyone can submit a lead." on knowplain_leads for insert with check (true);
+create policy "Leads are not publicly readable." on knowplain_leads for select using (false);

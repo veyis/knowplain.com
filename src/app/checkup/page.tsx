@@ -1,6 +1,6 @@
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbJsonLd, webApplicationJsonLd } from "@/lib/schema";
+import { breadcrumbJsonLd } from "@/lib/schema";
 import { pageMeta, site } from "@/lib/site";
 import { RetirementCheckup } from "./RetirementCheckup";
 
@@ -19,12 +19,6 @@ export default function CheckupPage() {
             { name: "Home", url: site.url },
             { name: "Retirement Checkup", url: `${site.url}/checkup` },
           ]),
-          webApplicationJsonLd({
-            name: "Know Plain Retirement Checkup",
-            description:
-              "A plain-language retirement snapshot that estimates a spending gap, planning portfolio range, and next steps.",
-            url: `${site.url}/checkup`,
-          }),
         ]}
       />
       <header className="mb-6 max-w-[760px]">

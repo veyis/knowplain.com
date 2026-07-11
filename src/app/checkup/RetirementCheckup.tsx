@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { ArrowRight, Mail, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { captureCheckupLead } from "./actions";
+import { trackProductEvent } from "@/lib/analytics";
 import { currency, runRetirementCheckup, type CheckupInput } from "@/lib/checkup";
 
 const defaults: CheckupInput = {
@@ -40,11 +41,24 @@ function ScoreBar({ label, value, inverse }: { label: string; value: number; inv
 export function RetirementCheckup() {
   const [input, setInput] = useState<CheckupInput>(defaults);
   const [email, setEmail] = useState("");
-  const [leadStatus, setLeadStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [leadStatus, setLeadStatus] = useState<"idle" | "saved" | "sent" | "error">("idle");
+  const [leadError, setLeadError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const editedTracked = useRef(false);
   const result = useMemo(() => runRetirementCheckup(input), [input]);
 
+  useEffect(() => {
+    trackProductEvent("Checkup Viewed");
+  }, []);
+
+  const trackEdited = () => {
+    if (editedTracked.current) return;
+    editedTracked.current = true;
+    trackProductEvent("Checkup Edited");
+  };
+
   const updateNumber = (key: keyof CheckupInput, value: string) => {
+    trackEdited();
     setInput((current) => ({ ...current, [key]: Number(value) }));
   };
 
@@ -55,7 +69,12 @@ export function RetirementCheckup() {
       form.set("email", email);
       form.set("summary", result.summary);
       const response = await captureCheckupLead(form);
-      setLeadStatus(response.ok ? "saved" : "error");
+      // "sent" and "saved" are different claims. Only make the one that is true.
+      setLeadStatus(response.ok ? (response.sent ? "sent" : "saved") : "error");
+      setLeadError(response.ok ? "" : response.error || "We could not save that.");
+      if (response.ok) {
+        trackProductEvent("Checkup Lead Captured", { sent: Boolean(response.sent) });
+      }
     });
   };
 
@@ -98,7 +117,10 @@ export function RetirementCheckup() {
             <input
               type="checkbox"
               checked={input.retireBefore65}
-              onChange={(e) => setInput((current) => ({ ...current, retireBefore65: e.target.checked }))}
+              onChange={(e) => {
+                trackEdited();
+                setInput((current) => ({ ...current, retireBefore65: e.target.checked }));
+              }}
             />
             Retiring before Medicare age 65
           </label>
@@ -106,7 +128,10 @@ export function RetirementCheckup() {
             <input
               type="checkbox"
               checked={input.partTimePossible}
-              onChange={(e) => setInput((current) => ({ ...current, partTimePossible: e.target.checked }))}
+              onChange={(e) => {
+                trackEdited();
+                setInput((current) => ({ ...current, partTimePossible: e.target.checked }));
+              }}
             />
             Part-time work is possible
           </label>
@@ -114,12 +139,13 @@ export function RetirementCheckup() {
             Spending flexibility
             <select
               value={input.spendingFlexibility}
-              onChange={(e) =>
+              onChange={(e) => {
+                trackEdited();
                 setInput((current) => ({
                   ...current,
                   spendingFlexibility: e.target.value as CheckupInput["spendingFlexibility"],
-                }))
-              }
+                }));
+              }}
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
             >
               <option value="low">Low</option>
@@ -152,6 +178,15 @@ export function RetirementCheckup() {
               </strong>
             </div>
           </div>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+            The target range is bracketed by the two credible withdrawal-rate benchmarks, not an average of
+            them. The low end assumes <strong>4.7%</strong> (Bengen&rsquo;s historical worst case, a more
+            aggressive portfolio); the high end assumes <strong>3.9%</strong> (Morningstar&rsquo;s
+            forward-looking rate for a rigid, inflation-adjusted paycheck at 90% confidence over 30 years).
+            They answer different questions, so there is no single &ldquo;safe&rdquo; number. Projections
+            assume 3%&ndash;6% annual returns and are hypothetical, not a guarantee. This is an educational
+            estimate, not financial advice.
+          </p>
         </div>
 
         <div className="grid gap-4 rounded-xl border border-border bg-card p-5">
@@ -193,8 +228,12 @@ export function RetirementCheckup() {
 
         <form onSubmit={saveEmail} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold tracking-tight">Email this checkup</h3>
-            <p className="text-sm text-muted-foreground">Saves the summary request; no exact account data is required.</p>
+            <h3 className="font-semibold tracking-tight">Save this checkup</h3>
+            <p className="text-sm text-muted-foreground">
+              We store your email and the one-line verdict above — nothing else. Your ages, balances, and
+              debts stay in this browser and are never sent to us. We&rsquo;ll use this to let you know when
+              checkup email summaries are available.
+            </p>
           </div>
           <input
             type="email"
@@ -205,13 +244,17 @@ export function RetirementCheckup() {
           />
           <Button type="submit" disabled={isPending} className="gap-2">
             <Mail className="size-4" />
-            {isPending ? "Saving" : "Send"}
+            {isPending ? "Saving" : "Save"}
           </Button>
-          {leadStatus === "saved" && <span className="text-sm text-emerald-600">Saved.</span>}
-          {leadStatus === "error" && <span className="text-sm text-red-600">Check the email.</span>}
+          {leadStatus === "sent" && (
+            <span className="text-sm text-emerald-600">Sent — check your inbox.</span>
+          )}
+          {leadStatus === "saved" && (
+            <span className="text-sm text-emerald-600">Saved. We&rsquo;ll send it shortly.</span>
+          )}
+          {leadStatus === "error" && <span className="text-sm text-red-600">{leadError}</span>}
         </form>
       </section>
     </div>
   );
 }
-
