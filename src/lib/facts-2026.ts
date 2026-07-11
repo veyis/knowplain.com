@@ -378,6 +378,89 @@ export function ssBreakEvenAge(pia: number, fra: number, earlyAge: number, lateA
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Retirement spending: why healthcare quietly eats the budget
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type SpendingYear = {
+  year: number;
+  essentials: number;
+  healthcare: number;
+  discretionary: number;
+  total: number;
+  /** Healthcare as a share of that year's total. */
+  healthcareShare: number;
+};
+
+export type SpendingProjection = {
+  years: SpendingYear[];
+  first: SpendingYear;
+  last: SpendingYear;
+  /** Percentage-POINT rise in healthcare's share of the budget. */
+  healthcareShareIncrease: number;
+  /** What the budget would be if healthcare inflated at the general rate instead. */
+  totalIfHealthcareTracked: number;
+  /** The cost of healthcare outrunning everything else, in the final year. */
+  healthcarePremiumCost: number;
+};
+
+/**
+ * Project a retirement budget when healthcare inflates faster than everything else.
+ *
+ * This is the whole point of the tool, and it is pure arithmetic — no forecast, no
+ * unverified constant. Two categories compounding at different rates diverge, and over
+ * a 25-year retirement healthcare can go from a modest line item to the thing that
+ * dominates the budget. Not because the retiree consumes more of it, but because its
+ * price runs hotter. A single blended inflation rate hides that completely, which is
+ * why most "inflation calculators" are useless here.
+ */
+export function projectRetirementSpending(opts: {
+  essentials: number;
+  healthcare: number;
+  discretionary: number;
+  years: number;
+  generalInflation: number;
+  healthcareInflation: number;
+}): SpendingProjection {
+  const n = Math.max(1, Math.floor(opts.years));
+  const years: SpendingYear[] = [];
+
+  for (let i = 0; i < n; i += 1) {
+    const g = Math.pow(1 + opts.generalInflation, i);
+    const h = Math.pow(1 + opts.healthcareInflation, i);
+    const essentials = opts.essentials * g;
+    const healthcare = opts.healthcare * h;
+    const discretionary = opts.discretionary * g;
+    const total = essentials + healthcare + discretionary;
+    years.push({
+      year: i + 1,
+      essentials: Math.round(essentials),
+      healthcare: Math.round(healthcare),
+      discretionary: Math.round(discretionary),
+      total: Math.round(total),
+      healthcareShare: total > 0 ? healthcare / total : 0,
+    });
+  }
+
+  const first = years[0];
+  const last = years[years.length - 1];
+
+  // The counterfactual: same budget, but healthcare behaves like everything else.
+  const g = Math.pow(1 + opts.generalInflation, n - 1);
+  const totalIfHealthcareTracked = Math.round(
+    (opts.essentials + opts.healthcare + opts.discretionary) * g,
+  );
+
+  return {
+    years,
+    first,
+    last,
+    healthcareShareIncrease: last.healthcareShare - first.healthcareShare,
+    totalIfHealthcareTracked,
+    healthcarePremiumCost: Math.max(0, last.total - totalIfHealthcareTracked),
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Debt payoff vs investing
 // ─────────────────────────────────────────────────────────────────────────────
 

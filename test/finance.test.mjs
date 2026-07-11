@@ -17,6 +17,7 @@ import {
   taxableIncome2026,
   rothConversionCost,
   debtVsInvesting,
+  projectRetirementSpending,
   monthsToPayoff,
   totalInterestPaid,
   irmaaTier1AnnualSurcharge,
@@ -452,4 +453,49 @@ test("debt vs investing: extra payments save real interest", () => {
   assert.ok(r.interestSaved > 0);
   assert.equal(r.interestSaved, r.interestIfMinimum - r.interestIfExtra);
   assert.ok(Number.isFinite(r.monthsToPayoff));
+});
+
+test("spending projection: healthcare only eats the budget when it inflates faster", () => {
+  const base = {
+    essentials: 40_000,
+    healthcare: 8_000,
+    discretionary: 12_000, // 60k total, healthcare = 13.3%
+    years: 25,
+  };
+
+  // No inflation anywhere: the mix cannot move.
+  const flat = projectRetirementSpending({
+    ...base,
+    generalInflation: 0,
+    healthcareInflation: 0,
+  });
+  assert.equal(flat.first.total, 60_000);
+  assert.equal(flat.last.total, 60_000);
+  assert.equal(flat.healthcareShareIncrease, 0);
+  assert.equal(flat.healthcarePremiumCost, 0);
+
+  // Everything inflates at the SAME rate: the budget grows, but the mix is unchanged.
+  // This is the control that proves the tool is measuring divergence, not just growth.
+  const even = projectRetirementSpending({
+    ...base,
+    generalInflation: 0.03,
+    healthcareInflation: 0.03,
+  });
+  assert.ok(even.last.total > even.first.total);
+  assert.ok(Math.abs(even.healthcareShareIncrease) < 1e-9, "same rate ⇒ same share");
+  assert.equal(even.healthcarePremiumCost, 0);
+  assert.equal(even.last.total, even.totalIfHealthcareTracked);
+
+  // Healthcare running hotter: its share rises, and the extra cost is real money.
+  const hot = projectRetirementSpending({
+    ...base,
+    generalInflation: 0.03,
+    healthcareInflation: 0.05,
+  });
+  assert.ok(hot.healthcareShareIncrease > 0.05, "share should climb by 5+ points over 25 years");
+  assert.ok(hot.last.healthcareShare > hot.first.healthcareShare);
+  assert.ok(hot.healthcarePremiumCost > 0);
+  assert.ok(hot.last.total > hot.totalIfHealthcareTracked);
+  assert.equal(hot.years.length, 25);
+  assert.equal(hot.first.year, 1);
 });

@@ -146,34 +146,13 @@ export function SocialSecurityBreakEvenTool() {
   );
 }
 
-// This used to back three tools via a `kind` switch, and two of them lied.
-//
-// The catch-up "tool" could not see the user's age or wages, so it never showed the
-// 60-63 super catch-up and never warned about the mandatory-Roth rule — it would happily
-// suggest a pre-tax catch-up the law no longer permits. Now CatchUpPlannerTool.
-//
-// The "Sequence-Risk Stress Test" did no sequencing whatsoever: it multiplied a balance
-// by a rate. The page promised "see why early returns matter more than the average" and
-// then never varied the order of returns. Now SequenceRiskTool, which actually runs the
-// same returns in two orders.
-//
-// What is left is the one case the shape genuinely fits: one input, one rate, one line.
-export function SimpleAssumptionTool() {
-  const [value, setValue] = useState(78000);
-  const [rate, setRate] = useState(3);
-  const output = `${currency(value)} becomes about ${currency(value * Math.pow(1 + rate / 100, 10))} in 10 years at ${rate}% inflation.`;
-
-  return (
-    <ToolFrame
-      analyticsName="inflation-spending"
-      inputs={[
-        ["Annual spending today", value, setValue],
-        ["Inflation rate", rate, setRate],
-      ]}
-      result={<p className="text-lg font-semibold tracking-tight">{output}</p>}
-    />
-  );
-}
+// SimpleAssumptionTool lived here and backed three tools through a `kind` switch. All
+// three now have real implementations, so it is gone:
+//   catch-up   -> CatchUpPlannerTool  (the old one was blind to age and wages, and would
+//                 suggest a pre-tax catch-up the law no longer permits)
+//   sequence   -> SequenceRiskTool    (the old one did no sequencing at all)
+//   inflation  -> SpendingPlannerTool (the old one applied one rate to the whole budget,
+//                 which quietly assumes healthcare behaves like groceries)
 
 function ToolFrame({
   analyticsName,

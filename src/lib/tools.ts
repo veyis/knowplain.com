@@ -122,14 +122,20 @@ export const toolPages = {
     ],
   },
   "inflation-spending": {
-    title: "Inflation-Adjusted Spending Planner",
-    description: "Translate today's spending into future retirement dollars.",
+    title: "Retirement Spending Planner",
+    description:
+      "Healthcare does not inflate like groceries. See what that does to your budget over a long retirement — and how much of your spending cushion it eats.",
     kind: "inflation",
     sources: [
       {
-        title: "Costs",
+        title: "Medicare costs",
         publisher: "Medicare.gov",
         url: "https://www.medicare.gov/basics/costs/medicare-costs",
+      },
+      {
+        title: "2025 Retiree Health Care Cost Estimate ($172,500 for a single 65-year-old)",
+        publisher: "Fidelity Investments",
+        url: "https://www.fidelity.com/viewpoints/personal-finance/plan-for-rising-health-care-costs",
       },
     ],
   },
