@@ -4,38 +4,12 @@ import { useMemo, useRef, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
+import { ToolField } from "./ToolField";
 import { currency } from "@/lib/checkup";
 import { sequenceRiskComparison } from "@/lib/facts-2026";
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-function Field({
-  label,
-  value,
-  onChange,
-  hint,
-  step = 1,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  hint?: string;
-  step?: number;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
-      <input
-        type="number"
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-      />
-      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
 
 export function SequenceRiskTool() {
   const [balance, setBalance] = useState(1_000_000);
@@ -111,28 +85,38 @@ export function SequenceRiskTool() {
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
         <div className="grid content-start gap-4" onChange={track}>
-          <Field label="Starting portfolio" value={balance} onChange={setBalance} step={10_000} />
-          <Field
+          <ToolField label="Starting portfolio"
+            min={0}
+            max={50000000} value={balance} onChange={setBalance} step={10_000} />
+          <ToolField
             label="First-year withdrawal rate (%)"
+            min={0}
+            max={20}
             value={withdrawalRate}
             onChange={setWithdrawalRate}
             step={0.1}
             hint="Rises with inflation each year after."
           />
-          <Field
+          <ToolField
             label="Return in the bad decade (%)"
+            min={-50}
+            max={50}
             value={badReturn}
             onChange={setBadReturn}
             step={0.5}
             hint="Applied to the first 10 years, or the last 10."
           />
-          <Field
+          <ToolField
             label="Return in the other 20 years (%)"
+            min={-50}
+            max={50}
             value={goodReturn}
             onChange={setGoodReturn}
             step={0.5}
           />
-          <Field label="Inflation (%)" value={inflation} onChange={setInflation} step={0.1} />
+          <ToolField label="Inflation (%)"
+            min={0}
+            max={20} value={inflation} onChange={setInflation} step={0.1} />
         </div>
 
         <div className="grid content-start gap-4">

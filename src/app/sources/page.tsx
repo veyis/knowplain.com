@@ -6,6 +6,8 @@ import { pageMeta, site } from "@/lib/site";
 import { currency } from "@/lib/checkup";
 import {
   ACA_2026,
+  ACA_APPLICABLE_PERCENTAGE_2026,
+  AGE_CURVE_FACTOR,
   CHARITABLE_2026,
   CONTRIBUTION_2026,
   FACT_SOURCES,
@@ -17,6 +19,8 @@ import {
   SWR,
   TAX_2026,
   acaSubsidyCliffMagi,
+  benchmarkPremiumForAge,
+  rmdDivisor,
   type FactSource,
 } from "@/lib/facts-2026";
 
@@ -96,7 +100,7 @@ export default function SourcesPage() {
           able to check.
         </p>
         <p className="mt-3 text-sm text-muted-foreground">
-          Two figures are marked <strong>can change by legislation</strong>. Those do not follow the
+          Some figures are marked <strong>can change by legislation</strong>. Those do not follow the
           annual indexing calendar and can move at any time, so we re-check them before every
           update rather than once a year. Spotted something out of date?{" "}
           <Link href="/corrections">Tell us</Link>.
@@ -253,11 +257,89 @@ export default function SourcesPage() {
       />
 
       <Group
+        heading="What you pay BELOW the cliff"
+        source={FACT_SOURCES.acaApplicablePercentage}
+        rows={[
+          ...ACA_APPLICABLE_PERCENTAGE_2026.map(
+            (band): Row => [
+              `${band.band} of the poverty level`,
+              band.initial === band.final
+                ? `${(band.final * 100).toFixed(2)}% of income`
+                : `${(band.initial * 100).toFixed(2)}% – ${(band.final * 100).toFixed(2)}% of income`,
+            ],
+          ),
+          [
+            "Above 400%",
+            "The whole premium",
+            "There is no percentage here, because there is no credit. That step is the cliff.",
+          ],
+        ]}
+      />
+
+      <Group
+        heading="Paying the credit back"
+        source={FACT_SOURCES.aptcRepayment}
+        rows={[
+          [
+            "Cap on repaying excess advance credit",
+            "None",
+            "Repealed for tax years after 2025. There used to be a graduated cap; there is now no limit at any income.",
+          ],
+          [
+            "What that means in practice",
+            "Estimate high, not low",
+            "An unplanned bonus, capital-gains distribution or Roth conversion in December can claw back the entire year's advance credit. You may also decline the advance credit and claim it at filing instead.",
+          ],
+        ]}
+      />
+
+      <Group
+        heading="Why age changes the premium"
+        source={FACT_SOURCES.ageCurve}
+        rows={[
+          ["Age 21 (and under)", `${AGE_CURVE_FACTOR[21].toFixed(3)}×`, "The baseline rate."],
+          ["Age 50", `${AGE_CURVE_FACTOR[50].toFixed(3)}×`, `About ${currency(benchmarkPremiumForAge(50))} a year for the benchmark plan.`],
+          ["Age 60", `${AGE_CURVE_FACTOR[60].toFixed(3)}×`, `About ${currency(benchmarkPremiumForAge(60))} — the age our published benchmark is quoted for.`],
+          [
+            "Age 64",
+            `${AGE_CURVE_FACTOR[64].toFixed(3)}×`,
+            `About ${currency(benchmarkPremiumForAge(64))}. The law caps the ratio at exactly 3:1, and 64 is where it bites.`,
+          ],
+        ]}
+      />
+
+      <Group
         heading="Required minimum distributions"
         source={FACT_SOURCES.rmd}
         rows={[
-          ["RMDs start at (born 1951–1959)", String(RMD.ageBorn1951to1959)],
-          ["RMDs start at (born 1960 or later)", String(RMD.ageBorn1960OrLater)],
+          [
+            "RMDs start at (born 1951–1959)",
+            String(RMD.ageBorn1951to1959),
+          ],
+          [
+            "RMDs start at (born 1960 or later)",
+            String(RMD.ageBorn1960OrLater),
+            "Two ages, not one. Most calculators assume 73 for everyone, which is wrong for anyone born in 1960 or later — and two years of runway is what a conversion plan is built in.",
+          ],
+        ]}
+      />
+
+      <Group
+        heading="How the RMD is calculated"
+        source={FACT_SOURCES.uniformLifetime}
+        rows={[
+          [
+            "Divisor at 73",
+            rmdDivisor(73).toFixed(1),
+            `Balance ÷ ${rmdDivisor(73).toFixed(1)} — about ${(100 / rmdDivisor(73)).toFixed(1)}% of the account.`,
+          ],
+          ["Divisor at 75", rmdDivisor(75).toFixed(1), `About ${(100 / rmdDivisor(75)).toFixed(1)}%.`],
+          ["Divisor at 85", rmdDivisor(85).toFixed(1), `About ${(100 / rmdDivisor(85)).toFixed(1)}%.`],
+          [
+            "Divisor at 95",
+            rmdDivisor(95).toFixed(1),
+            `About ${(100 / rmdDivisor(95)).toFixed(1)}%. The divisor shrinks every year, so the forced withdrawal grows as a share of the account — which is what lifts your Medicare premium and taxes more of your Social Security.`,
+          ],
         ]}
       />
 

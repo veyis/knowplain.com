@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { trackProductEvent } from "@/lib/analytics";
+import { ToolField } from "./ToolField";
 import { currency } from "@/lib/checkup";
 import {
   CONTRIBUTION_2026,
@@ -26,42 +27,6 @@ import {
 
 const CURRENT_YEAR = 2026;
 
-function Field({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step = 1,
-  hint,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  min: number;
-  max: number;
-  step?: number;
-  hint?: string;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
-      <input
-        type="number"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => {
-          const n = Number(e.target.value);
-          onChange(Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min);
-        }}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-      />
-      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
 
 export function RmdPlannerTool() {
   const [birthYear, setBirthYear] = useState(1962);
@@ -113,7 +78,7 @@ export function RmdPlannerTool() {
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
         <div className="grid content-start gap-4" onChange={track}>
-          <Field
+          <ToolField
             label="Birth year"
             value={birthYear}
             onChange={setBirthYear}
@@ -121,7 +86,7 @@ export function RmdPlannerTool() {
             max={2000}
             hint="This — not your age — decides when RMDs start."
           />
-          <Field
+          <ToolField
             label="Traditional IRA / 401(k) balance"
             value={balance}
             onChange={setBalance}
@@ -129,7 +94,7 @@ export function RmdPlannerTool() {
             max={20_000_000}
             step={10_000}
           />
-          <Field
+          <ToolField
             label="Assumed annual return (%)"
             value={growth}
             onChange={setGrowth}
@@ -137,7 +102,7 @@ export function RmdPlannerTool() {
             max={15}
             step={0.5}
           />
-          <Field
+          <ToolField
             label="Other retirement income"
             value={otherIncome}
             onChange={setOtherIncome}

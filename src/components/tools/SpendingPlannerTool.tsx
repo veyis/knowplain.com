@@ -3,39 +3,12 @@
 import { useMemo, useRef, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { trackProductEvent } from "@/lib/analytics";
+import { ToolField } from "./ToolField";
 import { currency } from "@/lib/checkup";
 import { projectRetirementSpending } from "@/lib/facts-2026";
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-function Field({
-  label,
-  value,
-  onChange,
-  hint,
-  step = 1,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  hint?: string;
-  step?: number;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
-      <input
-        type="number"
-        min={0}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-      />
-      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
 
 export function SpendingPlannerTool() {
   const [essentials, setEssentials] = useState(40_000);
@@ -82,36 +55,48 @@ export function SpendingPlannerTool() {
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
         <div className="grid content-start gap-4" onChange={track}>
-          <Field
+          <ToolField
             label="Essentials, per year"
+            min={0}
+            max={2000000}
             value={essentials}
             onChange={setEssentials}
             step={1000}
             hint="Housing, food, utilities, insurance."
           />
-          <Field
+          <ToolField
             label="Healthcare, per year"
+            min={0}
+            max={2000000}
             value={healthcare}
             onChange={setHealthcare}
             step={500}
             hint="Premiums, deductibles, prescriptions."
           />
-          <Field
+          <ToolField
             label="Discretionary, per year"
+            min={0}
+            max={2000000}
             value={discretionary}
             onChange={setDiscretionary}
             step={1000}
             hint="Travel, hobbies, gifts — the first thing you can cut."
           />
-          <Field label="Years in retirement" value={years} onChange={setYears} />
-          <Field
+          <ToolField label="Years in retirement"
+            min={1}
+            max={60} value={years} onChange={setYears} />
+          <ToolField
             label="General inflation (%)"
+            min={0}
+            max={20}
             value={generalInflation}
             onChange={setGeneralInflation}
             step={0.1}
           />
-          <Field
+          <ToolField
             label="Healthcare inflation (%)"
+            min={0}
+            max={20}
             value={healthcareInflation}
             onChange={setHealthcareInflation}
             step={0.1}

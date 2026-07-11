@@ -108,6 +108,12 @@ export const FACTS = {
   "tax.bracket12TopSingle": usd(TAX_2026.bracketsSingle[1][1]),
   "tax.bracket12TopMfj": usd(TAX_2026.bracketsMfj[1][1]),
 
+  // The 0% long-term capital gains band: taxable income below this pays nothing on
+  // realised long-term gains. It is NOT the same ceiling as the 12% ordinary bracket —
+  // close, but a different number, and conflating the two is a common prose error.
+  "tax.ltcgZeroBracketSingle": usd(TAX_2026.ltcgZeroBracket.single),
+  "tax.ltcgZeroBracketMfj": usd(TAX_2026.ltcgZeroBracket.mfj),
+
   // ── Saver's Match (SECURE 2.0, from tax year 2027) ───────────────────────
   "saversMatch.rate": pct(SAVERS_MATCH_2027.matchRate),
   "saversMatch.maxContribution": usd(SAVERS_MATCH_2027.maxMatchedContribution),

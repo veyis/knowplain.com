@@ -93,6 +93,36 @@ export const FACT_SOURCES = {
     verified: "2026-07-11",
     note: "3.9% is forward-looking (30 years, 90% success, 30-50% equity). Bengen's 4.7% is a historical worst case with a more aggressive portfolio. They answer different questions and must never be averaged.",
   },
+  acaApplicablePercentage: {
+    title: "Rev. Proc. 2025-25 — applicable percentage table for the premium tax credit",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-25.pdf",
+    verified: "2026-07-11",
+    volatile: true,
+    note: "The cap did NOT disappear when the enhanced credits expired — it reverted. Below 400% of the poverty level a household still owes only a set share of income (2.10% to 9.96%) for the benchmark plan. Saying 'the cap is gone' tells someone at 250% FPL they get no help, which is false.",
+  },
+  aptcRepayment: {
+    title: "Rev. Proc. 2025-32 §3.04 and Fact Sheet FS-2025-10 (Q31)",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/pub/taxpros/fs-2025-10.pdf",
+    verified: "2026-07-11",
+    volatile: true,
+    note: "OBBBA §71305 repealed §36B(f)(2)(B) for tax years after 2025: there is now NO cap on repaying excess advance premium tax credit, at any income level. Most sites still publish the old capped table. Underestimate your income and you repay every dollar you received.",
+  },
+  ageCurve: {
+    title: "Final Guidance Regarding Age Curves and State Reporting (Appendix I)",
+    publisher: "Centers for Medicare & Medicaid Services, CCIIO",
+    url: "https://www.cms.gov/CCIIO/Resources/Regulations-and-Guidance/Downloads/Final-Guidance-Regarding-Age-Curves-and-State-Reporting-12-16-16.pdf",
+    verified: "2026-07-11",
+    note: "45 CFR 147.102. The statutory 3:1 age band: a 64-year-old may be charged exactly three times a 21-year-old for the same plan. An ACA estimate that ignores your age is not an estimate.",
+  },
+  uniformLifetime: {
+    title: "Publication 590-B, Appendix B — Uniform Lifetime Table (Table III)",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/pub/irs-pdf/p590b.pdf",
+    verified: "2026-07-11",
+    note: "The divisor behind every RMD. It shrinks each year, so the forced withdrawal grows as a share of the account even while the balance compounds.",
+  },
 } as const satisfies Record<string, FactSource>;
 
 // ── IRS 2026 contribution limits ────────────────────────────────────────────

@@ -3,39 +3,12 @@
 import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, Gift, Scale, TrendingUp } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
+import { ToolField } from "./ToolField";
 import { currency } from "@/lib/checkup";
 import { INVEST_RISK_PREMIUM, debtVsInvesting } from "@/lib/facts-2026";
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-function Field({
-  label,
-  value,
-  onChange,
-  hint,
-  step = 1,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  hint?: string;
-  step?: number;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
-      <input
-        type="number"
-        step={step}
-        min={0}
-        value={value}
-        onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-      />
-      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
 
 export function DebtVsInvestingTool() {
   const [debtBalance, setDebtBalance] = useState(12_000);
@@ -125,44 +98,62 @@ export function DebtVsInvestingTool() {
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
         <div className="grid content-start gap-4" onChange={track}>
-          <Field label="Debt balance" value={debtBalance} onChange={setDebtBalance} step={500} />
-          <Field label="Interest rate (%)" value={debtApr} onChange={setDebtApr} step={0.5} />
-          <Field
+          <ToolField label="Debt balance"
+            min={0}
+            max={5000000} value={debtBalance} onChange={setDebtBalance} step={500} />
+          <ToolField label="Interest rate (%)"
+            min={0}
+            max={60} value={debtApr} onChange={setDebtApr} step={0.5} />
+          <ToolField
             label="Current monthly payment"
+            min={0}
+            max={200000}
             value={monthlyPayment}
             onChange={setMonthlyPayment}
             step={50}
           />
-          <Field
+          <ToolField
             label="Spare cash each month"
+            min={0}
+            max={200000}
             value={extraMonthly}
             onChange={setExtraMonthly}
             step={50}
             hint="The money you are deciding what to do with."
           />
-          <Field
+          <ToolField
             label="Expected market return (%)"
+            min={-20}
+            max={30}
             value={expectedReturn}
             onChange={setExpectedReturn}
             step={0.5}
             hint="A long-run guess, not a promise."
           />
-          <Field label="Annual salary" value={salary} onChange={setSalary} step={1000} />
-          <Field
+          <ToolField label="Annual salary"
+            min={0}
+            max={5000000} value={salary} onChange={setSalary} step={1000} />
+          <ToolField
             label="You contribute (% of salary)"
+            min={0}
+            max={100}
             value={contributionRate}
             onChange={setContributionRate}
             step={1}
           />
-          <Field
+          <ToolField
             label="Employer matches (cents on the dollar, %)"
+            min={0}
+            max={200}
             value={matchRate}
             onChange={setMatchRate}
             step={5}
             hint="Set to 0 if you have no employer match."
           />
-          <Field
+          <ToolField
             label="…up to this % of salary"
+            min={0}
+            max={100}
             value={matchLimit}
             onChange={setMatchLimit}
             step={1}
