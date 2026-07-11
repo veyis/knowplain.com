@@ -54,13 +54,24 @@ export const toolPages = {
   },
   "sequence-risk": {
     title: "Sequence-Risk Stress Test",
-    description: "See why early retirement returns can matter more than the long-run average.",
+    description:
+      "Two retirees, identical returns, identical average — one just meets the bad decade first. Watch what that alone does.",
     kind: "sequence",
     sources: [
       {
         title: "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable",
         publisher: "AAII Journal",
         url: "https://www.aaii.com/journal/article/retirement-savings-choosing-a-withdrawal-rate-that-is-sustainable",
+      },
+      {
+        title: "The Dynamic Implications of Sequence Risk on a Distribution Portfolio",
+        publisher: "Frank & Blanchett, Journal of Financial Planning (June 2010)",
+        url: "https://www.financialplanningassociation.org/sites/default/files/2021-10/JUN10%20JFP%20Frank%20and%20Blanchett%20PDF.pdf",
+      },
+      {
+        title: "What's a Safe Retirement Withdrawal Rate in 2026?",
+        publisher: "Morningstar, State of Retirement Income (2025 edition)",
+        url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026",
       },
     ],
   },

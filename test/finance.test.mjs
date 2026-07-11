@@ -1,11 +1,19 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  CHARITABLE_2026,
+  CONTRIBUTION_2026,
+  INHERITED_IRA_RMD,
+  SAVERS_MATCH_2027,
+  SOCIAL_SECURITY_2026,
   ssBenefitFactor,
   ssBreakEvenAge,
   catchUpContribution2026,
   catchUpPlan2026,
+  inheritedIraAnnualRmdRequired,
   seniorDeduction2026,
+  sequenceRiskComparison,
+  withdrawalPath,
   maxEmployeeDeferral2026,
   rmdStartAge,
   portfolioTarget,
@@ -49,16 +57,54 @@ test("2026 catch-up contributions (SECURE 2.0 super catch-up 60–63)", () => {
   assert.equal(catchUpContribution2026(64), 8_000); // super catch-up ends at 64
 });
 
+test("2026 retirement contribution constants include SIMPLE, 415(c), QCD, and Roth IRA phaseouts", () => {
+  assert.equal(CONTRIBUTION_2026.simpleIraDeferral, 17_000);
+  assert.equal(CONTRIBUTION_2026.simpleIraHigherDeferral, 18_100);
+  assert.equal(CONTRIBUTION_2026.simpleIraCatchUp50, 4_000);
+  assert.equal(CONTRIBUTION_2026.simpleIraSuperCatchUp60to63, 5_250);
+  assert.equal(CONTRIBUTION_2026.total415c, 72_000);
+  assert.equal(CONTRIBUTION_2026.qcdLimit, 111_000);
+  assert.deepEqual(CONTRIBUTION_2026.rothIraPhaseOutSingle, [153_000, 168_000]);
+  assert.deepEqual(CONTRIBUTION_2026.rothIraPhaseOutJoint, [242_000, 252_000]);
+});
+
 test("2026 max employee 401(k) deferral by age", () => {
   assert.equal(maxEmployeeDeferral2026(40), 24_500);
   assert.equal(maxEmployeeDeferral2026(50), 32_500);
   assert.equal(maxEmployeeDeferral2026(61), 35_750);
 });
 
+test("2026 charitable deduction and 2027 Saver's Match constants", () => {
+  assert.equal(CHARITABLE_2026.nonItemizerCashDeduction.single, 1_000);
+  assert.equal(CHARITABLE_2026.nonItemizerCashDeduction.mfj, 2_000);
+  assert.equal(CHARITABLE_2026.itemizerAgiFloor, 0.005);
+  assert.equal(SAVERS_MATCH_2027.matchRate, 0.5);
+  assert.equal(SAVERS_MATCH_2027.maxMatchedContribution, 2_000);
+  assert.equal(SAVERS_MATCH_2027.maxMatch, 1_000);
+  assert.deepEqual(SAVERS_MATCH_2027.phaseOutMfj, [41_000, 71_000]);
+});
+
+test("2026 Social Security constants include average benefit and WEP/GPO repeal flags", () => {
+  assert.equal(SOCIAL_SECURITY_2026.averageRetiredWorkerMonthly, 2_071);
+  assert.equal(SOCIAL_SECURITY_2026.maxBenefitAtFraMonthly, 4_152);
+  assert.equal(SOCIAL_SECURITY_2026.socialSecurityFairnessAct.wepRepealed, true);
+  assert.equal(SOCIAL_SECURITY_2026.socialSecurityFairnessAct.gpoRepealed, true);
+});
+
 test("RMD start age (SECURE 2.0)", () => {
   assert.equal(rmdStartAge(1955), 73);
   assert.equal(rmdStartAge(1959), 73);
   assert.equal(rmdStartAge(1960), 75);
+});
+
+test("inherited IRA annual RMD enforcement after final regs", () => {
+  assert.equal(INHERITED_IRA_RMD.emptyByYear, 10);
+  assert.deepEqual(INHERITED_IRA_RMD.annualRmdYears, [1, 9]);
+  assert.equal(INHERITED_IRA_RMD.missedRmdPenalty, 0.25);
+  assert.equal(INHERITED_IRA_RMD.timelyCorrectedPenalty, 0.1);
+  assert.equal(inheritedIraAnnualRmdRequired(true), true);
+  assert.equal(inheritedIraAnnualRmdRequired(false), false);
+  assert.equal(inheritedIraAnnualRmdRequired(true, true), false);
 });
 
 test("portfolio target from the 4% rule", () => {
@@ -175,4 +221,46 @@ test("OBBBA senior deduction: phase-out at 6% of MAGI over the threshold", () =>
   assert.equal(seniorDeduction2026(175_000, "single", 1), 0); // 6,000 − 6% × 100,000 = 0
   assert.equal(seniorDeduction2026(400_000, "single", 1), 0);
   assert.equal(seniorDeduction2026(250_000, "mfj", 2), 0); // each 6,000 − 6% × 100,000 = 0
+});
+
+test("withdrawal path: withdrawal comes out before the market acts", () => {
+  // 100k, withdraw 10k, then +10% on the remaining 90k ⇒ 99k.
+  const p = withdrawalPath(100_000, 10_000, [0.1], 0);
+  assert.equal(p.endingBalance, 99_000);
+  assert.equal(p.depletedInYear, null);
+
+  // Running out is detected, reported 1-indexed, and never goes negative.
+  const broke = withdrawalPath(10_000, 6_000, [0, 0, 0], 0);
+  assert.equal(broke.depletedInYear, 2);
+  assert.equal(broke.endingBalance, 0);
+  assert.deepEqual(broke.balances, [4_000, 0, 0]);
+});
+
+test("sequence risk: order is irrelevant WITHOUT withdrawals, decisive WITH them", () => {
+  const opts = {
+    balance: 1_000_000,
+    badReturn: -0.03,
+    goodReturn: 0.08,
+    inflation: 0.03,
+    years: 30,
+    badYears: 10,
+  };
+
+  // The two retirees earn the SAME returns, so the same average. If this ever differs,
+  // the comparison is rigged and proves nothing.
+  const withdrawing = sequenceRiskComparison({ ...opts, withdrawalRate: 0.04 });
+  assert.ok(Math.abs(withdrawing.averageReturn - (10 * -0.03 + 20 * 0.08) / 30) < 1e-12);
+
+  // Compounding is commutative: with NOTHING withdrawn, order cannot matter.
+  const untouched = sequenceRiskComparison({ ...opts, withdrawalRate: 0 });
+  assert.equal(untouched.badFirst.endingBalance, untouched.goodFirst.endingBalance);
+  assert.equal(untouched.shortfall, 0);
+
+  // Start withdrawing and the identical returns produce very different outcomes.
+  // Meeting the bad decade first is what does the damage.
+  assert.ok(
+    withdrawing.badFirst.endingBalance < withdrawing.goodFirst.endingBalance,
+    "the unlucky retiree must end up behind on identical returns",
+  );
+  assert.ok(withdrawing.shortfall > 0);
 });

@@ -17,6 +17,10 @@ export const CONTRIBUTION_2026 = {
   electiveDeferral: 24_500, // 401(k)/403(b)/457/TSP employee deferral
   catchUp50: 8_000, // standard catch-up, age 50+
   superCatchUp60to63: 11_250, // SECURE 2.0 "super catch-up", ages 60–63
+  simpleIraDeferral: 17_000,
+  simpleIraHigherDeferral: 18_100, // certain SIMPLE plans under SECURE 2.0
+  simpleIraCatchUp50: 4_000,
+  simpleIraSuperCatchUp60to63: 5_250,
   iraLimit: 7_500,
   iraCatchUp50: 1_100,
   // SECURE 2.0: catch-ups must be Roth if prior-year FICA wages from the plan
@@ -57,6 +61,24 @@ export const TAX_2026 = {
     [0.35, 768_700],
     [0.37, Infinity],
   ],
+} as const;
+
+// ── Charitable deductions 2026 ───────────────────────────────────────────────
+// Source: OBBBA / IRS retirement-tax planning summary. The cash-only non-itemizer
+// deduction returns in 2026; itemizers also face a 0.5%-of-AGI floor.
+export const CHARITABLE_2026 = {
+  nonItemizerCashDeduction: { single: 1_000, mfj: 2_000 },
+  itemizerAgiFloor: 0.005,
+} as const;
+
+// ── Saver's Match 2027 ───────────────────────────────────────────────────────
+// SECURE 2.0 replaces the Saver's Credit after 2026. The match is paid into the
+// retirement account rather than reducing tax on the return.
+export const SAVERS_MATCH_2027 = {
+  matchRate: 0.5,
+  maxMatchedContribution: 2_000,
+  maxMatch: 1_000,
+  phaseOutMfj: [41_000, 71_000],
 } as const;
 
 // ── OBBBA "senior bonus deduction" ── VOLATILE (expires after 2028) ──────────
@@ -112,6 +134,13 @@ export const SOCIAL_SECURITY_2026 = {
   earningsTestUnderFra: 24_480, // $1 withheld per $2 over
   earningsTestFraYear: 65_160, // $1 withheld per $3 over
   maxBenefitAtFraMonthly: 4_152,
+  averageRetiredWorkerMonthly: 2_071,
+  socialSecurityFairnessAct: {
+    signed: "2025-01-05",
+    retroactiveTo: "2024-01-01",
+    wepRepealed: true,
+    gpoRepealed: true,
+  },
   // Benefit-taxation thresholds (combined income). NOT indexed — unchanged since
   // 1984/1993, and OBBBA did NOT change them. The senior deduction is the substitute,
   // so "no tax on Social Security" is false. Say so.
@@ -136,10 +165,31 @@ export const MEDICARE_2026 = {
 // ── RMDs (SECURE 2.0) ────────────────────────────────────────────────────────
 // Source: IRS RMD FAQs — https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs
 export const RMD = { ageBorn1951to1959: 73, ageBorn1960OrLater: 75 } as const;
+export const INHERITED_IRA_RMD = {
+  finalRegsEffective: "2025-01-01",
+  emptyByYear: 10,
+  annualRmdYears: [1, 9],
+  appliesWhenOwnerDiedOnOrAfterRequiredBeginningDate: true,
+  missedRmdPenalty: 0.25,
+  timelyCorrectedPenalty: 0.1,
+} as const;
 
 /** RMD start age by birth year (73 for 1951–1959, 75 for 1960+). */
 export function rmdStartAge(birthYear: number): number {
   return birthYear >= 1960 ? RMD.ageBorn1960OrLater : RMD.ageBorn1951to1959;
+}
+
+/**
+ * Non-eligible designated beneficiaries generally must empty an inherited account
+ * by year 10. If the owner died on or after their required beginning date, the final
+ * regs also require annual RMDs in years 1-9. Eligible designated beneficiaries
+ * have different stretch/spousal rules, so this helper returns false for them.
+ */
+export function inheritedIraAnnualRmdRequired(
+  ownerDiedOnOrAfterRequiredBeginningDate: boolean,
+  eligibleDesignatedBeneficiary = false,
+): boolean {
+  return ownerDiedOnOrAfterRequiredBeginningDate && !eligibleDesignatedBeneficiary;
 }
 
 // ── Safe withdrawal rate benchmarks ──────────────────────────────────────────
@@ -219,6 +269,107 @@ export function ssBreakEvenAge(pia: number, fra: number, earlyAge: number, lateA
   const headStartDollars = early * (lateAge - earlyAge) * 12; // collected before late claim starts
   const monthsAfterLate = headStartDollars / monthlyGap;
   return lateAge + monthsAfterLate / 12;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sequence-of-returns risk
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type WithdrawalPath = {
+  /** End-of-year balance for each year. */
+  balances: number[];
+  endingBalance: number;
+  /** 1-indexed year the money ran out, or null if it survived. */
+  depletedInYear: number | null;
+};
+
+/**
+ * Walk a portfolio through retirement: take the (inflation-adjusted) withdrawal at the
+ * START of each year, then apply that year's return to what is left.
+ *
+ * Taking the withdrawal first is the conservative and realistic ordering — you spend
+ * from the balance before the market acts on it — and it is what makes a bad early year
+ * permanent: those dollars are gone and cannot participate in the recovery.
+ */
+export function withdrawalPath(
+  startingBalance: number,
+  firstYearWithdrawal: number,
+  annualReturns: number[],
+  inflation: number,
+): WithdrawalPath {
+  let balance = Math.max(0, startingBalance);
+  const balances: number[] = [];
+  let depletedInYear: number | null = null;
+
+  annualReturns.forEach((r, i) => {
+    if (depletedInYear !== null) {
+      balances.push(0);
+      return;
+    }
+    const withdrawal = firstYearWithdrawal * Math.pow(1 + inflation, i);
+    balance -= withdrawal;
+    if (balance <= 0) {
+      depletedInYear = i + 1;
+      balance = 0;
+    } else {
+      balance *= 1 + r;
+    }
+    balances.push(Math.round(balance));
+  });
+
+  return { balances, endingBalance: Math.round(balance), depletedInYear };
+}
+
+export type SequenceRiskComparison = {
+  /** Arithmetic mean return — IDENTICAL for both orders. That is the whole point. */
+  averageReturn: number;
+  badFirst: WithdrawalPath;
+  goodFirst: WithdrawalPath;
+  /** How much the unlucky retiree ends up behind the lucky one, on identical returns. */
+  shortfall: number;
+};
+
+/**
+ * The same returns, in two different orders.
+ *
+ * Both retirees earn an identical set of annual returns and therefore an identical
+ * average — one simply meets the bad years first. Compounding is commutative, so with
+ * NO withdrawals both end at exactly the same place. Add withdrawals and they diverge,
+ * because selling into a downturn converts a paper loss into a permanent one and shrinks
+ * the base that has to recover. This is sequence-of-returns risk, and it is why the first
+ * decade of retirement matters more than the twenty years after it.
+ */
+export function sequenceRiskComparison(opts: {
+  balance: number;
+  /** First-year withdrawal as a fraction of the starting balance, e.g. 0.04. */
+  withdrawalRate: number;
+  badReturn: number;
+  goodReturn: number;
+  inflation: number;
+  years?: number;
+  badYears?: number;
+}): SequenceRiskComparison {
+  const years = opts.years ?? 30;
+  const badYears = Math.min(opts.badYears ?? 10, years);
+
+  // One multiset of returns, two orderings. Never generate them separately — if the two
+  // sequences differed, the comparison would prove nothing.
+  const badFirstReturns = [
+    ...Array(badYears).fill(opts.badReturn),
+    ...Array(years - badYears).fill(opts.goodReturn),
+  ];
+  const goodFirstReturns = [...badFirstReturns].reverse();
+
+  const firstYearWithdrawal = opts.balance * opts.withdrawalRate;
+  const badFirst = withdrawalPath(opts.balance, firstYearWithdrawal, badFirstReturns, opts.inflation);
+  const goodFirst = withdrawalPath(opts.balance, firstYearWithdrawal, goodFirstReturns, opts.inflation);
+
+  return {
+    averageReturn: badFirstReturns.reduce((a, b) => a + b, 0) / years,
+    badFirst,
+    goodFirst,
+    shortfall: goodFirst.endingBalance - badFirst.endingBalance,
+  };
 }
 
 /** Total elective-deferral catch-up available at a given age for 2026 (super catch-up 60–63). */

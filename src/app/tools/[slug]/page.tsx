@@ -11,6 +11,7 @@ import {
 } from "@/components/tools/RetirementTools";
 import { AcaBridgeTool } from "@/components/tools/AcaBridgeTool";
 import { CatchUpPlannerTool } from "@/components/tools/CatchUpPlannerTool";
+import { SequenceRiskTool } from "@/components/tools/SequenceRiskTool";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { site } from "@/lib/site";
 import { isToolSlug, toolPages } from "@/lib/tools";
@@ -60,8 +61,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {tool.kind === "age-tradeoff" && <RetirementAgeTradeoffTool />}
       {tool.kind === "social-security" && <SocialSecurityBreakEvenTool />}
       {tool.kind === "aca-bridge" && <AcaBridgeTool />}
-      {tool.kind === "sequence" && <SimpleAssumptionTool kind="sequence" />}
-      {tool.kind === "inflation" && <SimpleAssumptionTool kind="inflation" />}
+      {tool.kind === "sequence" && <SequenceRiskTool />}
+      {tool.kind === "inflation" && <SimpleAssumptionTool />}
       {tool.kind === "catchup" && <CatchUpPlannerTool />}
       <SourceList sources={tool.sources} />
       <p className="mt-6 max-w-[760px] text-sm leading-relaxed text-muted-foreground">

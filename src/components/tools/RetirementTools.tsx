@@ -146,24 +146,29 @@ export function SocialSecurityBreakEvenTool() {
   );
 }
 
-// Catch-up used to be a third `kind` here, driven by two unlabelled number boxes. It
-// could not see the user's age or wages, so it never showed the 60-63 super catch-up and
-// never warned about the mandatory-Roth rule — it would happily suggest a pre-tax catch-up
-// the law no longer permits. It now has its own tool: CatchUpPlannerTool.
-export function SimpleAssumptionTool({ kind }: { kind: "sequence" | "inflation" }) {
-  const [value, setValue] = useState(kind === "inflation" ? 78000 : 1000000);
-  const [rate, setRate] = useState(kind === "inflation" ? 3 : 4);
-  const output =
-    kind === "inflation"
-      ? `${currency(value)} becomes about ${currency(value * Math.pow(1 + rate / 100, 10))} in 10 years at ${rate}% inflation.`
-      : `A ${rate}% first-year withdrawal from ${currency(value)} is ${currency(value * (rate / 100))}. Test lower withdrawals if markets fall early.`;
+// This used to back three tools via a `kind` switch, and two of them lied.
+//
+// The catch-up "tool" could not see the user's age or wages, so it never showed the
+// 60-63 super catch-up and never warned about the mandatory-Roth rule — it would happily
+// suggest a pre-tax catch-up the law no longer permits. Now CatchUpPlannerTool.
+//
+// The "Sequence-Risk Stress Test" did no sequencing whatsoever: it multiplied a balance
+// by a rate. The page promised "see why early returns matter more than the average" and
+// then never varied the order of returns. Now SequenceRiskTool, which actually runs the
+// same returns in two orders.
+//
+// What is left is the one case the shape genuinely fits: one input, one rate, one line.
+export function SimpleAssumptionTool() {
+  const [value, setValue] = useState(78000);
+  const [rate, setRate] = useState(3);
+  const output = `${currency(value)} becomes about ${currency(value * Math.pow(1 + rate / 100, 10))} in 10 years at ${rate}% inflation.`;
 
   return (
     <ToolFrame
-      analyticsName={kind === "inflation" ? "inflation-spending" : "sequence-risk"}
+      analyticsName="inflation-spending"
       inputs={[
-        [kind === "inflation" ? "Annual spending today" : "Portfolio balance", value, setValue],
-        [kind === "inflation" ? "Inflation rate" : "Withdrawal rate", rate, setRate],
+        ["Annual spending today", value, setValue],
+        ["Inflation rate", rate, setRate],
       ]}
       result={<p className="text-lg font-semibold tracking-tight">{output}</p>}
     />
