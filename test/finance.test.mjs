@@ -13,6 +13,10 @@ import {
   inheritedIraAnnualRmdRequired,
   seniorDeduction2026,
   sequenceRiskComparison,
+  federalIncomeTax,
+  taxableIncome2026,
+  rothConversionCost,
+  irmaaTier1AnnualSurcharge,
   withdrawalPath,
   maxEmployeeDeferral2026,
   rmdStartAge,
@@ -263,4 +267,97 @@ test("sequence risk: order is irrelevant WITHOUT withdrawals, decisive WITH them
     "the unlucky retiree must end up behind on identical returns",
   );
   assert.ok(withdrawing.shortfall > 0);
+});
+
+test("2026 federal income tax follows the bracket table", () => {
+  assert.equal(federalIncomeTax(0, "single"), 0);
+  // Single, entirely in the 10% bracket.
+  assert.equal(federalIncomeTax(10_000, "single"), 1_000);
+  // Single, top of the 10% bracket exactly: 12,400 × 10%.
+  assert.equal(federalIncomeTax(12_400, "single"), 1_240);
+  // Single, into the 12%: 1,240 + (50,400 − 12,400) × 12% = 1,240 + 4,560.
+  assert.equal(federalIncomeTax(50_400, "single"), 5_800);
+  // MFJ brackets are (here) exactly double the single ones at the low end.
+  assert.equal(federalIncomeTax(24_800, "mfj"), 2_480);
+});
+
+test("taxable income nets out the standard and OBBBA senior deductions", () => {
+  // Under 65: just the standard deduction.
+  assert.equal(taxableIncome2026(60_000, "single", 0), 60_000 - 16_100);
+  // 65+: the $6,000 senior deduction stacks on top.
+  assert.equal(taxableIncome2026(60_000, "single", 1), 60_000 - 16_100 - 6_000);
+  // Deductions cannot drive taxable income negative.
+  assert.equal(taxableIncome2026(5_000, "single", 1), 0);
+});
+
+test("Roth conversion: the tax bill is not the whole cost before 65", () => {
+  // A 61-year-old, single, $55k income, converting $15k. Comfortably under the
+  // cliff before ($62,600); $70k after. The tax looks modest — the cliff does not.
+  const c = rothConversionCost({
+    grossIncome: 55_000,
+    conversionAmount: 15_000,
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.ok(c.federalTax > 0);
+  assert.ok(c.effectiveRate > 0.1 && c.effectiveRate < 0.3, "should land in the 12-22% range");
+  assert.equal(c.acaHeadroomBefore, 7_600); // 62,600 − 55,000
+  assert.equal(c.pushesOverAcaCliff, true, "converting 15k blows through 7.6k of headroom");
+  assert.equal(c.crossesIrmaa, false); // nowhere near $109k
+
+  // Convert only within the headroom and the cliff is not triggered.
+  const safe = rothConversionCost({
+    grossIncome: 55_000,
+    conversionAmount: 7_000,
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(safe.pushesOverAcaCliff, false);
+
+  // At 66 you are on Medicare: the ACA cliff is irrelevant, whatever the income.
+  const onMedicare = rothConversionCost({
+    grossIncome: 55_000,
+    conversionAmount: 15_000,
+    filing: "single",
+    age: 66,
+    people65Plus: 1,
+    householdSize: 1,
+  });
+  assert.equal(onMedicare.pushesOverAcaCliff, false);
+});
+
+test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () => {
+  const base = {
+    grossIncome: 100_000,
+    conversionAmount: 20_000, // → $120k MAGI, over the $109k single tier
+    filing: "single",
+    people65Plus: 0,
+    householdSize: 1,
+  };
+
+  // At 61 the conversion is too early to land on a Medicare premium.
+  assert.equal(rothConversionCost({ ...base, age: 61 }).crossesIrmaa, false);
+
+  // At 63 it shows up on the Part B premium at 65.
+  const at63 = rothConversionCost({ ...base, age: 63 });
+  assert.equal(at63.crossesIrmaa, true);
+  assert.equal(at63.irmaaAnnualCost, irmaaTier1AnnualSurcharge());
+  // (284.10 − 202.90 Part B) + 14.50 Part D = 95.70/mo ⇒ $1,148/yr.
+  assert.equal(irmaaTier1AnnualSurcharge(), 1_148);
+
+  // A married couple pays it twice — both are on Medicare.
+  const couple = rothConversionCost({
+    grossIncome: 210_000,
+    conversionAmount: 20_000, // → $230k, over the $218k joint tier
+    filing: "mfj",
+    age: 64,
+    people65Plus: 0,
+    householdSize: 2,
+  });
+  assert.equal(couple.crossesIrmaa, true);
+  assert.equal(couple.irmaaAnnualCost, irmaaTier1AnnualSurcharge() * 2);
 });

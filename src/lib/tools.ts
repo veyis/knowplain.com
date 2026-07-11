@@ -40,6 +40,34 @@ export const toolPages = {
       },
     ],
   },
+  "roth-vs-traditional": {
+    title: "Roth Conversion Cost Checker",
+    description:
+      "Before 65, the tax bill is often the smaller cost. See whether a conversion pushes you over the ACA subsidy cliff or into a Medicare surcharge.",
+    kind: "roth-conversion",
+    sources: [
+      {
+        title: "Roth Comparison Chart",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/retirement-plans/roth-comparison-chart",
+      },
+      {
+        title: "Rev. Proc. 2025-32 (2026 brackets and standard deduction)",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+      },
+      {
+        title: "2026 Medicare Parts A & B Premiums and Deductibles (IRMAA)",
+        publisher: "Centers for Medicare & Medicaid Services",
+        url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles",
+      },
+      {
+        title: "How will the loss of enhanced premium tax credits affect older adults?",
+        publisher: "KFF",
+        url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/",
+      },
+    ],
+  },
   "social-security-break-even": {
     title: "Social Security Break-Even",
     description: "Compare claiming at 62, full retirement age, and 70 with clear caveats.",

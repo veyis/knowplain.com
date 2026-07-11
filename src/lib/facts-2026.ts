@@ -160,7 +160,29 @@ export const MEDICARE_2026 = {
   irmaaFirstTierSingle: 109_000, // MAGI from 2 years prior (2026 → 2024 return)
   irmaaFirstTierJoint: 218_000,
   irmaaLookbackYears: 2, // the planning point: a Roth conversion at 63 hits your premium at 65
+  // First IRMAA tier: Part B rises to this, and Part D adds a surcharge, PER PERSON.
+  irmaaTier1PartBMonthly: 284.1,
+  irmaaTier1PartDSurchargeMonthly: 14.5,
 } as const;
+
+/**
+ * Extra annual Medicare cost, per person, for crossing the FIRST IRMAA tier.
+ *
+ * ponytail: models tier 1 only. There are four higher tiers (up to $689.90/mo Part B),
+ * so this is a FLOOR for high incomes, not the whole story — the UI says so. Add the
+ * full bracket table when a user actually needs tier 2+.
+ */
+export function irmaaTier1AnnualSurcharge(): number {
+  const partB = MEDICARE_2026.irmaaTier1PartBMonthly - MEDICARE_2026.partBStandardPremiumMonthly;
+  return Math.round((partB + MEDICARE_2026.irmaaTier1PartDSurchargeMonthly) * 12);
+}
+
+/** Does this MAGI cross the first IRMAA tier? (Compared 2 years later — see irmaaLookbackYears.) */
+export function crossesIrmaaTier1(magi: number, filing: "single" | "mfj"): boolean {
+  const threshold =
+    filing === "mfj" ? MEDICARE_2026.irmaaFirstTierJoint : MEDICARE_2026.irmaaFirstTierSingle;
+  return magi > threshold;
+}
 
 // ── RMDs (SECURE 2.0) ────────────────────────────────────────────────────────
 // Source: IRS RMD FAQs — https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs
@@ -269,6 +291,100 @@ export function ssBreakEvenAge(pia: number, fra: number, earlyAge: number, lateA
   const headStartDollars = early * (lateAge - earlyAge) * 12; // collected before late claim starts
   const monthsAfterLate = headStartDollars / monthlyGap;
   return lateAge + monthsAfterLate / 12;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Roth conversions: the tax bill, and the two costs nobody prices in
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Federal income tax on a given TAXABLE income (after deductions), 2026 brackets. */
+export function federalIncomeTax(taxableIncome: number, filing: "single" | "mfj"): number {
+  const brackets = filing === "mfj" ? TAX_2026.bracketsMfj : TAX_2026.bracketsSingle;
+  let tax = 0;
+  let floor = 0;
+  for (const [rate, ceiling] of brackets) {
+    if (taxableIncome <= floor) break;
+    tax += (Math.min(taxableIncome, ceiling) - floor) * rate;
+    floor = ceiling;
+  }
+  return Math.max(0, Math.round(tax));
+}
+
+/** Taxable income after the standard deduction and (if 65+) the OBBBA senior deduction. */
+export function taxableIncome2026(
+  grossIncome: number,
+  filing: "single" | "mfj",
+  people65Plus: number,
+): number {
+  const standard =
+    filing === "mfj" ? TAX_2026.standardDeduction.mfj : TAX_2026.standardDeduction.single;
+  const senior = seniorDeduction2026(grossIncome, filing, people65Plus);
+  return Math.max(0, grossIncome - standard - senior);
+}
+
+export type ConversionCost = {
+  /** Federal income tax caused by the conversion itself. */
+  federalTax: number;
+  /** Tax as a share of the amount converted — the number that actually matters. */
+  effectiveRate: number;
+  magiAfter: number;
+  /** Pre-65 only: the conversion pushes MAGI over 400% FPL and kills the whole credit. */
+  pushesOverAcaCliff: boolean;
+  /** How much MAGI room was left before the cliff (negative if already over). */
+  acaHeadroomBefore: number;
+  /** 63+ only: crosses IRMAA tier 1, which lands on the Medicare premium 2 years later. */
+  crossesIrmaa: boolean;
+  irmaaAnnualCost: number;
+};
+
+/**
+ * What a Roth conversion really costs in 2026.
+ *
+ * Most calculators stop at the income tax. For someone aged 60-64 that is the smaller
+ * number: the conversion also raises ACA MAGI, and one dollar over 400% of the poverty
+ * line now forfeits the ENTIRE premium tax credit (the enhanced credits expired
+ * 2025-12-31). From 63, it separately raises Medicare IRMAA two years later.
+ *
+ * We report the ACA cliff as a binary — the credit is all-or-nothing — and link to the
+ * bridge tool for the dollar value, rather than restating a premium estimate here.
+ */
+export function rothConversionCost(opts: {
+  grossIncome: number;
+  conversionAmount: number;
+  filing: "single" | "mfj";
+  age: number;
+  people65Plus: number;
+  householdSize: number;
+}): ConversionCost {
+  const { grossIncome, conversionAmount, filing, age, people65Plus, householdSize } = opts;
+
+  const before = taxableIncome2026(grossIncome, filing, people65Plus);
+  const after = taxableIncome2026(grossIncome + conversionAmount, filing, people65Plus);
+  const federalTax = federalIncomeTax(after, filing) - federalIncomeTax(before, filing);
+
+  const magiAfter = grossIncome + conversionAmount;
+  const acaBefore = acaSubsidyStatus(grossIncome, householdSize);
+  const acaAfter = acaSubsidyStatus(magiAfter, householdSize);
+
+  // The cliff only bites while you are bridging to Medicare.
+  const preMedicare = age < MEDICARE_2026.eligibilityAge;
+  const pushesOverAcaCliff = preMedicare && !acaBefore.overCliff && acaAfter.overCliff;
+
+  // IRMAA uses income from two years prior, so it starts mattering at 63.
+  const irmaaRelevant = age >= MEDICARE_2026.eligibilityAge - MEDICARE_2026.irmaaLookbackYears;
+  const crossesIrmaa =
+    irmaaRelevant && !crossesIrmaaTier1(grossIncome, filing) && crossesIrmaaTier1(magiAfter, filing);
+  const peopleOnMedicare = filing === "mfj" ? 2 : 1;
+
+  return {
+    federalTax,
+    effectiveRate: conversionAmount > 0 ? federalTax / conversionAmount : 0,
+    magiAfter,
+    pushesOverAcaCliff,
+    acaHeadroomBefore: acaBefore.headroomToCliff,
+    crossesIrmaa,
+    irmaaAnnualCost: crossesIrmaa ? irmaaTier1AnnualSurcharge() * peopleOnMedicare : 0,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

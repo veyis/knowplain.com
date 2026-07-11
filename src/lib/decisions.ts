@@ -44,8 +44,8 @@ export const decisions = {
     description: "Frame tax-now versus tax-later retirement contributions.",
     plainAnswer:
       "Traditional saves tax now; Roth saves tax later. A split can be useful when today's and future tax rates are uncertain.",
-    toolHref: "/topics/retirement/roth-vs-traditional",
-    toolLabel: "Read the Roth guide",
+    toolHref: "/tools/roth-vs-traditional",
+    toolLabel: "Check what a conversion really costs",
     sources: [
       {
         title: "401(k) limit increases to $24,500 for 2026, IRA limit increases to $7,500",
