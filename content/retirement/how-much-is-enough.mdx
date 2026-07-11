@@ -1,9 +1,9 @@
 ---
 title: How much is enough to retire?
-description: "“Enough” is a spending-rate problem, not a magic net-worth number."
-plainAnswer: "Estimate annual spending, multiply by a withdrawal factor, then stress-test."
+description: "Your number is your annual spending gap divided by a withdrawal rate — not a salary multiple. Here is how to compute it, and the honest range."
+plainAnswer: "Start with annual spending, subtract Social Security and any pension, and divide what is left by a withdrawal rate. At the two credible 2026 rates, a $50,000 gap needs roughly $1.06M to $1.28M. The gap is the number that matters, not a round net worth."
 published: "2026-07-09"
-updated: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
@@ -12,60 +12,176 @@ riskLevel: "high"
 relatedTools:
   - href: /tools/am-i-on-track
     label: "Estimate if you are on track"
+  - href: /tools/sequence-risk
+    label: "Stress-test withdrawals"
+  - href: /tools/aca-bridge
+    label: "Check the pre-65 health cover gap"
 faqs:
-  - q: "Is there one magic retirement number?"
-    a: "No. A useful target starts with annual spending, subtracts guaranteed income, then converts the remaining gap into a portfolio range."
-  - q: "Why use a range instead of one number?"
-    a: "Future returns, inflation, taxes, healthcare costs, and lifespan are uncertain, so Know Plain tools show ranges and assumptions instead of false precision."
+  - q: "How much do I need to retire?"
+    a: "Take your expected annual spending, subtract guaranteed income like Social Security and any pension, and divide the remaining gap by a planning withdrawal rate. A $50,000 gap needs roughly $1.06 million at Bengen's {{swr.bengen}} and roughly $1.28 million at Morningstar's 3.9%. Your spending, not a salary multiple, drives the answer."
+  - q: "Is 10 times my salary enough to retire?"
+    a: "It is Fidelity's rule of thumb for age 67, and it is a reasonable sanity check. But it is keyed to your income, and income is not what your portfolio has to fund — spending is. Two people on the same salary can need targets a million dollars apart, because one saved 25% of it and one saved 5%."
+  - q: "Why is the answer a range and not one number?"
+    a: "Because the withdrawal rate is genuinely disputed. Morningstar's forward-looking figure is {{swr.morningstar}} and Bengen's revised historical worst case is 4.7%. They answer different questions and should not be averaged. Publishing one number would hide a real uncertainty that changes your target by about 20%."
+  - q: "Do I need 70-80% of my pre-retirement income?"
+    a: "That figure comes from SSA's own booklet, which attributes it to financial advisers — and SSA's research bulletin separately notes there is no authoritative basis for it. It also includes Social Security, which people forget. Your portfolio does not need to produce 70-80% of your old salary."
+  - q: "Does Social Security count toward my number?"
+    a: "Yes, and it usually does most of the heavy lifting. The average retired-worker benefit in 2026 is {{ss.averageBenefit}} a month — just under {{ss.taxThresholdSingle}} a year. Subtract your own estimated benefit from your spending before you compute a portfolio target, or you will overshoot badly."
+  - q: "How much extra do I need if I retire before 65?"
+    a: "Health insurance becomes a line item, and it is a large one. Unsubsidized national-average 2026 premiums for a 60-year-old run about {{aca.lowestBronze}} for the lowest-cost bronze plan and {{aca.benchmarkSilver}} for the benchmark silver plan. Premium tax credits can cut that sharply, but the {{aca.cliffPercent}}-of-poverty cliff is back for 2026 and one dollar over it forfeits the entire credit."
+  - q: "Should I use a 3.5% withdrawal rate to be safe?"
+    a: "3.5% is not a published finding — it is a number people invent to sound cautious. If you want to be conservative, use Morningstar's 3.9%, which is an actual forward-looking estimate with stated assumptions, and then build in spending flexibility. Precision you cannot source is not caution."
 sources:
-  - title: "Survey of Consumer Finances"
-    publisher: "Federal Reserve"
-    url: "https://www.federalreserve.gov/econres/scfindex.htm"
+  - title: "Retirement guidelines: age-based savings factors"
+    publisher: "Fidelity Investments"
+    url: "https://www.fidelity.com/viewpoints/retirement/retirement-guidelines"
     accessed: "2026-07-11"
-    note: "Used for retirement savings context and original research planning."
-  - title: "Starting Your Retirement Benefits Early"
+    note: "Source for the 1x/3x/6x/8x/10x salary multiples and — critically — for the assumptions baked into them: a 15% savings rate, 1.5% real wage growth, retirement at 67, planning through 93, no pension, and a target of replacing 45% of pre-retirement income from savings."
+  - title: "Understanding the Benefits (Publication No. 05-10024)"
     publisher: "Social Security Administration"
-    url: "https://www.ssa.gov/benefits/retirement/planner/agereduction.html"
+    url: "https://www.ssa.gov/pubs/EN-05-10024.pdf"
     accessed: "2026-07-11"
-    note: "Used for Social Security timing context."
+    note: "Source for the 70-80% income-replacement rule of thumb, and for the detail that the figure is meant to INCLUDE Social Security."
+  - title: "Alternate Measures of Replacement Rates for Social Security Benefits and Retirement Income"
+    publisher: "Social Security Bulletin, Social Security Administration"
+    url: "https://www.ssa.gov/policy/docs/ssb/v68n2/v68n2p1.html"
+    accessed: "2026-07-11"
+    note: "SSA's own research noting there is no single authoritative source for the 70% replacement rate — it is 'a rough consensus among financial planners'. Used for why the rule of thumb is weak."
+  - title: "What's a Safe Retirement Withdrawal Rate for 2026?"
+    publisher: "Morningstar (The State of Retirement Income, 2025 edition)"
+    url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026"
+    accessed: "2026-07-11"
+    note: "Source for the {{swr.morningstar}} forward-looking safe starting withdrawal rate (30-year horizon, 90% success, 30-50% equity), which sets the higher end of the portfolio target range."
+  - title: "Bill Bengen Boosts the '4% Rule' to {{swr.bengen}}"
+    publisher: "Advisor Perspectives"
+    url: "https://www.advisorperspectives.com/articles/2025/08/29/bill-bengen-boosts-the-4-rule-to-4-7"
+    accessed: "2026-07-11"
+    note: "Secondary reporting on Bengen's revised {{swr.bengen}} SAFEMAX, which sets the lower end of the portfolio target range. The primary source is his 2025 book 'A Richer Retirement'."
+  - title: "2026 Social Security Changes (COLA fact sheet)"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/news/en/cola/factsheets/2026.html"
+    accessed: "2026-07-11"
+    note: "Source for the 2026 average retired-worker benefit used as the guaranteed-income anchor."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "Source for 2026 unsubsidized marketplace premiums for older adults and the return of the {{aca.cliffPercent}}-of-FPL subsidy cliff — the pre-65 health care line item."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
-  - href: /topics/retirement/retirement-isnt-a-date
-    label: "Retirement isn’t a date"
   - href: /topics/retirement/4-percent-rule-2026
     label: "The 4% rule in 2026"
-  - href: /tools
-    label: "Estimate yours → Roadmap Pack"
+  - href: /topics/retirement/is-1-million-enough
+    label: "Is $1 million enough?"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
+  - href: /topics/retirement/sequence-of-returns
+    label: "Sequence of returns risk"
 ---
 
-A round number like "$1 million" feels concrete, but it ignores the things that actually decide whether money lasts: your spending, taxes, Social Security, and the order of market returns. "Enough" is a **spending-rate** question. This is a core spoke of the [Retirement hub](/topics/retirement).
+There is a real answer to this, it takes about ten minutes, and it is not a multiple of your salary.
 
-## Start from spending, not a net-worth number
+Two tools do the arithmetic for you: the [free retirement checkup](/checkup) gives you a target range and the risks attached to it, and [am I on track](/tools/am-i-on-track) compares that target against what you are projected to have. Everything below explains what those tools are doing and why, so you can argue with them.
 
-Write down what you expect to spend in a year of retirement, in today's dollars. Subtract guaranteed income — a pension, and your Social Security benefit (estimate it with the [SSA planner](https://www.ssa.gov/benefits/retirement/planner/)). What's left is the **gap** your portfolio has to cover. That gap, not a headline million, is the real target.
+This is a core spoke of the [Retirement hub](/topics/retirement).
 
-## Apply a withdrawal factor
+## Your number is a spending problem, not a net-worth problem
 
-To turn an annual gap into a portfolio size, divide by a planning withdrawal rate. At a 4% rate, dividing by 0.04 is the same as multiplying by **25**:
+The question "how much do I need" is really three questions stacked:
 
-- $40,000 gap ÷ 4% = **$1,000,000**
-- $60,000 gap ÷ 4% = **$1,500,000**
+1. **What will you spend in a year of retirement**, in today's dollars?
+2. **What arrives regardless** — Social Security, a pension, an annuity?
+3. **What is left over** — the gap your portfolio has to cover, forever?
 
-The 4% figure comes from William Bengen's 1994 study and the Trinity study — a historical starting point, not a guarantee. If you want a more conservative plan, use 3.5% (multiply by ~28). More on this in [the 4% rule in 2026](/topics/retirement/4-percent-rule-2026).
+Only the third number needs a portfolio. Get this order wrong and you build a target for money you were never going to have to produce.
 
-## Then adjust and stress-test
+The guaranteed-income step is the one people skip, and it is the largest. The average retired-worker Social Security benefit in 2026 is <Fact id="ss.averageBenefit" /> a month — just under $25,000 a year, and roughly double that for a couple who both worked. Estimate yours from your own SSA statement, not from the average, and remember that *when* you claim moves it a long way in both directions. See [Social Security timing](/topics/retirement/social-security-timing).
 
-The first estimate is a starting line, not a finish line:
+## Turn the gap into a portfolio target
 
-- **Taxes.** Withdrawals from a traditional 401(k)/IRA are taxable income; Roth withdrawals generally aren't. Your "gap" should be after-tax spending.
-- **Sequence risk.** Shock the plan with lower returns and a bad first decade — see [sequence of returns risk](/topics/retirement/sequence-of-returns).
-- **Flexibility.** A willingness to trim spending in bad years meaningfully raises the odds your money lasts.
+Divide the annual gap by a planning withdrawal rate. That is the whole model.
+
+The rate is disputed, and honestly so. The two credible current figures are Morningstar's forward-looking <Fact id="swr.morningstar" /> (a portfolio multiple of <Fact id="swr.morningstar.multiple" />) and Bengen's revised historical worst case, <Fact id="swr.bengen" /> (a multiple of <Fact id="swr.bengen.multiple" />). They answer different questions — see [the 4% rule in 2026](/topics/retirement/4-percent-rule-2026) — so they give you a bracket, not a point.
+
+| Annual gap (spending minus guaranteed income) | Target at <Fact id="swr.bengen" /> (<Fact id="swr.bengen.multiple" />) | Target at <Fact id="swr.morningstar" /> (<Fact id="swr.morningstar.multiple" />) |
+| --- | --- | --- |
+| $30,000 | ~$638,000 | ~$769,000 |
+| $40,000 | ~$851,000 | ~$1,026,000 |
+| $50,000 | ~$1,064,000 | ~$1,282,000 |
+| $60,000 | ~$1,277,000 | ~$1,538,000 |
+| $80,000 | ~$1,702,000 | ~$2,051,000 |
+
+Read that table honestly. The choice of withdrawal rate moves your target by about 20% — on a $50,000 gap, that is roughly $218,000, or several years of saving. Anyone who hands you a single number has quietly made that choice on your behalf and not told you which way.
+
+Two rules for using the range:
+
+- **Do not average the two rates.** They are not two measurements of one thing. A midpoint of 4.3% is a number with no source and no meaning.
+- **Do not treat the low end as the plan.** Bengen's rate is a historical *floor* — the worst thing that has ever happened. Building to it and having no flexibility is a bet that nothing worse ever will.
+
+Our [checkup](/checkup) shows both ends of this bracket for exactly this reason.
+
+## Where salary multiples fit, and where they break
+
+Fidelity's age-based savings factors are the best-known shortcut, and they are the table most people are actually looking for:
+
+| Age | Fidelity's suggested savings, as a multiple of current salary |
+| --- | --- |
+| 30 | 1× |
+| 40 | 3× |
+| 50 | 6× |
+| 60 | 8× |
+| 67 | 10× |
+
+That is Fidelity's rule of thumb, not ours, and it is a fine sanity check at 35 when you have no idea what you will spend at 70.
+
+But it is a crude heuristic, and Fidelity says so in its own footnotes. The multiples assume you save 15% of income a year, that your real wages grow 1.5% a year, that you retire at 67 and plan to 93, that you have **no pension**, and that your savings need to replace **45% of your pre-retirement income** with Social Security covering the rest.
+
+Change any of those and the multiple is wrong for you — sometimes very wrong:
+
+- A high earner who saved 30% of income was never spending it. Replacing a percentage of that salary overshoots, possibly by years of unnecessary work.
+- A household with a paid-off house and modest spending can be done well below 10×.
+- Someone retiring at 58 needs *more* than the 67 target, and needs it sooner, and has a health-insurance bill the model never saw.
+
+The multiple is keyed to income. Your portfolio has to fund spending. Those are different numbers, and the gap between them is the entire reason two people on identical salaries can need targets a million dollars apart.
+
+## The 70-80% replacement rule, and why it is weak
+
+SSA's own booklet says "most financial advisers say you will need about 70% to 80% of pre-retirement income" to live comfortably. It is repeated everywhere.
+
+Two things about it.
+
+First, that figure **includes Social Security**. It is total household income, not what the portfolio has to produce. Plenty of people read it as a savings target and end up building for an income they were already going to receive.
+
+Second, SSA's own research bulletin is blunt about where the number came from: "there is no single authoritative source for 70 percent as the appropriate replacement rate... 70 percent appears to be a rough consensus among financial planners." It is a survey of opinion, not a finding. When the agency publishing the rule of thumb tells you it has no basis, believe them.
+
+Spending, measured from your own bank statements, beats a percentage of a salary you will no longer earn.
+
+## The line item that breaks early retirement
+
+If you stop working before <Fact id="medicare.eligibilityAge" />, health insurance becomes a bill you have never paid before, and it belongs in the spending number — not in a footnote.
+
+The 2026 national-average unsubsidized premium for a 60-year-old is about <Fact id="aca.lowestBronze" /> a year for the lowest-cost bronze plan and <Fact id="aca.benchmarkSilver" /> for the benchmark silver plan. Premium tax credits can cut that a long way — but the enhanced subsidies expired at the end of 2025, and the 400%-of-poverty cliff is back. Cross it by one dollar and the entire credit is gone: for a single person that cliff sits at <Fact id="aca.cliffSingle" /> of MAGI, and for a couple at <Fact id="aca.cliffCouple" />.
+
+That makes your *withdrawal* decisions and your *insurance* decisions the same decision from about age 55 to <Fact id="medicare.eligibilityAge" />. Run it in the [ACA bridge tool](/tools/aca-bridge), and read [health care before Medicare](/topics/retirement/health-care-before-medicare) before you set a retirement date.
+
+## Then adjust the number you got
+
+The first estimate is a starting line.
+
+- **Taxes.** Your gap should be an *after-tax* spending figure, and withdrawals from a traditional 401(k) or IRA are ordinary income. If your money is mostly pre-tax, you have to withdraw more than you spend. Roth balances do not have this problem, which is one reason the mix matters as much as the total.
+- **Inflation is not one rate.** Health care has run hotter than the general basket for decades, and it is the category that grows as a share of an older household's budget. See [inflation and retirement](/topics/retirement/inflation-and-retirement).
+- **Sequence risk.** A bad first decade does far more damage than a bad average. [Stress-test it](/tools/sequence-risk).
+- **Flexibility.** A willingness to skip an inflation raise after a bad year buys more safety than any amount of arguing about the third decimal place of a withdrawal rate.
 
 ## Key takeaways
 
-- "Enough" = annual spending gap ÷ a planning withdrawal rate.
-- 4% ≈ 25× spending; 3.5% ≈ 28× for a safer plan.
-- Adjust for taxes and stress-test for bad early years.
+- Your number = annual spending − guaranteed income, divided by a withdrawal rate. Nothing else in this article changes that.
+- The rate is genuinely disputed: <Fact id="swr.morningstar" /> (<Fact id="swr.morningstar.multiple" />) forward-looking, <Fact id="swr.bengen" /> (<Fact id="swr.bengen.multiple" />) historical worst case. Use the bracket. Never average them.
+- Salary multiples like Fidelity's 10× at 67 are a sanity check, not a target. They are keyed to income; your portfolio funds spending.
+- The 70-80% replacement rule includes Social Security, and SSA itself says it has no authoritative basis.
+- Retiring before <Fact id="medicare.eligibilityAge" /> adds a health-insurance line item large enough to change the answer on its own.
 
-Educational only — not financial advice. Estimate your own number with the [Roadmap Pack](/tools).
+Next: run the [checkup](/checkup) for your own range, or test the round number on [is $1 million enough](/topics/retirement/is-1-million-enough).
+
+Educational only — not financial or tax advice.

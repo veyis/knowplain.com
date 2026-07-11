@@ -11,17 +11,26 @@
  */
 import {
   ACA_2026,
+  ACA_APPLICABLE_PERCENTAGE_2026,
+  ACA_TOP_APPLICABLE_PERCENTAGE,
   CONTRIBUTION_2026,
   FPL_2025,
+  MEDICAID_EXPANSION_FPL_PERCENT,
   MEDICARE_2026,
   RMD,
+  SAVERS_MATCH_2027,
   SENIOR_DEDUCTION,
   SOCIAL_SECURITY_2026,
   SWR,
   TAX_2026,
+  acaBenchmarkCostAtCliffSingle,
+  acaCreditLostAtCliffSingle,
   acaSubsidyCliffMagi,
+  federalPovertyLevel,
   irmaaTier1AnnualSurcharge,
-} from "./facts-2026";
+  // Explicit .ts so `node --test` and build-time scripts can import this directly,
+  // matching checkup.ts. Next resolves either form.
+} from "./facts-2026.ts";
 
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 const usdCents = (n: number) =>
@@ -30,6 +39,20 @@ const usdCents = (n: number) =>
 const pct = (rate: number) => `${(rate * 100).toFixed(1).replace(/\.0$/, "")}%`;
 /** Portfolio multiple implied by a withdrawal rate: 3.9% → "25.6×". */
 const multiple = (rate: number) => `${(1 / rate).toFixed(1)}×`;
+
+/**
+ * The IRS publishes the applicable percentages to two decimals (2.10%, 9.96%). Keep them
+ * that way — this table is quoted against Rev. Proc. 2025-25 and "2.1%" would not match.
+ */
+const pct2 = (rate: number) => `${(rate * 100).toFixed(2)}%`;
+/** A band of the applicable percentage table: a single rate, or the range it slides across. */
+const bandPct = (i: number) => {
+  const { initial, final } = ACA_APPLICABLE_PERCENTAGE_2026[i];
+  return initial === final ? pct2(final) : `${pct2(initial)}–${pct2(final)}`;
+};
+/** N% of the federal poverty level for a household of `size`, as a dollar string. */
+const fplAt = (percent: number, size: number) =>
+  usd((federalPovertyLevel(size) * percent) / 100);
 
 export const FACTS = {
   // ── Safe withdrawal rates ────────────────────────────────────────────────
@@ -77,6 +100,18 @@ export const FACTS = {
   "ss.maxTaxableEarnings": usd(SOCIAL_SECURITY_2026.maxTaxableEarnings),
   "ss.taxThresholdSingle": usd(SOCIAL_SECURITY_2026.benefitTaxThresholdSingle),
   "ss.taxThresholdJoint": usd(SOCIAL_SECURITY_2026.benefitTaxThresholdJoint),
+  // The 85% tier. Unindexed like the pair above, and equally untouched by OBBBA.
+  "ss.taxThreshold85Single": usd(SOCIAL_SECURITY_2026.benefitTax85ThresholdSingle),
+  "ss.taxThreshold85Joint": usd(SOCIAL_SECURITY_2026.benefitTax85ThresholdJoint),
+
+  // ── Bracket ceilings (indexed — worked examples must not hand-type these) ──
+  "tax.bracket12TopSingle": usd(TAX_2026.bracketsSingle[1][1]),
+  "tax.bracket12TopMfj": usd(TAX_2026.bracketsMfj[1][1]),
+
+  // ── Saver's Match (SECURE 2.0, from tax year 2027) ───────────────────────
+  "saversMatch.rate": pct(SAVERS_MATCH_2027.matchRate),
+  "saversMatch.maxContribution": usd(SAVERS_MATCH_2027.maxMatchedContribution),
+  "saversMatch.maxMatch": usd(SAVERS_MATCH_2027.maxMatch),
 
   // ── Medicare (CMS 2026) ──────────────────────────────────────────────────
   "medicare.eligibilityAge": String(MEDICARE_2026.eligibilityAge),
@@ -100,8 +135,35 @@ export const FACTS = {
   "aca.benchmarkSilver": usd(ACA_2026.averageAge60AnnualPremium.benchmarkSilver),
   "aca.lowestBronze": usd(ACA_2026.averageAge60AnnualPremium.lowestCostBronze),
   "aca.lostCreditAt65k": usd(ACA_2026.restoredEnhancedCreditReference.annualIncreaseAfterExpiration),
+
+  // The applicable percentage table (IRS Rev. Proc. 2025-25) — the cap that did NOT
+  // disappear when the enhanced credits expired. It got narrower and harsher.
+  "aca.applicablePctMin": pct2(ACA_APPLICABLE_PERCENTAGE_2026[0].final),
+  "aca.applicablePctMax": pct2(ACA_TOP_APPLICABLE_PERCENTAGE),
+  "aca.applicablePct.under133": bandPct(0),
+  "aca.applicablePct.133to150": bandPct(1),
+  "aca.applicablePct.150to200": bandPct(2),
+  "aca.applicablePct.200to250": bandPct(3),
+  "aca.applicablePct.250to300": bandPct(4),
+  "aca.applicablePct.300to400": bandPct(5),
+
+  // The cliff, in dollars, for a single 60-year-old at exactly 400% FPL.
+  "aca.cliffEdgeBenchmarkCost": usd(acaBenchmarkCostAtCliffSingle()),
+  "aca.cliffEdgeCreditLost": usd(acaCreditLostAtCliffSingle()),
+
+  // FPL by household size. Plan-year 2026 is measured against the 2025 guidelines.
   "fpl.onePerson": usd(FPL_2025.onePerson),
   "fpl.perAdditional": usd(FPL_2025.perAdditionalPerson),
+  "fpl.twoPerson": usd(federalPovertyLevel(2)),
+  "fpl.fourPerson": usd(federalPovertyLevel(4)),
+  // Each extra household member raises the cliff by 400% of the per-person FPL step.
+  "aca.cliffPerAdditionalPerson": usd(
+    (FPL_2025.perAdditionalPerson * ACA_2026.subsidyCliffFplPercent) / 100,
+  ),
+  "fpl.medicaidPercent": `${MEDICAID_EXPANSION_FPL_PERCENT}%`,
+  "fpl.medicaid138Single": fplAt(MEDICAID_EXPANSION_FPL_PERCENT, 1),
+  "fpl.medicaid138Couple": fplAt(MEDICAID_EXPANSION_FPL_PERCENT, 2),
+  "fpl.medicaid138Family4": fplAt(MEDICAID_EXPANSION_FPL_PERCENT, 4),
 } as const;
 
 export type FactId = keyof typeof FACTS;
@@ -119,4 +181,18 @@ export function fact(id: string): string {
     );
   }
   return value;
+}
+
+/**
+ * Resolve `{{fact.id}}` tokens inside a plain string.
+ *
+ * Frontmatter is YAML, so `<Fact>` cannot render there — which left `plainAnswer`,
+ * `description`, and every FAQ answer hand-typing their 2026 figures. That is the ONE
+ * surface with no drift protection, and it is the highest-visibility text on the page:
+ * `plainAnswer` is the featured-snippet play and `description` becomes the meta tag.
+ *
+ * Same guarantee as `<Fact>` — an unknown id throws instead of silently rendering nothing.
+ */
+export function resolveFacts(text: string): string {
+  return text.replace(/\{\{([A-Za-z0-9.]+)\}\}/g, (_, id: string) => fact(id));
 }

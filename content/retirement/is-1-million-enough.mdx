@@ -1,9 +1,9 @@
 ---
 title: "Is $1 million enough to retire in 2026?"
-description: "It depends on your spending, not the round number — $1M funds very different lives."
-plainAnswer: "At a 4% rate, $1M supports about $40,000/year before Social Security — enough for some, not for others."
+description: "$1M funds {{swr.morningstar.on1m}} to {{swr.bengen.on1m}} a year depending on whose rate you use — before tax and health care. Here is what is actually left to spend."
+plainAnswer: "$1 million supports a first-year withdrawal of {{swr.morningstar.on1m}} on Morningstar's forward-looking rate, or {{swr.bengen.on1m}} on Bengen's historical worst case. Add average Social Security and subtract federal tax and Medicare, and a 67-year-old is left with roughly $57,000 to $64,000 to actually spend."
 published: "2026-07-09"
-updated: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
@@ -12,22 +12,61 @@ riskLevel: "high"
 relatedTools:
   - href: /tools/am-i-on-track
     label: "Check your retirement gap"
+  - href: /tools/aca-bridge
+    label: "Check the pre-65 health cover gap"
+  - href: /tools/sequence-risk
+    label: "Stress-test withdrawals"
 faqs:
-  - q: "Can $1 million be enough to retire?"
-    a: "Yes for some households and no for others. It depends on spending, taxes, healthcare, housing, guaranteed income, and how flexible withdrawals can be."
-  - q: "Why does $1 million often feel misleading?"
-    a: "It sounds like a finish line, but retirement success depends more on the annual spending gap than on a round account balance."
+  - q: "How much income does $1 million produce in retirement?"
+    a: "In year one, {{swr.morningstar.on1m}} at Morningstar's forward-looking {{swr.morningstar}} rate, or {{swr.bengen.on1m}} at Bengen's revised historical worst case of 4.7%. Those are not the ends of a confidence interval — they are answers to two different questions. Both figures are before tax."
+  - q: "Is $1 million enough to retire at 65?"
+    a: "It is enough if your annual spending gap — what you spend, minus Social Security and any pension — is below roughly {{swr.morningstar.on1m}} to $47,000. For a household with average Social Security, a paid-off home and no dependants, that is often comfortable. In a high-cost area with a mortgage, it usually is not."
+  - q: "How long will $1 million last?"
+    a: "With zero real return — markets exactly keeping pace with inflation and no more — $1 million lasts 25 years at $40,000 a year and 20 years at $50,000. Anything beyond that comes from investment returns, which is exactly the part nobody can promise you."
+  - q: "How much tax will I pay on $1 million in an IRA?"
+    a: "If it is all pre-tax and you are single, 67, drawing {{swr.morningstar.on1m}} alongside average Social Security, federal income tax is roughly $4,100 — around 6% of your gross income, because the standard deduction and the senior deduction absorb most of it. State tax is on top. Roth balances change this completely."
+  - q: "Is $1 million enough to retire at 60?"
+    a: "It is a harder problem than at 67 for two reasons that compound. The horizon is longer, which lowers the sustainable rate, and you have to buy your own health insurance until 65 — the 2026 unsubsidized benchmark silver premium for a 60-year-old averages {{aca.benchmarkSilver}} a year nationally."
+  - q: "Does working part time replace a chunk of the portfolio?"
+    a: "Not the way it is usually described. $15,000 a year of earned income for five years means $75,000 of withdrawals you do not take — not $375,000 of capital. A portfolio funds spending indefinitely; a part-time job stops. The real value is that it protects your first years, which is where sequence risk lives."
+  - q: "What is the biggest risk to a $1 million retirement?"
+    a: "A bad first decade. The same average return, delivered in a bad-years-first order, can leave a retiree hundreds of thousands behind an identical retiree who got the good years first. Nothing about the $1 million figure protects against that; only flexibility does."
 sources:
-  - title: "Starting Your Retirement Benefits Early"
+  - title: "What's a Safe Retirement Withdrawal Rate for 2026?"
+    publisher: "Morningstar (The State of Retirement Income, 2025 edition)"
+    url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026"
+    accessed: "2026-07-11"
+    note: "Source for the {{swr.morningstar}} forward-looking rate (30-year horizon, 90% success, 30-50% equity) and therefore the {{swr.morningstar.on1m}} first-year withdrawal on $1 million."
+  - title: "Bill Bengen Boosts the '4% Rule' to {{swr.bengen}}"
+    publisher: "Advisor Perspectives"
+    url: "https://www.advisorperspectives.com/articles/2025/08/29/bill-bengen-boosts-the-4-rule-to-4-7"
+    accessed: "2026-07-11"
+    note: "Secondary reporting on Bengen's revised {{swr.bengen}} SAFEMAX, the source of the {{swr.bengen.on1m}} figure. The primary source is his 2025 book 'A Richer Retirement'."
+  - title: "2026 Social Security Changes (COLA fact sheet)"
     publisher: "Social Security Administration"
-    url: "https://www.ssa.gov/benefits/retirement/planner/agereduction.html"
+    url: "https://www.ssa.gov/news/en/cola/factsheets/2026.html"
     accessed: "2026-07-11"
-    note: "Used for guaranteed-income timing context."
-  - title: "Costs"
-    publisher: "Medicare.gov"
-    url: "https://www.medicare.gov/basics/costs/medicare-costs"
+    note: "Source for the 2026 average retired-worker benefit and the earnings-test threshold used in the part-time work section."
+  - title: "Rev. Proc. 2025-32 — 2026 inflation adjustments"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
     accessed: "2026-07-11"
-    note: "Used for healthcare cost caveats."
+    note: "Source for the 2026 standard deduction and tax brackets used to compute the federal tax line in the spendable-income table."
+  - title: "One Big Beautiful Bill Act — tax deductions for seniors"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors"
+    accessed: "2026-07-11"
+    note: "Source for the senior deduction applied in the tax calculation. It is a deduction, not an exemption — Social Security benefit taxation is unchanged, and the deduction sunsets after 2028."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "Source for the Part B premium and deductible used as the floor of the health care line."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "Source for 2026 unsubsidized marketplace premiums for a 60-year-old and the return of the {{aca.cliffPercent}}-of-FPL subsidy cliff, used in the retire-before-65 section."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
@@ -35,33 +74,106 @@ related:
     label: "How much is enough?"
   - href: /topics/retirement/4-percent-rule-2026
     label: "The 4% rule in 2026"
-  - href: /tools
-    label: "Find your number → Roadmap Pack"
+  - href: /topics/retirement/part-time-retirement
+    label: "Part-time work in retirement"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
 ---
 
-"Is $1 million enough?" is the internet's favorite retirement question and the wrong one. A million dollars funds wildly different lives depending on what you spend — the number that matters is *yours*, not the round one. This spoke sits under the [Retirement hub](/topics/retirement).
+Every article on this question gives you a withdrawal number and stops. That is the easy half, and it is the half that does not decide anything.
 
-## The plain math on $1M
+What decides it is what is left *after* the IRS and the health-insurance company have been paid. Nobody shows you that, so this page does.
 
-Using the 4% planning heuristic from [the 4% rule](/topics/retirement/4-percent-rule-2026), $1,000,000 supports roughly **$40,000 a year** (before taxes), adjusted for inflation over a ~30-year retirement. Add Social Security on top of that, and the household income can be considerably higher. So the real question is: does your **spending gap** — what you spend minus guaranteed income — fit inside that?
+This spoke sits under the [Retirement hub](/topics/retirement).
 
-Work a quick example. Say you spend $80,000 a year and Social Security covers $30,000 — your portfolio has to fund the remaining $50,000. Because $50,000 is *more* than the $40,000 a million safely produces, $1M falls short here: you'd need about **$1.25M** (25 × $50,000). And the lever cuts both ways — earning even $15,000 part-time is worth roughly $375,000 in portfolio terms (25×), which can turn "not enough" into "plenty."
+## What $1 million actually pays in year one
 
-## When $1M is plenty — and when it isn't
+There is no single answer, and the reason is not vagueness — it is a genuine, live disagreement between two credible sources.
 
-- **Plenty if:** your mortgage is paid off, you live somewhere affordable, and Social Security covers a big chunk of your spending. $40k + Social Security is a comfortable life in much of the country.
-- **Tight if:** you're in a high-cost area, retiring early (a longer horizon means a lower safe rate), carrying debt, or facing large health costs before Medicare.
+- **Morningstar** puts the safe starting rate at <Fact id="swr.morningstar" />. On $1,000,000 that is <Fact id="swr.morningstar.on1m" />. It is a forward-looking figure: a 30-year horizon, a 90% success target, and a 30-50% equity portfolio, given today's valuations and yields.
+- **Bengen**, who invented the 4% rule, has revised his own historical worst case up to <Fact id="swr.bengen" />. On $1,000,000 that is <Fact id="swr.bengen.on1m" />. It is the rate that would have survived the single worst 30-year period in the US record, on a more diversified portfolio.
 
-The same $1M is "more than enough" and "not nearly enough" depending on those facts — which is exactly why the round number is a distraction.
+They are not the ends of a confidence interval. They are answers to two different questions, and averaging them produces an answer to neither. [The 4% rule in 2026](/topics/retirement/4-percent-rule-2026) sets out exactly how the two methods differ.
 
-## How to know your number
+For everything below, the example household is a single 67-year-old with $1,000,000, all of it in a traditional IRA, claiming the average Social Security benefit of <Fact id="ss.averageBenefit" /> a month. It is an illustration, not a recommendation.
 
-Skip the headline and run the plain model from [how much is enough](/topics/retirement/how-much-is-enough): estimate your annual spending, subtract Social Security, divide the gap by your planning rate. That gives *your* target — which might be well under $1M or well over it.
+## What is left after tax and health care
+
+This is the table nobody publishes.
+
+| | Withdrawing <Fact id="swr.morningstar.on1m" /> (<Fact id="swr.morningstar" />) | Withdrawing <Fact id="swr.bengen.on1m" /> (<Fact id="swr.bengen" />) |
+| --- | --- | --- |
+| Portfolio withdrawal | $39,000 | $47,000 |
+| Social Security (average benefit, 12 months) | ~$24,850 | ~$24,850 |
+| **Cash in** | **~$63,850** | **~$71,850** |
+| Federal income tax | −~$4,100 | −~$5,300 |
+| Medicare Part B (premium × 12 + deductible) | −~$2,720 | −~$2,720 |
+| **Left to spend** | **~$57,000** | **~$63,900** |
+
+Roughly 11% of the money disappears before it becomes spending. That is the number that should change your plan, and it is not in anyone else's headline.
+
+**How the tax line was computed, so you can check it.** Part of the Social Security benefit becomes taxable once combined income crosses <Fact id="ss.taxThresholdSingle" /> for a single filer — a threshold that has never been indexed and was not changed by the 2025 tax law. Against that we apply the <Fact id="tax.standardDeductionSingle" /> standard deduction plus the <Fact id="tax.seniorDeduction" /> senior deduction for being 65 or over. What remains lands in the 10% and 12% brackets.
+
+Four caveats, all of which matter:
+
+- **Federal only.** State income tax is on top. Some states exempt Social Security and some tax IRA withdrawals in full.
+- **All pre-tax.** If part of the $1M is Roth or in a taxable brokerage account, the tax line falls sharply — possibly to near zero. Account *mix* is worth as much here as balance.
+- **The senior deduction expires.** It is scheduled to end after <Fact id="tax.seniorDeductionLastYear" />. "No tax on Social Security" was never true; a deduction is not an exemption, and the benefit-taxation thresholds are untouched.
+- **The Medicare line is a floor, not a budget.** It is the Part B premium (<Fact id="medicare.partBPremium" /> a month) and the Part B deductible (<Fact id="medicare.partBDeductible" />). It contains no Part D premium, no Medigap, no dental, vision or hearing, and no actual medical care.
+
+## Is it enough? The one-line test
+
+$1 million is enough if your **annual spending gap** — what you spend, minus Social Security and any pension — comes in under <Fact id="swr.morningstar.on1m" /> to <Fact id="swr.bengen.on1m" />, in pre-tax terms.
+
+Spend $70,000 a year with average Social Security, and your gap is about $45,000. That fits inside Bengen's number and not inside Morningstar's. You are exactly on the seam, which means the honest answer to "is $1M enough" for that household is *it depends on which methodology is right*, and nobody knows. Work the general model on [how much is enough](/topics/retirement/how-much-is-enough), or run your own figures through the [checkup](/checkup).
+
+## How long does $1 million last?
+
+Strip out every forecast. Assume markets exactly keep pace with inflation and do nothing more — a zero real return. Then the arithmetic is pure division:
+
+| Annual spending from the portfolio (today's dollars) | Years $1M lasts at zero real return |
+| --- | --- |
+| $30,000 | 33 |
+| $40,000 | 25 |
+| $50,000 | 20 |
+| $60,000 | 17 |
+
+This is the floor, and it is worth sitting with, because it shows what the whole safe-withdrawal literature is really arguing about. Morningstar's <Fact id="swr.morningstar.multiple" /> multiple *is* <Fact id="swr.morningstar.multiple" /> years at zero real return. Bengen's <Fact id="swr.bengen.multiple" /> multiple is <Fact id="swr.bengen.multiple" /> years. Everything past 30 years has to be produced by investment returns — which is precisely the part that a bad first decade takes away from you.
+
+That is [sequence of returns risk](/topics/retirement/sequence-of-returns), and it is the real threat to a $1M retirement. Not the size of the number. The order of the returns. [Stress-test it](/tools/sequence-risk).
+
+## Retiring before 65 changes the answer
+
+Two things get worse at once, and they compound.
+
+The horizon lengthens, which lowers the sustainable rate — both published figures assume 30 years, and a retirement starting at 60 is not a 30-year problem.
+
+And health insurance becomes a line item. The 2026 national-average unsubsidized premium for a 60-year-old is about <Fact id="aca.lowestBronze" /> a year for the lowest-cost bronze plan and <Fact id="aca.benchmarkSilver" /> for the benchmark silver plan. Premium tax credits cut that, but the enhanced subsidies expired at the end of 2025 and the <Fact id="aca.cliffPercent" />-of-poverty cliff is back: for a single person it sits at <Fact id="aca.cliffSingle" /> of MAGI, and one dollar over it forfeits the *entire* credit.
+
+Here is the part that catches $1M retirees specifically. Drawing <Fact id="swr.morningstar.on1m" /> to <Fact id="swr.bengen.on1m" /> from a portfolio, with no Social Security yet, puts your MAGI comfortably below that cliff — you probably qualify for a credit. Then you do a Roth conversion, or realise a capital gain, or take one extra distribution, and the credit vanishes in full. The withdrawal decision and the insurance decision are the same decision. Model it in the [ACA bridge tool](/tools/aca-bridge) and read [health care before Medicare](/topics/retirement/health-care-before-medicare).
+
+There is a floor as well as a cliff. Push MAGI below 100% of the poverty line — <Fact id="fpl.onePerson" /> for one person — and you generally get no marketplace subsidy at all. It is possible to duck the cliff and land in the ditch.
+
+## What part-time work is really worth
+
+You will see this claim everywhere, including in an earlier version of this page: earning $15,000 part-time is "worth $375,000 in portfolio terms", because 25 × $15,000 = $375,000.
+
+That is wrong, and it is worth being precise about why.
+
+A portfolio funds spending indefinitely. A part-time job funds it until you stop, and you will stop. Five years of $15,000 earnings means **$75,000 of withdrawals you did not have to take** — not $375,000 of capital you no longer need. Capitalising temporary income at a perpetual multiple overstates the lever by a factor of five or more, and it is the kind of arithmetic that talks someone into retiring two years early.
+
+The directional point survives, and it is a real one: earned income reduces the portfolio you have to draw on. But its true value is about *when*, not how much. Those first five years are exactly where sequence risk lives, and every dollar you do not sell in a down market is a dollar left to recover. That is a genuine and underrated benefit. It is just not a $375,000 one.
+
+One trap: if you claim Social Security before your full retirement age of <Fact id="ss.fra" />, the earnings test withholds $1 of benefit for every $2 you earn above <Fact id="ss.earningsTestUnderFra" />. Only *earned* income counts — portfolio withdrawals, pensions and capital gains do not. See [part-time work in retirement](/topics/retirement/part-time-retirement).
 
 ## Key takeaways
 
-- $1M ≈ $40,000/year at 4%, plus Social Security — before taxes.
-- Whether it's "enough" is set by your spending, location, and horizon.
-- Compute your own gap instead of chasing a round number.
+- $1 million supports <Fact id="swr.morningstar.on1m" /> (Morningstar) or <Fact id="swr.bengen.on1m" /> (Bengen) in year one. Two methods, two questions — not a range to average.
+- After federal tax and the Medicare floor, a single 67-year-old with average Social Security keeps roughly $57,000 to $63,900 of it. Roughly 11% never becomes spending.
+- The test is whether your annual spending *gap* fits under those withdrawal figures. Your spending, not the round number, decides.
+- At zero real return $1M lasts 25 years at $40,000 a year. Everything past that is investment return — which is what a bad first decade takes from you.
+- Part-time income is a bridge, not capital. $15,000 a year for five years is $75,000 of withdrawals avoided, not $375,000 of portfolio.
 
-Educational only — not financial advice. Find your number with the [Roadmap Pack](/tools).
+Next: find your own target on [how much is enough](/topics/retirement/how-much-is-enough), or understand the rate itself on [the 4% rule in 2026](/topics/retirement/4-percent-rule-2026).
+
+Educational only — not financial or tax advice.

@@ -32,6 +32,8 @@ import {
   acaRestoredEnhancedBenchmarkCost,
   acaSubsidyCliffMagi,
   acaSubsidyStatus,
+  acaApplicablePercentage,
+  acaEnhancedApplicablePercentage,
   SWR,
   REAL_RETURN,
 } from "../src/lib/facts-2026.ts";
@@ -145,13 +147,48 @@ test("ACA 2026 subsidy cliff (400% FPL) — enhanced subsidies expired", () => {
   assert.equal(under.overCliff, false);
   assert.equal(under.belowFloor, false);
   assert.equal(under.headroomToCliff, 2_600); // $2,600 of MAGI room left
-  assert.equal(under.restoredEnhancedBenchmarkSavings, 0);
+
+  // This assertion used to read `=== 0`, and it was encoding the bug rather than catching it.
+  // Below the cliff, "current law" was computed with the EXPIRED 8.5% enhanced cap — the same
+  // value as the restored-enhanced scenario — so the two subtracted to zero and the bridge
+  // tool told every household under 400% FPL that the subsidy expiration cost them nothing.
+  //
+  // Under actual 2026 law this household sits in the 300-400% band and pays the top applicable
+  // percentage (9.96%): $60,000 × 9.96% = $5,976.
+  assert.equal(under.currentLawBenchmarkCost, 5_976);
+  assert.ok(under.restoredEnhancedBenchmarkSavings > 0, "the expiration DID cost them");
+
+  // The applicable percentage slides within each band and stops existing over the cliff.
+  assert.equal(acaApplicablePercentage(120), 0.021); // flat, under 133%
+  assert.equal(acaApplicablePercentage(350), 0.0996); // flat, 300-400% band
+  assert.equal(acaApplicablePercentage(401), null); // no credit at all — not a capped one
+  const mid = acaApplicablePercentage(175); // midpoint of the 150-200% band
+  assert.ok(mid > 0.0419 && mid < 0.066, "rises linearly inside the band");
+
+  // The ENHANCED (expired) side must use its own sliding 0%-8.5% schedule, not a flat 8.5%.
+  // 8.5% was only ever the cap ABOVE 400% FPL. Pricing the whole enhanced scenario at 8.5%
+  // made it look DEARER than current law for lower incomes, so the lost credit floored at $0
+  // for exactly the households the expiration hit hardest in percentage terms.
+  assert.equal(acaEnhancedApplicablePercentage(140), 0, "under 150% FPL paid nothing");
+  assert.equal(acaEnhancedApplicablePercentage(400), 0.085);
+  assert.equal(acaEnhancedApplicablePercentage(450), 0.085, "no cliff under the enhanced rules");
+
+  // Nobody below the cliff was left unharmed by the expiration. This is the regression.
+  for (const magi of [25_000, 30_000, 45_000, 60_000]) {
+    const s = acaSubsidyStatus(magi, 1);
+    assert.equal(s.overCliff, false);
+    assert.ok(
+      s.restoredEnhancedBenchmarkSavings > 0,
+      `MAGI ${magi} is under the cliff but must still show a real loss from the expiration`,
+    );
+    assert.ok(s.currentLawBenchmarkCost > s.restoredEnhancedBenchmarkCost);
+  }
 
   const over = acaSubsidyStatus(70_000, 1); // ~447% FPL ⇒ $0 credit
   assert.equal(over.overCliff, true);
   assert.equal(over.headroomToCliff, -7_400);
   assert.equal(over.currentLawBenchmarkCost, 15_914);
-  assert.equal(over.restoredEnhancedBenchmarkCost, 5_950); // 8.5% of $70k
+  assert.equal(over.restoredEnhancedBenchmarkCost, 5_950); // 8.5% of $70k — the cap DOES apply above 400%
   assert.equal(over.restoredEnhancedBenchmarkSavings, 9_964);
 
   const low = acaSubsidyStatus(10_000, 1); // ~64% FPL

@@ -1,7 +1,7 @@
 ---
 title: "Health care before Medicare"
-description: "Retire before 65 and you hit a coverage gap — here are the plain options to bridge it, and the 2026 income cliff that can cost you thousands."
-plainAnswer: "Medicare starts at 65; retire earlier and bridge the gap with an ACA plan, COBRA, or a spouse's coverage — and in 2026, keep your income under 400% of the poverty line, because one dollar over it now costs you every penny of your subsidy."
+description: "Retire before 65 and you must bridge the gap yourself. Every coverage option compared — COBRA, ACA, spouse's plan, Medicaid — and the 2026 income rules that decide the cost."
+plainAnswer: "Medicare starts at 65. Retire earlier and you bridge the gap with an ACA marketplace plan, COBRA, a spouse's plan, or Medicaid. For 2026, the ACA premium cap still exists below {{aca.cliffPercent}} of the poverty line — but above that line the subsidy drops to zero, so the bridge years are income-management years."
 published: "2026-07-09"
 updated: "2026-07-11"
 reviewed: "2026-07-11"
@@ -15,81 +15,229 @@ relatedTools:
   - href: /tools/roth-vs-traditional
     label: "Check what a Roth conversion really costs"
 faqs:
+  - q: "What are my health insurance options if I retire before 65?"
+    a: "Five realistic ones: an ACA marketplace plan, COBRA from your former employer, joining a working spouse's plan, Medicaid if your income is low enough, or a part-time job that carries benefits. Retiree coverage from an employer is rare now. For most early retirees with moderate income, the ACA marketplace is the only option that lasts all the way to 65."
+  - q: "Is COBRA or an ACA plan cheaper?"
+    a: "Usually the ACA plan, because COBRA gets no subsidy and you pay the entire group premium — the employer's share plus your own, plus up to a 2% administrative fee. COBRA can still win if you are mid-treatment and need to keep your exact doctors and your already-met deductible, or if your income is too high for any ACA credit."
+  - q: "How long does COBRA last?"
+    a: "Generally 18 months when you leave a job or your hours are cut. Certain other qualifying events — divorce, death of the covered employee, a child ageing off the plan — run 36 months. There is also a disability extension to 29 months. Retire at 60 and 18 months cannot reach 65, so COBRA is a bridge to a bridge, not the whole span."
   - q: "What income counts toward ACA subsidies?"
-    a: "Not your taxable income — a broader figure called ACA MAGI. It adds back all of your Social Security benefits (not just the taxable part), tax-exempt interest, and foreign income. Traditional 401(k) and IRA withdrawals, Roth conversions, capital gains, and pensions all count. Withdrawals from a Roth account you already own do not."
-  - q: "What is the 400% subsidy cliff?"
-    a: "For 2026 coverage, if your household ACA MAGI is one dollar above 400% of the federal poverty level, your premium tax credit drops to zero — not a little, all of it. For a single person that line is about $62,600. The temporary rules that softened this cliff expired on December 31, 2025."
-  - q: "Can COBRA bridge the whole gap?"
-    a: "Usually not. COBRA typically lasts up to 18 months and you pay the full premium yourself. If you retire at 60, it cannot cover the five years to Medicare."
+    a: "Not taxable income — a broader figure called ACA MAGI. It is your adjusted gross income plus tax-exempt interest, excluded foreign income, and all of your Social Security benefits, including the portion that is not taxed. Traditional 401(k) and IRA withdrawals, Roth conversions, capital gains, and pensions all count. Withdrawals from a Roth account you already own do not."
+  - q: "What is the {{aca.cliffPercent}} subsidy cliff?"
+    a: "For 2026 coverage, if your household ACA MAGI lands one dollar above {{aca.cliffPercent}} of the federal poverty level, your premium tax credit falls to zero — not reduced, gone. The temporary rules that removed this cliff expired on December 31, 2025. Below the line, a cap on your benchmark premium still applies."
+  - q: "Can my income be too low for an ACA subsidy?"
+    a: "Yes, and this trap catches people who cut their income to duck the cliff. Below 100% of the federal poverty level you generally get no marketplace premium tax credit at all. In the ten states that never expanded Medicaid, you may also be ineligible for Medicaid — the coverage gap. Aim between the floor and the cliff, not at the floor."
+  - q: "Can I contribute to an HSA on a marketplace plan?"
+    a: "As of January 1, 2026, yes on more plans than before. Bronze and catastrophic exchange plans are now treated as HSA-qualified regardless of whether they meet the general high-deductible test (IRS Notice 2026-05). An HSA contribution is also one of the few levers that lowers ACA MAGI, so it does double duty in the bridge years."
 sources:
+  - title: "Rev. Proc. 2025-25 — Applicable Percentage Table for 2026"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-25.pdf"
+    accessed: "2026-07-11"
+    note: "The premium cap that still applies below {{aca.cliffPercent}} FPL: {{aca.applicablePctMin}} of income at the bottom, {{aca.applicablePctMax}} in the 300-{{aca.cliffPercent}} band. This is what reverted — the cap did not disappear."
+  - title: "Questions and Answers about the Premium Tax Credit (FS-2025-10)"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/taxpros/fs-2025-10.pdf"
+    accessed: "2026-07-11"
+    note: "Q31: there is no repayment cap for tax years after 2025. Also the definition of household income/MAGI and the 100%-{{aca.cliffPercent}} FPL eligibility range."
   - title: "How will the loss of enhanced premium tax credits affect older adults?"
     publisher: "KFF"
     url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
     accessed: "2026-07-11"
-    note: "Enhanced premium tax credits expired 2025-12-31; the 400%-of-FPL cliff returned for plan year 2026."
+    note: "Enhanced premium tax credits expired 2025-12-31; the {{aca.cliffPercent}}-of-FPL cliff returned for plan year 2026. Source of the age-60 benchmark premium figures."
+  - title: "Understanding COBRA (May 2026)"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/marketplace/technical-assistance-resources/understanding-cobra.pdf"
+    accessed: "2026-07-11"
+    note: "18 months for termination or reduced hours; up to 102% of the premium; 29-month disability extension; 36 months for second qualifying events."
   - title: "Health coverage for retirees"
     publisher: "HealthCare.gov"
     url: "https://www.healthcare.gov/retirees/"
     accessed: "2026-07-11"
-    note: "Marketplace access before 65 and special enrollment after losing job-based coverage."
+    note: "Marketplace access before 65 and the special enrollment period after losing job-based coverage."
   - title: "HHS Poverty Guidelines"
-    publisher: "HHS ASPE"
+    publisher: "U.S. Department of Health and Human Services"
     url: "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines"
     accessed: "2026-07-11"
-    note: "2026 coverage is measured against the 2025 guidelines: $15,650 for one person, +$5,500 per additional person (48 states + DC)."
+    note: "Plan-year 2026 eligibility is measured against the 2025 guidelines: {{fpl.onePerson}} for one person, +{{fpl.perAdditional}} per additional person (48 states + DC)."
+  - title: "Treasury, IRS provide guidance on new tax benefits for health savings account participants (Notice 2026-05)"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/newsroom/treasury-irs-provide-guidance-on-new-tax-benefits-for-health-savings-account-participants-under-the-one-big-beautiful-bill"
+    accessed: "2026-07-11"
+    note: "From Jan 1, 2026, bronze and catastrophic exchange plans are treated as HSA-compatible regardless of the general HDHP test."
+  - title: "What You Should Know About Health Care Sharing Ministries, Discount Plans, and Risk-Sharing Plans"
+    publisher: "National Association of Insurance Commissioners"
+    url: "https://content.naic.org/article/what-you-should-know-about-health-care-sharing-ministries-discount-plans-and-risk-sharing-plans"
+    accessed: "2026-07-11"
+    note: "Health care sharing ministries are not insurance, are not regulated by state insurance departments, and are not legally required to pay claims."
+  - title: "Status of State Medicaid Expansion Decisions"
+    publisher: "KFF"
+    url: "https://www.kff.org/medicaid/status-of-state-medicaid-expansion-decisions/"
+    accessed: "2026-07-11"
+    note: "Ten states have not adopted Medicaid expansion, which is what creates the coverage gap below 100% FPL."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
+  - href: /topics/retirement/aca-subsidy-cliff
+    label: "The 2026 ACA subsidy cliff, in dollars"
   - href: /topics/decision-tools/retirement-age-framework
     label: "How to choose a retirement age"
-  - href: /topics/retirement/is-1-million-enough
-    label: "Is $1 million enough?"
+  - href: /topics/retirement/part-time-retirement
+    label: "Part-time work in retirement"
 ---
 
-The most overlooked obstacle to early retirement isn't money — it's **health insurance**. [Medicare](https://www.medicare.gov/) generally starts at 65, so retiring before then leaves a gap you have to bridge yourself. This spoke sits under the [Retirement hub](/topics/retirement).
+The most overlooked obstacle to early retirement is not money — it is **health insurance**. [Medicare](https://www.medicare.gov/) generally starts at age <Fact id="medicare.eligibilityAge" />, so retiring before then leaves a gap you have to bridge yourself. This spoke sits under the [Retirement hub](/topics/retirement).
 
-## The coverage gap
+Retire at 60 and that is five years with no employer plan and no Medicare. Going uninsured is not a plan: one serious illness can undo a retirement that took thirty years to build. So the bridge is not a detail to sort out later. It is part of choosing a [retirement age](/topics/decision-tools/retirement-age-framework).
 
-If you stop working at, say, 60, you have roughly five years with no employer plan and no Medicare. Going uninsured is not a plan — a single serious illness can undo a retirement. So bridging the gap is a core part of choosing a [retirement age](/topics/decision-tools/retirement-age-framework).
+## Every option, compared
 
-## Your main options
+| Option | How long it lasts | Who it actually fits |
+| --- | --- | --- |
+| **ACA marketplace plan** | To 65, indefinitely | Most early retirees. The only option that reliably spans the whole gap. Cost depends on **income**, not assets. |
+| **COBRA** | 18 months (some events 36) | A short bridge — retiring at 63.5, or finishing a course of treatment with your current doctors. |
+| **Spouse's employer plan** | While they keep working | Usually the cheapest bridge that exists. Check whether their employer surcharges spouses. |
+| **Retiree coverage from your employer** | Varies; often to 65 | Rare now, mostly public sector and legacy union plans. If you have it, read what happens at 65 — it usually converts to a Medicare supplement. |
+| **Medicaid** | While income stays low | Under <Fact id="fpl.medicaidPercent" /> of FPL in expansion states. Real coverage, no premium. Asset tests generally do not apply to this pathway. |
+| **Part-time job with benefits** | While you work it | The underrated one. Some large retailers and universities offer coverage at ~20 hours. See [part-time retirement](/topics/retirement/part-time-retirement). |
+| **State continuation ("mini-COBRA")** | Varies by state | Small employers not covered by federal COBRA. Rules differ in every state. |
+| **Health care sharing ministry** | N/A | Be careful — see below. |
 
-- **ACA marketplace** — buy an individual plan at [HealthCare.gov](https://www.healthcare.gov/retirees/). Premium help is based on your **income**, not your assets, which matters enormously for early retirees (more below).
-- **COBRA** — continue your employer's plan, usually for up to 18 months. Comprehensive, but you now pay the full premium. If you retire at 60, it cannot cover the whole gap.
-- **A spouse's plan** — if your partner is still working, joining their coverage is frequently the simplest bridge.
+### Health care sharing ministries: read this before you join one
 
-## What changed for 2026: the cliff is back
+They advertise low monthly costs and they are not insurance. The National Association of Insurance Commissioners is blunt about it: sharing ministries are not regulated by state insurance departments, do not have to cover pre-existing conditions or cap your out-of-pocket costs, and **are not legally required to pay your claims**. There is no state guaranty fund behind them. Some members are reimbursed reliably for years. Some are not, and discover it during a cancer diagnosis. If the low premium is tempting because you are just over the subsidy cliff, fix the income problem instead — the levers below are cheaper than the risk.
 
-This is the part most retirement advice has not caught up with.
+## COBRA vs an ACA plan
 
-The temporary rules that made marketplace coverage cheaper — the enhanced premium tax credits — **expired on December 31, 2025**, and were not extended. Two things changed for plan year 2026:
+This comparison is worth doing properly, because the intuition — "COBRA keeps my good employer plan, so it must be the safe choice" — quietly ignores that you are now paying for all of it.
 
-- The cap that limited your premium to a set share of your income is **gone**.
-- The **400% subsidy cliff is back**. If your household income lands one dollar above 400% of the federal poverty level, your premium tax credit is **zero**. Not reduced. Zero.
+| | COBRA | ACA marketplace |
+| --- | --- | --- |
+| **What you pay** | The **entire** group premium — your old payroll deduction *plus* the share your employer was paying — plus up to a 2% administrative fee (102% total). | The plan premium, minus any premium tax credit. |
+| **Subsidy** | **None.** COBRA premiums get no premium tax credit, ever. | Yes, if your MAGI is between 100% and <Fact id="aca.cliffPercent" /> of FPL. |
+| **The sticker shock** | The employer typically paid the large majority of the premium. Most people have never seen the full number until the election notice arrives. | National-average unsubsidized cost for a 60-year-old: <Fact id="aca.lowestBronze" />/yr lowest bronze, <Fact id="aca.benchmarkSilver" />/yr benchmark silver. |
+| **How long** | 18 months for job loss or reduced hours. 36 for certain other events. 29 with a disability extension. | To 65. |
+| **Your doctors** | Identical network. Nothing changes. | May change. Check every doctor before you switch. |
+| **Deductible** | Carries over — what you already spent this year still counts. | **Resets to zero.** Switching mid-year after a big claim can be expensive. |
+| **HSA** | Only if the plan is an HDHP. | Bronze and catastrophic exchange plans are HSA-qualified from 2026. |
+| **When it wins** | Mid-treatment; deductible already met; income too high for any credit anyway; a gap shorter than 18 months. | Almost everything else, especially if you can steer your MAGI. |
 
-For a single person, that line sits at roughly **$62,600**. For a 60-year-old earning $65,000 — just over it — crossing that line costs about **$10,389 a year** compared with the old rules ([KFF](https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/)).
+Two practical notes. You generally have 60 days to elect COBRA, and losing job-based coverage opens a **special enrollment period** on the marketplace — so you can price both before committing. And COBRA is retroactive to the day your coverage ended, which means some people deliberately let the 60-day clock run while uninsured, ready to elect COBRA if something catastrophic happens. That is a real strategy with a real risk, and it only works if you can pay the back premiums.
 
-That makes the years between 60 and 65 the highest-stakes income-management years of most people's lives.
+The other thing to know: COBRA cannot span the gap. Retire at 60 and 18 months of COBRA runs out at 61 and a half. You will be shopping the marketplace anyway. The only question is whether you do it now or in a year and a half.
+
+## What changed for 2026
+
+The enhanced premium tax credits — the temporary ARPA and Inflation Reduction Act rules that made marketplace coverage much cheaper — **expired on December 31, 2025**. Two specific things reverted, and the difference between them is the thing most articles get wrong.
+
+**What went away:** the 8.5%-of-income ceiling, and eligibility for any credit at all above <Fact id="aca.cliffPercent" /> of FPL. Above that line your premium tax credit is now zero.
+
+**What did not go away: the cap itself.** If your household is between 100% and <Fact id="aca.cliffPercent" /> of FPL, the cost of the benchmark silver plan is *still* capped at a set share of your income. The cap did not disappear. It got narrower and harsher. Here is the actual table the IRS published for 2026:
+
+| Household income (% of FPL) | Your benchmark silver premium is capped at |
+| --- | --- |
+| Under 133% | <Fact id="aca.applicablePct.under133" /> of income |
+| 133% – 150% | <Fact id="aca.applicablePct.133to150" /> |
+| 150% – 200% | <Fact id="aca.applicablePct.150to200" /> |
+| 200% – 250% | <Fact id="aca.applicablePct.200to250" /> |
+| 250% – 300% | <Fact id="aca.applicablePct.250to300" /> |
+| 300% – 400% | <Fact id="aca.applicablePct.300to400" /> |
+| **Over 400%** | **No cap. No credit. You pay the whole premium.** |
+
+Source: [IRS Rev. Proc. 2025-25](https://www.irs.gov/pub/irs-drop/rp-25-25.pdf).
+
+This matters enormously. A 62-year-old at 250% of FPL who is told "the cap is gone" concludes there is no help available and may not enrol at all. There is help: their benchmark premium is capped at roughly <Fact id="aca.applicablePct.250to300" /> of income. It is worse than it was under the enhanced credits — under those rules the same household paid a good deal less — but it is not nothing, and walking away from it is the single most expensive mistake available here.
+
+Under the enhanced rules, nobody paid more than 8.5% of income and there was no cliff. Under the reverted rules, the top band pays <Fact id="aca.applicablePctMax" /> and the cliff is back.
+
+## The cliff, briefly
+
+One dollar of MAGI above <Fact id="aca.cliffPercent" /> of FPL and your premium tax credit is **zero**. Not tapered. Zero.
+
+For a single 60-year-old that line is <Fact id="aca.cliffSingle" />. Sitting exactly on it, the benchmark silver plan costs them <Fact id="aca.cliffEdgeBenchmarkCost" /> for the year. One dollar over, and they owe the whole <Fact id="aca.benchmarkSilver" /> — a credit of about <Fact id="aca.cliffEdgeCreditLost" /> destroyed by a single dollar of income.
+
+This deserves its own page, because the arithmetic gets genuinely absurd and there is a repayment rule for 2026 that almost nobody has caught up with. Read: **[the 2026 ACA subsidy cliff, in dollars](/topics/retirement/aca-subsidy-cliff)**.
+
+## The floor nobody mentions
+
+Here is the trap that the cliff creates. Told to get their income *down*, people push it down too far.
+
+Below **100% of FPL** you generally get no marketplace premium tax credit at all. The credit exists for households between 100% and <Fact id="aca.cliffPercent" /> of FPL — there is a floor as well as a ceiling.
+
+In the 40 states (plus DC) that expanded Medicaid, this is usually survivable: below <Fact id="fpl.medicaidPercent" /> of FPL you qualify for Medicaid instead, which is real coverage with no premium. But in the **ten states that never expanded Medicaid**, an adult below 100% of FPL can be too poor for a marketplace subsidy and too well-off for Medicaid, and therefore eligible for nothing. That is the **coverage gap**, and KFF counts roughly 1.4 million people in it.
+
+An early retiree living off a large taxable brokerage account can land here by accident. Spend from principal and Roth accounts, realise no gains, and your *MAGI* can be near zero while your *spending* is $70,000 a year. You are not poor. You are just invisible to the formula — and in a non-expansion state, uninsured.
+
+The target is not "as low as possible". It is **between the floor and the cliff**, and if you are aiming for a silver plan, ideally between 100% and 250% of FPL where cost-sharing reductions also cut your deductible.
+
+## The poverty line, by household size
+
+Plan-year 2026 eligibility is measured against the **2025** HHS guidelines (48 states + DC; Alaska and Hawaii are higher). One person: <Fact id="fpl.onePerson" />, plus <Fact id="fpl.perAdditional" /> for each additional person.
+
+| Household | 100% FPL (the floor) | <Fact id="fpl.medicaidPercent" /> FPL (Medicaid, expansion states) | <Fact id="aca.cliffPercent" /> FPL (the cliff) |
+| --- | --- | --- | --- |
+| 1 person | <Fact id="fpl.onePerson" /> | <Fact id="fpl.medicaid138Single" /> | **<Fact id="aca.cliffSingle" />** |
+| 2 people | <Fact id="fpl.twoPerson" /> | <Fact id="fpl.medicaid138Couple" /> | **<Fact id="aca.cliffCouple" />** |
+| 4 people | <Fact id="fpl.fourPerson" /> | <Fact id="fpl.medicaid138Family4" /> | **<Fact id="aca.cliffFamily4" />** |
+
+Household size here is your tax family — you, your spouse if filing jointly, and your dependents. A couple bridging to Medicare together has a cliff at <Fact id="aca.cliffCouple" />, not <Fact id="aca.cliffSingle" />, which is why the arithmetic changes sharply the year one spouse turns 65 and drops off the marketplace plan.
 
 ## The income that counts is not the income you think
 
-Here is the trap. ACA help is not based on your *taxable* income. It is based on a broader number — **ACA MAGI** — and it adds back things you might assume are invisible.
+ACA help is not based on taxable income. It is based on **ACA MAGI**: your adjusted gross income, plus three add-backs (IRC §36B).
 
-**Counts toward the cliff:** traditional 401(k) and IRA withdrawals · **Roth conversions** · capital gains · pensions · **all** of your Social Security benefits, including the portion that isn't taxed · tax-exempt interest.
+**Counts:**
 
-**Does not count:** withdrawals from a Roth account you already own.
+- Traditional 401(k) and IRA withdrawals
+- **Roth conversions** — the full converted amount
+- Capital gains, dividends, interest
+- Pensions and annuity income
+- Wages and self-employment income
+- **All** of your Social Security benefits — including the portion that is not taxable. This one surprises people. The untaxed part of your benefit is invisible on your tax return and fully visible to the ACA formula.
+- Tax-exempt interest — municipal bonds do not hide here either
+- Excluded foreign earned income
 
-So a Roth conversion done "to be efficient" at 61 can quietly push you over the cliff, cost five figures in lost premium help, and — separately — raise your Medicare premium two years later through IRMAA. This is why your [Roth vs Traditional](/topics/retirement/roth-vs-traditional) mix and a deliberate [withdrawal plan](/topics/decision-tools/withdrawal-plan) matter *before* 65, not after.
+**Does not count:**
 
-Model it before you convert. The [Retirement Checkup](/checkup) will show you where you stand.
+- Withdrawals from a **Roth** account you already own
+- Return of your own **principal or basis** from a taxable brokerage account (only the *gain* counts)
+- Loan proceeds, including a HELOC or a margin loan
+- Gifts and inheritances
+- The proceeds of selling your home, up to the excluded gain
+
+That last group is the whole game. Two retirees can spend exactly $70,000 a year and have completely different ACA MAGI, purely because of which accounts they spend from.
+
+## The levers that move MAGI
+
+Roughly in the order most people should reach for them:
+
+1. **Spend from Roth and from basis.** Free. No tax, no MAGI. This is the reason a Roth balance is worth more between 60 and 65 than at almost any other time — see [Roth vs Traditional](/topics/retirement/roth-vs-traditional).
+2. **Pre-tax 401(k) or traditional IRA contributions**, if you still have earned income. Deductible contributions come straight off AGI. A part-time job can fund a deductible IRA and lower your MAGI at the same time.
+3. **HSA contributions.** An above-the-line deduction, so it reduces MAGI dollar for dollar. From January 1, 2026, **bronze and catastrophic exchange plans count as HSA-qualified** regardless of the general high-deductible test (IRS Notice 2026-05), which widens this lever considerably for early retirees. Note you cannot contribute once you enrol in Medicare.
+4. **SEP-IRA or solo 401(k)**, if any of your income is self-employment. The contribution limits are far larger than an IRA's, and self-employed health insurance premiums may also be deductible above the line.
+5. **Manage capital gains deliberately.** You choose when to realise them. Harvest losses to offset gains; up to $3,000 of net capital loss can offset ordinary income each year, and the rest carries forward. Specific-lot identification lets you sell high-basis shares and realise less gain per dollar raised.
+6. **Time the lumpy events.** A Roth conversion, a business sale, an exercised option, a big rebalance — each is a choice about *which year* the income lands in. Between 60 and 65 that choice is worth real money.
+
+The tax-efficient move and the ACA-efficient move often point in opposite directions. A Roth conversion at 61 that looks smart on a pure tax spreadsheet can cost you five figures in lost premium credits and — separately — raise your Medicare premium two years later through IRMAA, because IRMAA looks back <Fact id="medicare.irmaaLookback" /> years. A conversion at 63 lands on your premium at 65.
+
+## Planning the bridge
+
+Model it before you act, not after.
+
+- [**ACA bridge tool**](/tools/aca-bridge) — where your income lands against the cliff, and the headroom you have left.
+- [**Roth vs Traditional**](/tools/roth-vs-traditional) — what a conversion really costs once the cliff and IRMAA are priced in, not just the income tax.
+- [**Retirement Checkup**](/checkup) — the whole picture.
+
+And build the premium into the plan itself. Health care is the line item that inflates fastest in a retirement budget, and pre-65 premiums are the most expensive stretch of it — see [inflation and retirement](/topics/retirement/inflation-and-retirement).
 
 ## Key takeaways
 
-- Medicare starts at 65 — retiring earlier leaves a gap you must bridge yourself.
-- Bridge it with an ACA plan, COBRA (≤18 months), or a spouse's plan.
-- **For 2026, one dollar over 400% of the poverty line costs you the entire subsidy** — about $62,600 for a single person.
-- The income that counts is ACA MAGI, which includes every Roth conversion and *all* Social Security benefits.
+- Medicare starts at <Fact id="medicare.eligibilityAge" />. Retire earlier and the bridge is yours to build — COBRA cannot span it, and the marketplace usually can.
+- **The premium cap did not disappear for 2026.** Between 100% and <Fact id="aca.cliffPercent" /> of FPL, your benchmark silver premium is still capped, at <Fact id="aca.applicablePctMin" /> to <Fact id="aca.applicablePctMax" /> of income. What expired was the softer enhanced cap and eligibility above the cliff.
+- **Above <Fact id="aca.cliffPercent" /> of FPL the credit is zero** — <Fact id="aca.cliffSingle" /> for one person, <Fact id="aca.cliffCouple" /> for two.
+- **There is a floor too.** Below 100% of FPL you generally get no credit, and in the ten non-expansion states you may get nothing at all. Do not crush your MAGI past it.
+- The number that decides all of this is ACA MAGI, which includes every Roth conversion and *all* of your Social Security — but not Roth withdrawals or return of basis.
 
-*Congress was still debating an extension of the enhanced credits when this was written. We re-check this page against current law at every update. Last verified 2026-07-11.*
+*The enhanced credits expired 2025-12-31 and legislation to restore them was live in Congress when this was written; the House passed a three-year extension in January 2026 and the Senate had not acted. A change could be retroactive. We re-check this page against current law at every update. Last verified 2026-07-11.*
 
 Educational only — not financial, tax, or medical advice.

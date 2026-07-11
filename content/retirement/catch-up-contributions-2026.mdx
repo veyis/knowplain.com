@@ -1,7 +1,7 @@
 ---
 title: "Catch-up contributions in 2026"
 description: "The 2026 catch-up limits by age, why the 60–63 super catch-up replaces rather than stacks, and the new rule forcing high earners' catch-up into Roth."
-plainAnswer: "In 2026 you can defer $24,500 to a 401(k). At 50 you add an $8,000 catch-up. At 60–63 that catch-up rises to $11,250 — instead of, not on top of, the $8,000 — and drops back at 64. If your 2025 wages from that employer topped $150,000, the catch-up must be Roth."
+plainAnswer: "In 2026 you can defer {{401k.deferral}} to a 401(k). At 50 you add an {{401k.catchUp50}} catch-up. At 60–63 that catch-up rises to {{401k.superCatchUp}} — instead of, not on top of, the {{401k.catchUp50}} — and drops back at 64. If your 2025 wages from that employer topped $150,000, the catch-up must be Roth."
 published: "2026-07-11"
 updated: "2026-07-11"
 reviewed: "2026-07-11"
@@ -16,28 +16,28 @@ relatedTools:
     label: "Check what a Roth conversion really costs"
 faqs:
   - q: "How much can I contribute to a 401(k) in 2026 if I am over 50?"
-    a: "The base employee deferral is $24,500. From the year you turn 50 you can add an $8,000 catch-up, for $32,500. From the year you turn 60 until the year you turn 63, the catch-up is $11,250 instead, for $35,750. Employer contributions sit on top of all of that."
+    a: "The base employee deferral is $24,500. From the year you turn 50 you can add an {{401k.catchUp50}} catch-up, for $32,500. From the year you turn 60 until the year you turn 63, the catch-up is {{401k.superCatchUp}} instead, for $35,750. Employer contributions sit on top of all of that."
   - q: "Do the age-50 and age-60 catch-ups stack?"
-    a: "No. This is the single most common error. The $11,250 super catch-up available at ages 60 to 63 replaces the $8,000 catch-up. It is not added to it. Your maximum employee contribution at 61 is $35,750, not $44,000. Any source telling you otherwise is wrong."
+    a: "No. This is the single most common error. The {{401k.superCatchUp}} super catch-up available at ages 60 to 63 replaces the {{401k.catchUp50}} catch-up. It is not added to it. Your maximum employee contribution at 61 is $35,750, not $44,000. Any source telling you otherwise is wrong."
   - q: "What happens to my catch-up at 64?"
     a: "It reverts to the standard $8,000. The larger catch-up is written for ages 60 through 63 only, so it is a four-year window, not a permanent upgrade. If you were counting on the bigger number continuing, plan for the drop before it happens."
   - q: "Does my catch-up have to be Roth in 2026?"
     a: "Only if your Social Security (FICA) wages in 2025 from the employer that sponsors your plan exceeded $150,000. If so, SECURE 2.0 requires the catch-up portion to be after-tax Roth. Pre-tax is not an option for it. Your base deferral is unaffected and can still be pre-tax."
-  - q: "Is the Roth catch-up threshold $145,000 or $150,000?"
-    a: "$150,000 for 2026. The $145,000 figure written into SECURE 2.0 is the statutory base, and it is indexed. IRS Notice 2025-67 set the 2026 threshold — measured against 2025 wages — at $150,000. Many articles and payroll notices still quote $145,000."
+  - q: "Is the Roth catch-up threshold $145,000 or {{401k.mandatoryRothWageThreshold}}?"
+    a: "{{401k.mandatoryRothWageThreshold}} for 2026. The $145,000 figure written into SECURE 2.0 is the statutory base, and it is indexed. IRS Notice 2025-67 set the 2026 threshold — measured against 2025 wages — at $150,000. Many articles and payroll notices still quote $145,000."
   - q: "What if my plan does not offer Roth?"
     a: "Then, under the final regulations, a participant who is subject to the Roth catch-up requirement cannot make catch-up contributions at all. The plan does not have to add a Roth feature. If you are a high earner and your plan lacks one, you may lose the catch-up entirely until the plan adds it."
-  - q: "Are catch-up contributions counted against the $72,000 total limit?"
-    a: "No. Catch-up contributions are not treated as annual additions, so they sit on top of the $72,000 employee-plus-employer ceiling rather than inside it. This matters if you are trying to size after-tax contributions for a mega-backdoor Roth."
+  - q: "Are catch-up contributions counted against the {{401k.total415c}} total limit?"
+    a: "No. Catch-up contributions are not treated as annual additions, so they sit on top of the {{401k.total415c}} employee-plus-employer ceiling rather than inside it. This matters if you are trying to size after-tax contributions for a mega-backdoor Roth."
   - q: "What is the Saver's Match?"
-    a: "From tax year 2027, SECURE 2.0 replaces the Saver's Credit with a federal match: 50% of the first $2,000 you contribute, up to $1,000. Unlike the credit, it is paid into your retirement account rather than reducing the tax on your return, and it cannot be deposited into a Roth account."
+    a: "From tax year 2027, SECURE 2.0 replaces the Saver's Credit with a federal match: 50% of the first {{saversMatch.maxContribution}} you contribute, up to $1,000. Unlike the credit, it is paid into your retirement account rather than reducing the tax on your return, and it cannot be deposited into a Roth account."
 sources:
   - title: "Notice 2025-67 — 2026 amounts relating to retirement plans and IRAs"
     publisher: "Internal Revenue Service"
     url: "https://www.irs.gov/pub/irs-drop/n-25-67.pdf"
     accessed: "2026-07-11"
     note: "Source for the 2026 deferral, catch-up, IRA and 415(c) limits, and for raising the section 414(v)(7)(A) Roth catch-up wage threshold from $145,000 to $150,000."
-  - title: "401(k) limit increases to $24,500 for 2026; IRA limit increases to $7,500"
+  - title: "401(k) limit increases to {{401k.deferral}} for 2026; IRA limit increases to {{ira.limit}}"
     publisher: "Internal Revenue Service"
     url: "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500"
     accessed: "2026-07-11"
@@ -61,7 +61,7 @@ sources:
     publisher: "United States Senate Committee on Finance"
     url: "https://www.finance.senate.gov/imo/media/doc/Secure%202.0_Section%20by%20Section%20Summary%2012-19-22%20FINAL.pdf"
     accessed: "2026-07-11"
-    note: "Source for the Saver's Match rate, the $2,000 matched contribution cap, the $1,000 maximum, and the statutory income phase-out ranges."
+    note: "Source for the Saver's Match rate, the {{saversMatch.maxContribution}} matched contribution cap, the {{saversMatch.maxMatch}} maximum, and the statutory income phase-out ranges."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
@@ -96,13 +96,13 @@ This is the error to burn into memory, because a great many pages that rank for 
 
 At ages 60 through 63, the catch-up is <Fact id="401k.superCatchUp" /> **instead of** <Fact id="401k.catchUp50" />. Not in addition to it. Your ceiling at 61 is <Fact id="401k.maxAt60" /> — the base deferral plus one catch-up, the larger one.
 
-Add the two catch-ups together and you get a number that does not exist in law. Someone who believes it will set a payroll deferral their plan will refuse, or worse, over-contribute and have to unwind an excess deferral with their plan administrator before the filing deadline. The real gain from turning 60 is the difference between the two catch-ups, which is a useful sum but a much smaller one than the stacked figure implies.
+Add the two catch-ups together and you get a number that does not exist in law. Someone who believes it will set a payroll deferral their plan refuses, or over-contributes and has to unwind an excess deferral before the filing deadline. The real gain from turning 60 is the *difference* between the two catch-ups — a useful sum, but much smaller than the stacked figure implies.
 
 ## And it ends at 64
 
 The larger catch-up is written for ages 60, 61, 62 and 63. In the year you turn 64 you go back to <Fact id="401k.catchUp50" />.
 
-That is genuinely counter-intuitive — nothing else in retirement law gives you something and then quietly takes it back while you are still working — and it is the reason to treat 60–63 as a window rather than a new baseline. Four years of the larger catch-up is real money, and it lands in exactly the years when a household is most likely to have finished with mortgages and tuition. If your plan is "I will max out the big catch-up once I get there," check that your cash flow can actually do it for four years, because there is no extension.
+Nothing else in retirement law gives you something and then quietly takes it back while you are still working, which is why 60–63 is a window rather than a new baseline. Four years is real money, and it lands in exactly the years a household is most likely to be done with mortgages and tuition. If your plan is "I will max the big catch-up once I get there", check your cash flow can actually do it for four years — there is no extension.
 
 The [catch-up planner](/tools/catch-up-contributions) will show you which tier you fall into and how much room you have left this year.
 
@@ -133,13 +133,11 @@ So a high earner in a plan without Roth does not fall back to a pre-tax catch-up
 
 ### 2026 is a transition year
 
-The statutory requirement applies from January 1, 2026. The final regulations, T.D. 10033, generally apply to taxable years beginning after December 31, 2026, and for 2026 a plan may follow a reasonable, good-faith interpretation of the statute instead.
+The statutory requirement applies from January 1, 2026. The final regulations generally apply to taxable years beginning after December 31, 2026, and for 2026 a plan may instead follow a reasonable, good-faith interpretation of the statute. The law binds now; the detailed rulebook binds next year. In between, two employers can land on mildly different answers at the edges — so do not assume your plan reads the wage test the way your last one did.
 
-In plain terms: the law binds now, the detailed rulebook binds next year, and in between two employers can reach mildly different answers on the edge cases. Do not assume your plan reads the wage test the way the last plan did. Ask.
+Many plans handle it with a **deemed Roth election**: if you are over the threshold, the plan treats your catch-up as Roth unless you say otherwise. The regulations require a real opportunity to elect differently — which in practice means declining the catch-up, not electing pre-tax. Read the notice your plan sends.
 
-Many plans handle this with a **deemed Roth election** — if you are over the wage threshold, the plan simply treats your catch-up as Roth unless you say otherwise. The regulations require that you be given a real chance to make a different election, which in practice means opting out of the catch-up altogether, not opting into pre-tax. Read the notice your plan sends; do not bin it.
-
-Whether a forced Roth catch-up is bad news is a separate question, and the honest answer is that it often is not — see [Roth vs Traditional](/topics/retirement/roth-vs-traditional). It costs you a deduction today and buys you a tax-free withdrawal, and it reduces the taxable balance that will eventually drive your RMDs. What it does do is raise your taxable income now, which can matter if you are managing income against [ACA subsidies before 65](/topics/retirement/health-care-before-medicare).
+Whether a forced Roth catch-up is bad news is a separate question, and often it is not — see [Roth vs Traditional](/topics/retirement/roth-vs-traditional). It costs a deduction today, buys a tax-free withdrawal later, and shrinks the pre-tax balance that will eventually drive your RMDs. What it does do is raise your taxable income now, which matters if you are managing income against [ACA subsidies before 65](/topics/retirement/health-care-before-medicare).
 
 ## The IRA is a separate bucket
 
@@ -149,9 +147,9 @@ The IRA limit is its own allowance, on top of the 401(k):
 - IRA catch-up at 50+: <Fact id="ira.catchUp50" />
 - Maximum IRA contribution at 50 or older: <Fact id="ira.maxAt50" />
 
-There is no super catch-up for IRAs. The <Fact id="ira.catchUp50" /> is the same at 51 and at 61.
+There is no super catch-up for IRAs. The <Fact id="ira.catchUp50" /> is the same at 51 as at 61.
 
-Two limits to check before you assume the money goes where you want it. Direct Roth IRA contributions phase out at modified AGI of <Fact id="roth.phaseOutSingle" /> for single filers and <Fact id="roth.phaseOutJoint" /> for joint filers. And the deductibility of a traditional IRA contribution phases out at much lower incomes if you are covered by a workplace plan — you can still contribute, but the deduction may be gone.
+Two limits before you assume the money goes where you want it. Direct Roth IRA contributions phase out at modified AGI of <Fact id="roth.phaseOutSingle" /> (single) and <Fact id="roth.phaseOutJoint" /> (joint). And if you are covered by a workplace plan, the *deductibility* of a traditional IRA contribution phases out at much lower incomes — you can still contribute, but the deduction may be gone.
 
 ## The ceiling above your ceiling
 
@@ -169,9 +167,9 @@ If your income is modest, the more valuable change is one nobody is writing abou
 
 For tax years after 2026, SECURE 2.0 section 103 replaces the Saver's Credit with the **Saver's Match**. The federal government contributes 50% of the first $2,000 you save — up to $1,000 a year — and, crucially, it is **paid into your retirement account** rather than deducted from the tax on your return. The old credit was non-refundable, which meant the people it was aimed at frequently owed too little tax to receive it. The match does not have that problem.
 
-The statutory phase-out ranges are $20,500 to $35,500 of modified AGI for single filers, $30,750 to $53,250 for heads of household, and $41,000 to $71,000 for joint filers; they are indexed after 2027. The match cannot be deposited into a Roth account, and the usual exclusions from the old credit — dependents, full-time students, and those under 18 — carry over. (Figures from the [Senate Finance Committee's section-by-section summary](https://www.finance.senate.gov/imo/media/doc/Secure%202.0_Section%20by%20Section%20Summary%2012-19-22%20FINAL.pdf); the IRS is still working through implementation, so the mechanics of how the money reaches your account may change.)
+The statutory phase-out ranges are $20,500–$35,500 of modified AGI for single filers, $30,750–$53,250 for heads of household, and $41,000–$71,000 for joint filers, indexed after 2027. The match cannot be deposited into a Roth account, and the old credit's exclusions — dependents, full-time students, and under-18s — carry over. (Figures from the [Senate Finance Committee's section-by-section summary](https://www.finance.senate.gov/imo/media/doc/Secure%202.0_Section%20by%20Section%20Summary%2012-19-22%20FINAL.pdf). The IRS is still working through implementation, so the mechanics of how the money reaches your account may change.)
 
-If you are 50-something, earning below those ceilings, and have been told catch-up contributions are the answer, this is the more consequential number. A guaranteed $1,000 into the account beats almost anything a fund selection will do for you.
+If you are 50-something, earning below those ceilings, and have been told catch-up contributions are the answer, this is the more consequential number. A guaranteed $1,000 into the account beats anything a fund selection will do for you.
 
 ## Key takeaways
 

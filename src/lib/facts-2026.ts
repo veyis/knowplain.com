@@ -230,6 +230,10 @@ export const SOCIAL_SECURITY_2026 = {
   // so "no tax on Social Security" is false. Say so.
   benefitTaxThresholdSingle: 25_000,
   benefitTaxThresholdJoint: 32_000,
+  // The second tier, where up to 85% of the benefit becomes taxable. Also unindexed and
+  // also untouched by OBBBA. Here so prose can cite it rather than hand-type it.
+  benefitTax85ThresholdSingle: 34_000,
+  benefitTax85ThresholdJoint: 44_000,
 } as const;
 
 // ── Medicare 2026 ────────────────────────────────────────────────────────────
@@ -348,6 +352,85 @@ export const ACA_2026 = {
     annualIncreaseAfterExpiration: 10_389,
   },
 } as const;
+
+// ── ACA applicable percentage table 2026 ── VOLATILE ─────────────────────────
+// WHAT ACTUALLY REVERTED when the enhanced credits expired. The cap did NOT vanish.
+// A household between 100% and 400% of FPL still has its benchmark-silver premium
+// capped at this share of income. The cap got NARROWER (nothing at all above 400%)
+// and HARSHER (9.96% at the top, where ARPA/IRA capped everyone at 8.5%).
+//
+// Saying "the cap is gone" tells a 62-year-old at 250% FPL they get no help at all.
+// They do — their benchmark premium is capped at 8.44-9.96% of income.
+// Source: IRS Rev. Proc. 2025-25 §3.01 — https://www.irs.gov/pub/irs-drop/rp-25-25.pdf
+export const ACA_APPLICABLE_PERCENTAGE_2026 = [
+  { band: "Under 133%", lower: 0, upper: 133, initial: 0.021, final: 0.021 },
+  { band: "133% to 150%", lower: 133, upper: 150, initial: 0.0314, final: 0.0419 },
+  { band: "150% to 200%", lower: 150, upper: 200, initial: 0.0419, final: 0.066 },
+  { band: "200% to 250%", lower: 200, upper: 250, initial: 0.066, final: 0.0844 },
+  { band: "250% to 300%", lower: 250, upper: 300, initial: 0.0844, final: 0.0996 },
+  { band: "300% to 400%", lower: 300, upper: 400, initial: 0.0996, final: 0.0996 },
+] as const;
+
+/**
+ * The share of income a household is expected to pay for the benchmark silver plan, at a
+ * given percent of FPL. Rises linearly inside each band (Rev. Proc. 2025-25 §3.01).
+ *
+ * Above 400% FPL there IS no applicable percentage — the credit is zero, not capped — so
+ * this returns null there rather than a number that would imply help exists.
+ */
+export function acaApplicablePercentage(fplPct: number): number | null {
+  if (fplPct > ACA_2026.subsidyCliffFplPercent) return null; // over the cliff: no credit at all
+  const band =
+    ACA_APPLICABLE_PERCENTAGE_2026.find((b) => fplPct >= b.lower && fplPct <= b.upper) ??
+    ACA_APPLICABLE_PERCENTAGE_2026[0];
+  if (band.initial === band.final) return band.final;
+  const span = band.upper - band.lower;
+  const progress = span > 0 ? (fplPct - band.lower) / span : 0;
+  return band.initial + (band.final - band.initial) * progress;
+}
+
+/**
+ * What the benchmark silver plan actually costs a household under CURRENT (2026) law.
+ *
+ * This is the number the old code got wrong. It used the EXPIRED enhanced 8.5% cap for
+ * everyone below the cliff, which (a) underpriced the 300-400% band, who really pay 9.96%,
+ * and (b) made `restoredEnhancedBenchmarkSavings` subtract a value from itself — so the
+ * bridge tool reported $0 of harm from the subsidy expiration for EVERY household under
+ * 400% FPL. That is the same "no help, no harm below the line" error we just removed from
+ * the prose, sitting in the calculator that the prose links to.
+ */
+export function acaCurrentLawBenchmarkCost(magi: number, householdSize: number): number {
+  const pct = fplPercent(magi, householdSize);
+  const applicable = acaApplicablePercentage(pct);
+  // Over the cliff: no credit, you pay the whole premium.
+  if (applicable === null) return ACA_2026.averageAge60AnnualPremium.benchmarkSilver;
+  return Math.round(
+    Math.min(ACA_2026.averageAge60AnnualPremium.benchmarkSilver, Math.max(0, magi * applicable)),
+  );
+}
+
+/** The top applicable percentage (the flat 300-400% band). This rate prices the cliff edge. */
+export const ACA_TOP_APPLICABLE_PERCENTAGE =
+  ACA_APPLICABLE_PERCENTAGE_2026[ACA_APPLICABLE_PERCENTAGE_2026.length - 1].final;
+
+/**
+ * OBBBA §71305 REPEALED §36B(f)(2)(B) — the cap on repaying excess advance premium
+ * tax credit — for tax years beginning after 2025. There is now NO repayment cap at
+ * ANY income level, not merely above 400% FPL.
+ *
+ * This is the part almost every secondary source still gets wrong: they publish the
+ * old $350/$900/$1,500 repayment-cap table as if it still applies to 2026. It does not.
+ * Underestimate your income and you repay every dollar of APTC you received.
+ *
+ * Sources: IRS Rev. Proc. 2025-32 §3.04 ("Section 71305 of the OBBBA removes
+ * § 36B(f)(2)(B) ... effective for taxable years beginning after December 31, 2025");
+ * IRS Fact Sheet FS-2025-10 Q31, updated 2025-12-23 ("There is no repayment cap for
+ * tax years after 2025.") — https://www.irs.gov/pub/taxpros/fs-2025-10.pdf
+ */
+export const ACA_APTC_REPAYMENT_CAP_REPEALED = true;
+
+/** Medicaid expansion threshold: statutory 133% FPL plus the 5-point income disregard. */
+export const MEDICAID_EXPANSION_FPL_PERCENT = 138;
 
 // Federal Poverty Level. 2026 marketplace subsidies are computed against the
 // PRIOR year's guidelines, so 2026 coverage uses the 2025 HHS FPL (48 contiguous
@@ -954,6 +1037,31 @@ export function acaSubsidyCliffMagi(householdSize: number): number {
   return federalPovertyLevel(householdSize) * (ACA_2026.subsidyCliffFplPercent / 100);
 }
 
+/**
+ * A single 60-year-old sitting at EXACTLY 400% of FPL — the last subsidised dollar.
+ * Their benchmark-silver premium is capped at the top applicable percentage of income,
+ * so this is what they actually pay.
+ */
+export function acaBenchmarkCostAtCliffSingle(): number {
+  return Math.round(acaSubsidyCliffMagi(1) * ACA_TOP_APPLICABLE_PERCENTAGE);
+}
+
+/**
+ * The premium tax credit that ONE MORE DOLLAR of MAGI destroys, for that same
+ * 60-year-old: the full benchmark premium minus the capped share they were paying.
+ *
+ * This is the cliff in dollars. It is the number that makes the marginal tax rate on
+ * that dollar absurd, and it is the whole reason the 60-64 bracket has to manage MAGI.
+ * Uses the national-average age-60 benchmark, so it is an order-of-magnitude figure,
+ * not a quote — local benchmark premiums vary materially by county.
+ */
+export function acaCreditLostAtCliffSingle(): number {
+  return Math.max(
+    0,
+    Math.round(ACA_2026.averageAge60AnnualPremium.benchmarkSilver - acaBenchmarkCostAtCliffSingle()),
+  );
+}
+
 /** Reference cost for the lost enhanced subsidy in KFF's 60-year-old, $65k scenario. */
 export function acaLostEnhancedCreditReference(): number {
   const { annualIncome, benchmarkIncomeCap } = ACA_2026.restoredEnhancedCreditReference;
@@ -970,6 +1078,47 @@ export function acaRestoredEnhancedBenchmarkCost(magi: number): number {
   return Math.min(
     ACA_2026.averageAge60AnnualPremium.benchmarkSilver,
     Math.max(0, magi * ACA_2026.restoredEnhancedCreditReference.benchmarkIncomeCap),
+  );
+}
+
+/**
+ * The EXPIRED (ARPA/IRA) enhanced applicable-percentage schedule, for the counterfactual.
+ *
+ * The 8.5% figure everyone quotes was only ever the cap at the TOP of this schedule — the
+ * rate paid above 400% FPL, where the enhanced credits removed the cliff entirely. Below
+ * that it slid from 0%. Pricing the whole enhanced scenario at a flat 8.5% (which is what
+ * `acaRestoredEnhancedBenchmarkCost` does, and is correct only above the cliff) makes the
+ * expired subsidy look MORE expensive than current law for lower incomes — so the lost
+ * credit floored at $0 for exactly the households that lost the most, in percentage terms.
+ */
+export const ACA_ENHANCED_APPLICABLE_PERCENTAGE = [
+  { lower: 0, upper: 150, initial: 0, final: 0 },
+  { lower: 150, upper: 200, initial: 0, final: 0.02 },
+  { lower: 200, upper: 250, initial: 0.02, final: 0.04 },
+  { lower: 250, upper: 300, initial: 0.04, final: 0.06 },
+  { lower: 300, upper: 400, initial: 0.06, final: 0.085 },
+] as const;
+
+/** Share of income owed for the benchmark plan under the EXPIRED enhanced schedule. */
+export function acaEnhancedApplicablePercentage(fplPct: number): number {
+  // Above 400% the enhanced credits had no cliff — you simply paid the 8.5% cap.
+  if (fplPct > ACA_2026.subsidyCliffFplPercent) {
+    return ACA_2026.restoredEnhancedCreditReference.benchmarkIncomeCap;
+  }
+  const band = ACA_ENHANCED_APPLICABLE_PERCENTAGE.find(
+    (b) => fplPct >= b.lower && fplPct <= b.upper,
+  );
+  if (!band) return 0;
+  if (band.initial === band.final) return band.final;
+  const progress = (fplPct - band.lower) / (band.upper - band.lower);
+  return band.initial + (band.final - band.initial) * progress;
+}
+
+/** What the benchmark plan WOULD cost if the enhanced credits were restored. */
+export function acaEnhancedBenchmarkCost(magi: number, householdSize: number): number {
+  const pct = acaEnhancedApplicablePercentage(fplPercent(magi, householdSize));
+  return Math.round(
+    Math.min(ACA_2026.averageAge60AnnualPremium.benchmarkSilver, Math.max(0, magi * pct)),
   );
 }
 
@@ -996,11 +1145,13 @@ export type AcaSubsidyStatus = {
 export function acaSubsidyStatus(magi: number, householdSize: number): AcaSubsidyStatus {
   const cliffMagi = acaSubsidyCliffMagi(householdSize);
   const pct = fplPercent(magi, householdSize);
-  const currentLawBenchmarkCost =
-    pct > ACA_2026.subsidyCliffFplPercent
-      ? ACA_2026.averageAge60AnnualPremium.benchmarkSilver
-      : acaRestoredEnhancedBenchmarkCost(magi);
-  const restoredEnhancedBenchmarkCost = acaRestoredEnhancedBenchmarkCost(magi);
+  // Both sides of this comparison now use the schedule that ACTUALLY applied to each.
+  // Current law = the reverted table (2.10%–9.96%). Enhanced = the expired ARPA sliding
+  // scale (0%–8.5%), NOT a flat 8.5% — pricing the enhanced scenario at its top-of-schedule
+  // cap made it look dearer than current law for lower incomes, so the lost credit floored
+  // at $0 for the households the expiration hit hardest.
+  const currentLawBenchmarkCost = acaCurrentLawBenchmarkCost(magi, householdSize);
+  const restoredEnhancedBenchmarkCost = acaEnhancedBenchmarkCost(magi, householdSize);
   return {
     fplPercent: pct,
     cliffMagi,

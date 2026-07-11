@@ -1,10 +1,37 @@
 import { allArticles } from "content-collections";
+import { resolveFacts } from "./facts-display";
 import { pillars, type PillarId } from "./site";
 
 export type Article = (typeof allArticles)[number];
 export type ContentType = "explainer" | "tool" | "video" | "thread";
 
-export const articles = allArticles;
+/**
+ * Resolve `{{fact.id}}` tokens in every frontmatter string, once, at the collection boundary.
+ *
+ * `<Fact>` only works in the MDX body. Frontmatter is YAML, so every 2026 number in
+ * `description`, `plainAnswer`, the FAQs, the source notes and the link labels was hand-typed
+ * — and those are the strings that become the meta description, the answer snippet, and the
+ * Article schema. It was the one surface with no protection against drifting from
+ * facts-2026.ts, which is the exact failure this whole system exists to prevent.
+ *
+ * Doing it HERE rather than in each page means the hubs, search index, OG images and sitemap
+ * cannot forget to. An unknown id throws at build.
+ */
+export const articles = allArticles.map((a) => ({
+  ...a,
+  title: resolveFacts(a.title),
+  description: resolveFacts(a.description),
+  plainAnswer: resolveFacts(a.plainAnswer),
+  faqs: a.faqs?.map((f) => ({ q: resolveFacts(f.q), a: resolveFacts(f.a) })),
+  sources: a.sources?.map((s) => ({
+    ...s,
+    title: resolveFacts(s.title),
+    ...(s.note ? { note: resolveFacts(s.note) } : {}),
+  })),
+  related: a.related?.map((r) => ({ ...r, label: resolveFacts(r.label) })),
+  relatedTools: a.relatedTools?.map((r) => ({ ...r, label: resolveFacts(r.label) })),
+  relatedDecisions: a.relatedDecisions?.map((r) => ({ ...r, label: resolveFacts(r.label) })),
+}));
 
 export function getArticle(pillar: string, slug: string) {
   return articles.find((a) => a.pillar === pillar && a.slug === slug);
