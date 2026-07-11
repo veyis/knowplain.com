@@ -2,6 +2,11 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { login, signup } from "./actions";
 
+export const metadata = {
+  title: "Sign in",
+  robots: { index: false, follow: false },
+};
+
 export default async function LoginPage({
   searchParams,
 }: {

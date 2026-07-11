@@ -10,7 +10,7 @@ import { SourceList } from "@/components/SourceList";
 import { mdxComponents } from "@/components/mdx-components";
 import { articles, getArticle, isPillarId } from "@/lib/content";
 import { defaultArticleAuthor, defaultArticleReviewer, getEditorialPerson, getReviewer } from "@/lib/editorial";
-import { articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/schema";
+import { articleJsonLd, breadcrumbJsonLd } from "@/lib/schema";
 import { pillars, site } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -78,7 +78,8 @@ export default async function ArticlePage({
       { name: p.title, url: `${site.url}${p.path}` },
       { name: article.title, url },
     ]),
-    faqJsonLd(article.faqs),
+    // No FAQPage: Google removed the FAQ rich result on 2026-05-07. The visible
+    // FAQBlock below stays — it serves readers and LLM extraction, not a SERP feature.
   ].filter(Boolean) as Record<string, unknown>[];
 
   return (

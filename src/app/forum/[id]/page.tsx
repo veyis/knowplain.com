@@ -28,6 +28,14 @@ const pillarColors: Record<string, string> = {
   "decision-tools": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
 };
 
+// User-generated threads stay out of the index until moderation is real. Thin or
+// unreviewed UGC on a YMYL finance domain drags site-wide quality, and Google's
+// DiscussionForumPosting markup should be earned, not led with. Curated answers live
+// at /forum/questions/* and ARE indexed.
+export const metadata = {
+  robots: { index: false, follow: true },
+};
+
 export default async function ThreadPage({
   params,
 }: {

@@ -12,17 +12,18 @@ export function organizationJsonLd() {
   };
 }
 
+/**
+ * WebSite markup is kept ONLY for Google's site-name feature. The SearchAction /
+ * sitelinks-search-box it used to carry was removed by Google on 2024-11-21 and
+ * no longer produces anything, so it is deliberately not emitted.
+ * https://developers.google.com/search/blog/2024/10/sitelinks-search-box
+ */
 export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: site.name,
     url: site.url,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${site.url}/search?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 
@@ -63,21 +64,16 @@ export function articleJsonLd(input: {
   };
 }
 
-export function faqJsonLd(items?: { q: string; a: string }[]) {
-  if (!items?.length) return null;
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.a,
-      },
-    })),
-  };
-}
+// Removed: faqJsonLd (FAQPage). Google removed the FAQ rich result on 2026-05-07 and
+// deleted its documentation on 2026-06-15, so the markup produces nothing. The visible
+// "Common questions" block stays — it is for readers and for LLM extraction.
+//
+// Removed: webApplicationJsonLd. The software-app rich result requires offers.price AND
+// aggregateRating/review; a free calculator with no genuine ratings earns nothing, and
+// inventing ratings to qualify would be a spam violation. Tools ship as ordinary pages.
+//
+// Removed: qaPageJsonLd. QAPage requires that users be able to submit answers; our
+// seeded question pages are staff-written. Re-add when the moderated forum earns it.
 
 export function profilePageJsonLd(input: {
   name: string;
@@ -97,25 +93,6 @@ export function profilePageJsonLd(input: {
       url: input.url,
       sameAs: input.sameAs,
     },
-  };
-}
-
-export function webApplicationJsonLd(input: {
-  name: string;
-  description: string;
-  url: string;
-  applicationCategory?: string;
-}) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: input.name,
-    description: input.description,
-    url: input.url,
-    applicationCategory: input.applicationCategory || "FinanceApplication",
-    operatingSystem: "Web",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
   };
 }
 
@@ -139,41 +116,6 @@ export function videoObjectJsonLd(input: {
     contentUrl: input.url,
     duration: input.duration,
     publisher: { "@type": "Organization", name: site.name, url: site.url },
-  };
-}
-
-export function qaPageJsonLd(input: {
-  question: string;
-  url: string;
-  answers: { text: string; author: string; upvotes?: number; accepted?: boolean }[];
-}) {
-  const acceptedAnswer = input.answers.find((answer) => answer.accepted) || input.answers[0];
-  return {
-    "@context": "https://schema.org",
-    "@type": "QAPage",
-    mainEntity: {
-      "@type": "Question",
-      name: input.question,
-      text: input.question,
-      url: input.url,
-      answerCount: input.answers.length,
-      acceptedAnswer: acceptedAnswer
-        ? {
-            "@type": "Answer",
-            text: acceptedAnswer.text,
-            upvoteCount: acceptedAnswer.upvotes || 0,
-            author: { "@type": "Person", name: acceptedAnswer.author },
-          }
-        : undefined,
-      suggestedAnswer: input.answers
-        .filter((answer) => answer !== acceptedAnswer)
-        .map((answer) => ({
-          "@type": "Answer",
-          text: answer.text,
-          upvoteCount: answer.upvotes || 0,
-          author: { "@type": "Person", name: answer.author },
-        })),
-    },
   };
 }
 

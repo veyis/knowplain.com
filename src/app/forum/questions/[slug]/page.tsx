@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
-import { breadcrumbJsonLd, qaPageJsonLd } from "@/lib/schema";
+import { breadcrumbJsonLd } from "@/lib/schema";
 import { isSeededQuestionSlug, seededQuestions } from "@/lib/forum-seeds";
 import { site } from "@/lib/site";
 
@@ -30,6 +30,8 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
 
   return (
     <AppShell active="forum">
+      {/* No QAPage markup: Google requires that users be able to submit answers, and these
+          are staff-written answer hubs. Earn the schema when the forum opens for real. */}
       <JsonLd
         data={[
           breadcrumbJsonLd([
@@ -37,11 +39,6 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
             { name: "Forum", url: `${site.url}/forum` },
             { name: question.title, url },
           ]),
-          qaPageJsonLd({
-            question: question.title,
-            url,
-            answers: [{ text: question.answer, author: "Know Plain Editorial", accepted: true, upvotes: 1 }],
-          }),
         ]}
       />
       <article className="max-w-[760px]">

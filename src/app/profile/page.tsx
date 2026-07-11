@@ -16,6 +16,7 @@ type SavedSimulation = {
 
 export const metadata = {
   title: "Profile",
+  robots: { index: false, follow: false },
 };
 
 export default async function ProfilePage() {
