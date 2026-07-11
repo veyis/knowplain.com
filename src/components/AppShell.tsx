@@ -78,6 +78,9 @@ export async function AppShell({
             <Link href="/glossary" className="transition-colors hover:text-foreground">
               Glossary
             </Link>
+            <Link href="/sources" className="transition-colors hover:text-foreground">
+              2026 numbers
+            </Link>
             <Link href="/disclosure" className="transition-colors hover:text-foreground">
               Disclosure
             </Link>

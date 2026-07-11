@@ -11,6 +11,90 @@
 
 export type Source = { label: string; url: string };
 
+/**
+ * Where every number below actually comes from.
+ *
+ * The citation lives WITH the constant, not in a comment, so the public /sources page
+ * renders straight from this file. If a figure changes, the number and its source and
+ * its verified date all move together — there is no second copy to forget.
+ *
+ * `volatile: true` marks a figure that can change by act of Congress rather than by the
+ * annual indexing calendar. Those need re-checking before every publish, not once a year.
+ */
+export type FactSource = {
+  title: string;
+  publisher: string;
+  url: string;
+  /** Last time a human confirmed this against the primary source. */
+  verified: string;
+  volatile?: boolean;
+  note?: string;
+};
+
+export const FACT_SOURCES = {
+  contributions: {
+    title: "Notice 2025-67 — 2026 retirement plan cost-of-living adjustments",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/pub/irs-drop/n-25-67.pdf",
+    verified: "2026-07-11",
+    note: "Also the source for the $150,000 mandatory-Roth catch-up wage threshold — widely misquoted as the $145,000 statutory base.",
+  },
+  tax: {
+    title: "Rev. Proc. 2025-32 — 2026 inflation adjustments",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+    verified: "2026-07-11",
+  },
+  seniorDeduction: {
+    title: "One Big Beautiful Bill Act — deductions for seniors",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors",
+    verified: "2026-07-11",
+    volatile: true,
+    note: "Expires after 2028. This is NOT 'no tax on Social Security' — the benefit-taxation thresholds are untouched.",
+  },
+  socialSecurity: {
+    title: "2026 Social Security Changes (COLA fact sheet)",
+    publisher: "Social Security Administration",
+    url: "https://www.ssa.gov/news/en/cola/factsheets/2026.html",
+    verified: "2026-07-11",
+  },
+  medicare: {
+    title: "2026 Medicare Parts A & B Premiums and Deductibles",
+    publisher: "Centers for Medicare & Medicaid Services",
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles",
+    verified: "2026-07-11",
+  },
+  aca: {
+    title: "How will the loss of enhanced premium tax credits affect older adults?",
+    publisher: "KFF",
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/",
+    verified: "2026-07-11",
+    volatile: true,
+    note: "The enhanced credits expired 2025-12-31 and the 400%-of-FPL cliff returned. An extension was live in Congress and could change this overnight, possibly retroactively.",
+  },
+  fpl: {
+    title: "HHS Poverty Guidelines",
+    publisher: "U.S. Department of Health and Human Services",
+    url: "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines",
+    verified: "2026-07-11",
+    note: "2026 coverage is measured against the 2025 guidelines.",
+  },
+  rmd: {
+    title: "Retirement plan and IRA required minimum distributions FAQs",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs",
+    verified: "2026-07-11",
+  },
+  swr: {
+    title: "What's a Safe Retirement Withdrawal Rate in 2026?",
+    publisher: "Morningstar, State of Retirement Income (2025 edition)",
+    url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026",
+    verified: "2026-07-11",
+    note: "3.9% is forward-looking (30 years, 90% success, 30-50% equity). Bengen's 4.7% is a historical worst case with a more aggressive portfolio. They answer different questions and must never be averaged.",
+  },
+} as const satisfies Record<string, FactSource>;
+
 // ── IRS 2026 contribution limits ────────────────────────────────────────────
 // Source: IRS Notice 2025-67 — https://www.irs.gov/pub/irs-drop/n-25-67.pdf
 export const CONTRIBUTION_2026 = {
