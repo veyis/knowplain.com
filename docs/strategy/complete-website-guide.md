@@ -84,16 +84,21 @@ Audited against the working tree, 2026-07-10. **The previous draft's "current kn
 | 1 | **`captureCheckupLead` silently lied.** It inserted into `knowplain_leads` — a table that **did not exist** in `supabase/schema.sql` — inside a `try/catch` that swallowed the failure and returned `{ ok: true }`. | Every user who asked for their results by email was told it worked. Nothing was stored, nothing was sent. On a site whose only asset is trust, this was the worst bug in the repo. | ✅ **FIXED** — table created (insert-only RLS, not publicly readable), errors surfaced, UI no longer claims an email was sent. **Still open: no ESP is wired** (needs a provider decision). |
 | 2 | **13 of 21 articles had bare frontmatter** — no author, reviewer, sources, or dates. | The actual YMYL trust hole. The schema and components existed; the content didn't use them. | ✅ **FIXED** — **21/21** now carry the trust stack. Sources attached only where the article makes a checkable claim (DOIs for the behavioural studies already named in prose; `.gov` primaries for the finance pages). |
 | 3 | **`health-care-before-medicare.mdx` was materially wrong.** It said ACA subsidies "key off **taxable income**" (they key off ACA MAGI, which adds back *all* Social Security and tax-exempt interest) and never mentioned the cliff. | This is Correction #1 showing up in live content — the exact page an early retiree would trust. | ✅ **FIXED** — rewritten with the cliff, the MAGI definition, the $10,389/yr figure, and a "last verified" date. |
-| 4 | **No analytics of any kind.** Zero. And the CSP (`connect-src 'self'`) would block a third-party script today. | Every metric in §15 is unmeasurable. You are flying blind. | 🔴 **OPEN — now the top P0.** |
-| 5 | `/profile` and `/login` were crawlable. `/forum/[id]` threads neither in the sitemap nor noindexed. | Thin/auth pages in the index drag site-wide quality. | ✅ **FIXED** for `/profile` + `/login` (`noindex` + robots disallow). `/forum/[id]` still open — decide when moderation is real. |
-| 6 | **Dead schema shipping.** `faqJsonLd()` (FAQ rich result removed 2026-05-07), `SearchAction` (removed 2024-11-21), `webApplicationJsonLd()` (earns nothing without ratings), and `QAPage` **misapplied** to staff-answered pages that cannot satisfy its "users must be able to submit answers" requirement. | Maintaining markup that does nothing, plus one genuine misapplication. | ✅ **FIXED** — all four removed; `WebSite` kept for the site-name feature only. |
+| 4 | **No analytics of any kind**, and the CSP (`connect-src 'self'`) would have silently dropped any that were added. | Every metric in §15 was unmeasurable. | ✅ **FIXED** — Vercel Analytics + Speed Insights, with the CSP allow-listed so they actually report. Cookieless, no consent banner needed, and suppressed entirely under Global Privacy Control. |
+| 5 | `/profile` and `/login` were crawlable. `/forum/[id]` threads neither in the sitemap nor noindexed. | Thin/auth pages in the index drag site-wide quality. | ✅ **FIXED** — all three now `noindex`; `/profile`, `/login`, `/auth/` also disallowed in robots.txt. Curated `/forum/questions/*` stay indexed. |
+| 6 | **Dead schema shipping.** `faqJsonLd()` (FAQ rich result removed 2026-05-07), `SearchAction` (removed 2024-11-21), `webApplicationJsonLd()` (earns nothing without ratings), and `QAPage` **misapplied** to staff-answered pages that cannot satisfy its "users must be able to submit answers" requirement. | Maintaining markup that does nothing, plus one genuine misapplication. | ✅ **FIXED** — all four removed; `WebSite` kept for the site-name feature only. Verified against the rendered HTML, not just the source. |
 | 7 | **`checkup.ts` hardcoded `0.035`/`0.045`** instead of reading `facts-2026.ts`, i.e. the exact uncited band Correction #8 says to stop publishing. | Broke the single-source-of-truth rule inside the flagship tool. | ✅ **FIXED** — now derives the range from the two cited SWR anchors and labels the method on-screen. Guarded by `test/checkup.test.mjs`. |
-| 8 | No `/research`, no `/sources` hub. | §10.4 — the only durable backlink asset. | 🟡 **OPEN (P2)** |
+| 8 | **Two tools lied about their own function.** The "Sequence-Risk Stress Test" did **no sequencing** — it multiplied a balance by a rate. The catch-up planner was blind to age and wages, so it would suggest a **pre-tax catch-up the law no longer permits**. | A calculator that misstates its own method is worse than no calculator: it launders a guess as a computation. | ✅ **FIXED** — both rebuilt, with tests that fail if the behaviour regresses. See §8. |
+| 9 | **YouTube embeds were blocked in production.** The CSP had no `frame-src`, so `/watch/[slug]` iframes fell back to `default-src 'self'`. | Invisible only because the fallback videos use non-YouTube ids. Every video page would have gone blank the moment `sync:youtube` wrote real ids. | ✅ **FIXED** — `frame-src` added, and switched to `youtube-nocookie` (no tracking cookies until the user presses play). |
+| 10 | No `/research`, no `/sources` hub. | §10.4 — the only durable backlink asset. | 🟡 **OPEN (P2)** |
+| 11 | **No credentialed human reviewer.** `editorial.ts` holds two *entities*, not two *people*; Article schema emits `author`/`reviewedBy` as `Organization`. | 🔴 **The largest remaining trust gap, and the only one code cannot close.** One named CFP® with a `sameAs` link is worth more than every schema change in this branch combined. | 🔴 **OPEN — needs a human, longest lead time.** |
 
 💭 **Two things the audit got wrong, corrected by implementation:**
 
 - **The Checkup was already fully client-side.** `runRetirementCheckup` runs in a `useMemo`; ages, balances, and debts never leave the browser. Only the email and a generic verdict sentence are ever sent. §9.2's hardening was therefore *already true* — the privacy exposure was much smaller than the audit assumed.
 - **The Checkup already respected the advice line.** No asset allocation, no named securities; every "next step" is an internal tool link. §9.3 was already satisfied. It is now *enforced* by a test that fails if anyone adds allocation language.
+
+⚠️ **Three things still require a human and cannot be coded:** run `supabase/migrations/2026-07-11_leads.sql` on the live project; set the four Resend env vars (the sender **refuses to fire** without a postal address, because sending without one is unlawful); enable Analytics + Speed Insights in the Vercel dashboard.
 
 ---
 
@@ -109,7 +114,7 @@ The previous draft opens by declaring Know Plain should become a **ten-channel d
 
 **3.1 The compliance surface multiplies, and it is not shared.** The plan's own risk table rates Tax Plain, Coverage Lab, Legal Lens, and Longevity Lab as **"Very High"** risk. That is correct, and it is disqualifying at current capacity. Each of those verticals needs its *own* credentialed reviewer — a CPA will not review a Medicare page, a CFP will not review a will, and nobody sane reviews longevity claims without a physician. The plan's "shared trust infrastructure" moat is real for *templates* and *schema*. It is worth **zero** for *review capacity*, which is the binding constraint. You cannot amortize a CPA across a cybersecurity article.
 
-**3.2 A single editorial entity claiming expertise in nine unrelated YMYL fields is a negative trust signal.** Retirement content is **"YMYL Financial Security"** in the Quality Rater Guidelines and gets "the most scrutiny for Page Quality rating." Raters do off-site reputation research and apply a Who/How/Why test. "Know Plain Editorial," author of both *Roth conversion strategy* and *how to spot phishing* and *which longevity claims are real*, does not survive that test — not because of a topic rule, but because **no reader believes it, and raters are instructed to model readers.** Today you have **two** editorial entities (`know-plain-editorial`, `retirement-review-board`) covering **one** vertical, and 13 of 21 articles don't even use them. Breadth is not the problem to solve.
+**3.2 A single editorial entity claiming expertise in nine unrelated YMYL fields is a negative trust signal.** Retirement content is **"YMYL Financial Security"** in the Quality Rater Guidelines and gets "the most scrutiny for Page Quality rating." Raters do off-site reputation research and apply a Who/How/Why test. "Know Plain Editorial," author of both *Roth conversion strategy* and *how to spot phishing* and *which longevity claims are real*, does not survive that test — not because of a topic rule, but because **no reader believes it, and raters are instructed to model readers.** Today you have **two** editorial entities (`know-plain-editorial`, `retirement-review-board`) covering **one** vertical — and they are *entities*, not credentialed people. Every article now cites them, but "Know Plain Editorial" is not a person a rater can look up. Breadth is not the problem to solve; **a name is.**
 
 **3.3 The real Google policy risk is *scaled content abuse*, and the plan walks into it.** Google's spam policy defines this as generating many pages "primarily to manipulate rankings and not help users," explicitly including AI-assisted mass production. A solo operator publishing **100 evergreen assets across 7 verticals in 12 months**, each requiring a source pack and a reviewer, will either miss the deadline or hit it by producing exactly the kind of thin, unreviewed, AI-assisted corpus the policy names. The plan's own quality bar and its own volume target are in direct conflict, and volume usually wins.
 
@@ -200,9 +205,9 @@ The bar, stated correctly (the previous draft's framing of this was stale — se
 
 **6.1 The work that matters, in order.**
 
-1. **Close the frontmatter gap (P0).** 13 of 21 articles have no author, no sources, no review date. The schema, the components, and the registry all exist. This is *content* work, not engineering, and it is the highest-value trust work available. Nothing else in this section matters until it's done.
-2. **Get one real credentialed reviewer.** ✅ Today `src/lib/editorial.ts` has two *entities* — `know-plain-editorial` and `retirement-review-board` — not two *people*. For YMYL finance, **a named human with a verifiable credential and a `sameAs` link to a CFP Board / AICPA profile is worth more than every schema change in this document combined.** One CFP® reviewing the high-risk pages does the heavy lifting.
-3. **Visible byline > markup.** "Written by X · Reviewed by Y, CFP® · Updated Jul 10, 2026" on the page. `reviewedBy` in JSON-LD is fine to keep, but it does nothing for Google (§1.6).
+1. ✅ **Close the frontmatter gap.** DONE — **21/21** articles now carry author, sources, dates and risk level.
+2. 🔴 **Get one real credentialed reviewer. This is now the only thing left, and it is the whole ballgame.** `src/lib/editorial.ts` has two *entities* — `know-plain-editorial` and `retirement-review-board` — not two *people*. Article schema therefore emits `author` and `reviewedBy` as `Organization`. For YMYL finance, **a named human with a verifiable credential and a `sameAs` link to a CFP Board / AICPA profile is worth more than every schema change in this document combined.** One CFP® reviewing the high-risk pages does the heavy lifting. Everything else in this guide is now built; this is not.
+3. **Visible byline > markup.** "Written by X · Reviewed by Y, CFP® · Updated Jul 10, 2026" on the page. `reviewedBy` in JSON-LD is fine to keep, but it does nothing for Google (§1.6). Note this cannot be honestly written until item 2 is done — inventing a byline would be worse than having none.
 4. **Honest dates.** `published` set once and never bumped; `dateModified` moved **only** on substantive revision. Faking freshness is a trust risk, and it's the one form of SEO manipulation that a corrections-policy site cannot survive being caught doing.
 5. **Corrections that are visible.** `/corrections` exists. Use it — a visible correction note on a revised article is a stronger trust signal than any badge.
 
@@ -265,19 +270,20 @@ SOCIAL_SECURITY_2026.benefitTaxThresholds = { single: 25_000, joint: 32_000 }  /
 
 ## 8. The tools — this is the product
 
-💭 Reordering the previous draft's list, because §4.3 says the tools are the asset and the ACA cliff (§5) is the 2026 wedge. **Build in this order:**
+💭 §4.3 says the tools are the asset and the ACA cliff (§5) is the 2026 wedge, so the four highest-value tools were built first. **All four Tier-1 tools now ship.** Status as of 2026-07-11:
 
-**Tier 1 — build now.**
+| Tool | Status | What it does that competitors don't |
+|---|---|---|
+| **⭐ ACA Bridge / Cliff Warner** | ✅ **SHIPPED** `/tools/aca-bridge` | Shows **dollars of MAGI headroom to the 400% cliff** and both scenarios (current law vs restored credits), with a visible "verified on" date. ✅ **ACA MAGI includes ALL Social Security benefits** (not just the taxable part), traditional withdrawals, **Roth conversions**, capital gains, pensions, tax-exempt interest. **Roth withdrawals do not count** — getting this definition wrong is the whole ballgame. |
+| **Roth Conversion Cost Checker** | ✅ **SHIPPED** `/tools/roth-vs-traditional` | **The one nobody else has built.** Every Roth calculator stops at the income tax; before 65 that is the *smaller* number. Prices the tax, the ACA cliff, and IRMAA together. A 61-year-old on $55k converting $15k pays $2,150 in tax — and burns $7,600 of cliff headroom. Names the largest conversion that stays under. |
+| **Sequence-risk stress test** | ✅ **REBUILT** `/tools/sequence-risk` | Was a lie: it multiplied a balance by a rate and did **no sequencing at all**. Now runs one multiset of returns in two orders. Same average, one retiree broke in year 18, the other with $909,828. Falsifiable on the page: set withdrawals to 0 and both orders land on the same number. |
+| **Social Security break-even** | ✅ SHIPPED | Math verified: claim at 62 with FRA 67 = **70% of PIA**; 70 = **124%**. Break-even ≈ **78–79** (62 vs FRA) and **~82–83** (FRA vs 70). The page says plainly that break-even is an **incomplete frame** — health, survivor benefits, taxes and cash-flow need dominate it. |
+| **Catch-up planner** | ✅ **REBUILT** `/tools/catch-up-contributions` | Was giving **illegal advice**: blind to age and wages, so it never showed the 60–63 super catch-up and would suggest a pre-tax catch-up the law no longer permits. Now models the **$150,000 mandatory-Roth rule** and the age-64 drop back. |
+| Am I On Track · Retirement Age Tradeoff | ✅ shipped | Honest, but thin — they lean on the checkup engine rather than doing anything of their own. |
+| **Inflation-adjusted spending** | 🟡 **TOY** | Two boxes, one multiplication. It does not lie — it does exactly what it says — so it is low priority. But it is not a moat. |
+| Debt vs Investing | 🔴 not built | The last Tier-2 gap. |
 
-1. **⭐ ACA Bridge / Cliff Warner (60–64).** The flagship. Inputs: age, retirement age, household size, projected **ACA MAGI**. Output: % of FPL, **dollars of MAGI headroom to the 400% cliff**, and what falling over it costs. The math is already in `facts-2026.ts` (`acaSubsidyStatus`).
-   - ✅ **ACA MAGI includes ALL Social Security benefits** (not just the taxable portion), traditional IRA/401(k) withdrawals, **Roth conversions**, capital gains, pensions, and tax-exempt interest. **Roth withdrawals do not count.** Getting this definition wrong is the whole ballgame.
-   - ✅ Anchors: 400% FPL = **$62,600** (single, 2026 coverage). Unsubsidized 60-year-old: **$11,625** bronze / **$15,914** benchmark silver. A 60-year-old at $65,000 pays **$10,389/yr more** than under the expired credits.
-   - ⚠️ Show *both* scenarios (cliff and restored-subsidy), cite current statute, and carry a visible "verified on" date. No extension is enacted as of today, but this is live politics.
-2. **Sequence-risk stress test.** Extends the withdrawal simulator you already have — cheapest high-value build. Same average return, good-first vs bad-first order. Frame via the **portfolio-size effect**: a loss early, when the balance is biggest and you're selling into it, is permanent in a way the same loss later is not.
-3. **Social Security break-even.** ✅ Math already correct in `facts-2026.ts` (`ssBenefitFactor`, `ssBreakEvenAge`): claim at 62 with FRA 67 = **70% of PIA**; 70 = **124%**. Break-even ≈ **78–79** (62 vs 67) and **~82–83** (67 vs 70). **The page must say break-even is an incomplete frame** — health, survivor benefits, taxes, and cash-flow need dominate it.
-4. **Roth vs Traditional.** Now far more interesting than the previous draft assumed, because MAGI control drives **ACA subsidies (60–64)** and **IRMAA (63+, two-year lookback)**. A Roth conversion at 61 can cost $10k in lost premium tax credits *and* raise the Part B premium two years later. That's the article nobody has written well.
-
-**Tier 2.** Am I On Track · Retirement Age Tradeoff · Catch-Up Planner (**must model the $150,000 mandatory-Roth rule**) · Debt vs Investing · Inflation-Adjusted Spending.
+💭 **The rule this list enforces:** a tool may be simple, but it must never promise more than it does. Two of the eight were quietly lying about their own function; both are now rebuilt with tests that fail if the behaviour regresses.
 
 **8.1 The withdrawal-rate problem — get this right or don't ship the number.**
 
@@ -462,51 +468,46 @@ The previous draft listed a revenue ladder with no figures and ranked **Coverage
 
 Revised: **one vertical, done properly.** The previous draft's 12-month, 7-channel plan is replaced (§3).
 
-**Weeks 1–2 — Stop the bleeding (all P0).**
-1. Fix or remove `captureCheckupLead` (§9.1). No lying success messages.
-2. Backfill trust frontmatter on all **13 bare articles** (§2.2).
-3. Ship analytics (§13.4).
-4. Constrain Checkup output — no allocation, no securities (§9.3).
-5. Fix the affiliate disclosure wording (§11.4). `noindex` on `/profile` and `/login`.
+**✅ DONE (2026-07-11).** Everything the original Weeks 1–10 plan called for, plus four defects the plan didn't know about:
 
-**Weeks 3–6 — The 2026 wedge.**
-6. **⭐ ACA Bridge / Cliff Warner** (§8.1) — the flagship. Both scenarios, cited, dated.
-7. Extend `facts-2026.ts` with the tax/Medicare/OBBBA additions (§7).
-8. Move the Checkup client-side; stop persisting financial inputs (§9.2).
-9. Recruit **one credentialed reviewer** (§6.1.2). Start now — it has the longest lead time of anything here.
+1. ✅ `captureCheckupLead` no longer lies. Table created, errors surfaced, Resend wired, and `sent` reported separately from `saved` so the UI can only claim what actually happened.
+2. ✅ Trust frontmatter on **21/21** articles.
+3. ✅ Analytics shipped, with the CSP opened so it actually reports.
+4. ✅ Checkup output constrained — and the constraint is now enforced by a test.
+5. ✅ Affiliate disclosure made FTC-adequate; `noindex` on `/profile`, `/login`, `/forum/[id]`.
+6. ✅ **ACA Bridge** — the flagship, both scenarios, cited, dated.
+7. ✅ `facts-2026.ts` extended: OBBBA senior deduction, 2026 brackets, Part D cap, 415(c), Roth phase-outs, QCD, IRMAA tiers.
+8. ✅ Checkup was *already* client-side (the audit was wrong).
+9. ✅ Dead schema deleted; `QAPage` misapplication fixed.
+10. ✅ **Sequence-risk stress test rebuilt** (it did no sequencing) and **catch-up planner rebuilt** (it gave illegal advice).
+11. ✅ **Roth Conversion Cost Checker** built — tax + ACA cliff + IRMAA in one place. The tool nobody else has.
+12. ✅ Fixed a latent bug the plan missed entirely: **the CSP was blocking every YouTube embed.**
 
-**Weeks 7–10 — The decision layer.**
-10. Sequence-risk stress test; Social Security break-even; Roth vs Traditional (with the ACA/IRMAA MAGI interaction — the article nobody has written well).
-11. Delete the dead schema; fix the `QAPage` misapplication (§13.1).
-12. Email: real ESP, real list, capture at the Checkup result and the checklist — **not a sitewide popup**.
+**🔴 NEXT — needs a human, not code.**
+13. **Recruit one credentialed reviewer.** ⚠️ This is now the single highest-value item on the list and the longest lead time. Everything else is done; this is the gap. See §2, row 11.
+14. Run the leads migration, set the Resend env vars, enable Analytics in Vercel.
 
-**Weeks 11–13 — Compounding assets.**
-13. First original research piece from **your own aggregate usage data** (§10.4).
-14. Video depth + embedded calculators. 💭 Give YouTube real weight — it's the channel AI hasn't disintermediated.
+**Then — compounding assets.**
+15. First original research piece from **your own aggregate usage data** (§10.4). You now have analytics and four real tools generating it.
+16. Video depth + embedded calculators. 💭 Give YouTube real weight — it's the channel AI hasn't disintermediated, and the embeds now actually render.
+17. `/sources` and `/research` hubs; Debt-vs-Investing tool; upgrade the inflation toy.
 
 **Always on.** Update `facts-2026.ts` at each IRS/SSA/CMS release. ⚠️ **Watch the ACA subsidy legislation and update the flagship calculator the day statute changes.** Assign that to a named human.
 
 **The gate for a second vertical:** credentialed reviewer on every high-risk page · ≥$3,000/mo revenue · ≥25k pv/mo · P0 list closed. Not before.
 
-**14.1 Implementation backlog.** Use this as the issue list.
+**14.1 Implementation backlog.** The P0/P1 engineering list is **closed** — see §2 and §8 for what shipped. What remains:
 
-| Priority | Task | Likely files | Dependency | Acceptance criteria |
-|---|---|---|---|---|
-| P0 | Fix or remove Checkup lead capture | `src/app/checkup/actions.ts`, `src/app/checkup/RetirementCheckup.tsx`, `supabase/schema.sql` | ESP decision or remove email promise | User is never shown a false success message; failed capture is visible or the email feature is absent |
-| P0 | Backfill trust frontmatter on 13 bare articles | `content/**/*.mdx` | Source packs | Every indexable article has author, reviewer/review status, published, updated, reviewed, sources, risk level |
-| P0 | Ship analytics | `src/app/layout.tsx`, CSP config, analytics helper | Vendor choice and GPC policy | Core events in §15 are recorded; GPC suppresses ad/third-party identifiers |
-| P0 | Constrain Checkup output | `src/lib/checkup.ts`, `src/app/checkup/RetirementCheckup.tsx` | §11.1 rules | No allocation, securities, fund, adviser, or personalized-plan wording appears in outputs |
-| P0 | Fix affiliate disclosure wording | `src/app/tools/page.tsx`, shared affiliate component if added | None | Plain commission disclosure appears before first monetized link |
-| P1 | Add `noindex` to thin/private pages | `src/app/profile/page.tsx`, `src/app/login/page.tsx`, forum routes | Metadata audit | Login/profile are noindex; unmoderated forum pages are noindex |
-| P1 | Build ACA Bridge / Cliff Warner | `src/lib/facts-2026.ts`, `src/app/tools/[slug]/page.tsx`, tool data/config | Volatility register owner | Shows MAGI, FPL %, cliff headroom, cliff/restored-subsidy scenarios, source/date |
-| P1 | Extend facts module | `src/lib/facts-2026.ts`, tests | Appendix A verification | Added constants are unit-tested and source-commented |
-| P1 | Move Checkup client-side | `src/app/checkup/RetirementCheckup.tsx`, `src/lib/checkup.ts` | Lead-capture decision | Results render without posting financial inputs to server |
-| P1 | Recruit credentialed reviewer | Editorial operations, author data | Budget/outreach | Named human reviewer with credential and sameAs profile appears on high-risk pages |
-| P2 | Sequence-risk, Social Security, Roth tools | `src/app/tools/[slug]/page.tsx`, `src/lib/facts-2026.ts` | Facts module | Each tool shows assumptions first, sources, limits, and next step |
-| P2 | Delete dead/misapplied schema | `src/lib/schema.ts`, article/tool/forum pages | Schema audit | No FAQPage/WebApplication/SearchAction/QAPage misuse remains |
-| P2 | Wire real email | Checkup result, ESP integration, privacy copy | ESP + CAN-SPAM setup | Double-checked opt-out/address requirements; results/checklists send reliably |
-| P3 | Original research from aggregate usage | `/research`, analytics/data export | Analytics live and privacy review | Methodology published before conclusions; data anonymized and downloadable if safe |
-| P3 | Video depth with calculators | `/watch`, video data, tool embeds | Tool pages | Video pages have transcript, chapters, sources, and related calculator |
+| Priority | Task | Blocked on | Acceptance criteria |
+|---|---|---|---|
+| 🔴 **P0** | **Recruit one credentialed reviewer** | **A human. Budget/outreach.** | A named person with a verifiable credential and a `sameAs` link appears on every high-risk page, and `articleJsonLd` emits `author`/`reviewedBy` as `Person`, not `Organization`. **This is the last thing standing between the site and a real YMYL trust posture, and no amount of code closes it.** |
+| 🔴 P0 | Run `supabase/migrations/2026-07-11_leads.sql`; set the four Resend vars; enable Analytics in Vercel | You | Checkup email says "Sent", not an error |
+| P2 | `/sources` hub | None — `facts-2026.ts` already holds the data | One cited page per annual rule, with last-verified dates, linked from every article that uses the number |
+| P2 | Debt-vs-Investing tool; upgrade the inflation toy | None | Each shows assumptions first, sources, limits, next step |
+| P3 | Original research from aggregate usage | Analytics live + privacy review | Methodology published before conclusions; anonymized |
+| P3 | Video depth with embedded calculators | None (embeds now render — the CSP was blocking them) | Transcript, chapters, sources, related calculator per video |
+
+⚠️ **Always on.** Update `facts-2026.ts` at each IRS/SSA/CMS release. **Watch the ACA subsidy legislation** — an extension would change the flagship tool's answer overnight, possibly retroactively. `ACA_2026.lastVerified` and a named owner exist for exactly this reason.
 
 ---
 
