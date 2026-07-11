@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { createPost, toggleLike } from "../actions";
 import { Heart, Reply } from "lucide-react";
@@ -77,13 +78,13 @@ export default async function ThreadPage({
 
   const postList = (posts ?? []) as unknown as Post[];
 
-  const pColor = pillarColors[thread.pillar] || "bg-gray-100 text-gray-800";
+  const pColor = pillarColors[thread.pillar] || "bg-secondary text-secondary-foreground";
   const likeCount = thread.knowplain_forum_likes?.[0]?.count || 0;
 
   return (
     <AppShell active="forum">
       <div className="mx-auto max-w-3xl">
-        <div className="mb-6 flex items-center text-sm text-muted">
+        <div className="mb-6 flex items-center text-sm text-muted-foreground">
           <Link href="/forum" className="hover:text-ink">Forum</Link>
           <span className="mx-2">›</span>
           <span className="truncate">{thread.title}</span>
@@ -95,7 +96,7 @@ export default async function ThreadPage({
             {thread.pillar.replace("-", " ")}
           </span>
           <h1 className="mb-4 text-3xl font-bold tracking-tight">{thread.title}</h1>
-          <div className="flex items-center gap-4 text-sm text-muted">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>Posted by <strong className="text-ink">{thread.knowplain_profiles?.display_name || "Anonymous"}</strong></span>
             <span>•</span>
             <span>{new Date(thread.created_at).toLocaleDateString()}</span>
@@ -110,7 +111,7 @@ export default async function ThreadPage({
                   className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
                     hasLiked 
                       ? 'border-red-200 bg-red-50 text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400' 
-                      : 'border-line bg-surface hover:bg-canvas text-muted hover:text-ink'
+                      : 'border-line bg-surface hover:bg-canvas text-muted-foreground hover:text-ink'
                   }`}
                 >
                   <Heart className={`h-4 w-4 ${hasLiked ? 'fill-current' : ''}`} />
@@ -118,7 +119,7 @@ export default async function ThreadPage({
                 </button>
               </form>
             ) : (
-              <Link href="/login" className="flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted hover:bg-canvas">
+              <Link href="/login" className="flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-canvas">
                 <Heart className="h-4 w-4" />
                 {likeCount} {likeCount === 1 ? 'Upvote' : 'Upvotes'}
               </Link>
@@ -137,7 +138,7 @@ export default async function ThreadPage({
                   </div>
                   <strong className="font-semibold text-ink">{p.knowplain_profiles?.display_name || "Anonymous"}</strong>
                 </div>
-                <span className="text-muted">{new Date(p.created_at).toLocaleString()}</span>
+                <span className="text-muted-foreground">{new Date(p.created_at).toLocaleString()}</span>
               </div>
               <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed text-secondary">
                 {p.content}
@@ -163,7 +164,7 @@ export default async function ThreadPage({
                   placeholder="Share your thoughts..."
                   className="w-full resize-none rounded-xl border border-line bg-canvas px-4 py-3 text-sm outline-hidden focus:border-ink"
                 />
-                <button type="submit" className="kp-btn-primary self-end">Post Reply</button>
+                <Button type="submit" className="self-end">Post Reply</Button>
               </form>
             </div>
           ) : (
@@ -172,7 +173,9 @@ export default async function ThreadPage({
               <p className="mb-4 text-sm text-blue-800 dark:text-blue-200">
                 You must be signed in to post a reply.
               </p>
-              <Link href="/login" className="kp-btn bg-white text-black">Sign In</Link>
+              <Button asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
             </div>
           )}
         </div>

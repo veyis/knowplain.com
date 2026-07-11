@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { login, signup } from "./actions";
 
 export default async function LoginPage({
@@ -10,7 +11,7 @@ export default async function LoginPage({
 
   return (
     <AppShell active="home">
-      <div className="mx-auto mt-10 max-w-sm rounded-[14px] border border-line bg-white p-6 shadow-soft">
+      <div className="mx-auto mt-10 max-w-sm rounded-[14px] border border-line bg-card p-6 shadow-soft">
         <h1 className="mb-4 text-xl font-semibold">Sign in</h1>
         {error && (
           <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600">
@@ -25,7 +26,7 @@ export default async function LoginPage({
               name="email"
               type="email"
               required
-              className="w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm outline-hidden focus:border-ink focus:bg-white"
+              className="w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm outline-hidden focus:border-ink focus:bg-card"
             />
           </div>
           <div>
@@ -35,16 +36,16 @@ export default async function LoginPage({
               name="password"
               type="password"
               required
-              className="w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm outline-hidden focus:border-ink focus:bg-white"
+              className="w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm outline-hidden focus:border-ink focus:bg-card"
             />
           </div>
           <div className="mt-2 flex flex-col gap-2">
-            <button formAction={login} className="kp-btn-primary w-full text-center">
+            <Button formAction={login} className="w-full">
               Log in
-            </button>
-            <button formAction={signup} className="w-full rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-canvas">
+            </Button>
+            <Button variant="outline" formAction={signup} className="w-full">
               Sign up
-            </button>
+            </Button>
           </div>
         </form>
       </div>

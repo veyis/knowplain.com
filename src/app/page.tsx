@@ -1,69 +1,134 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ArrowUpRight, Brain, CheckCircle2, FileText, Landmark, PlayCircle, Wrench } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { SearchForm } from "@/components/SearchForm";
+import { Badge } from "@/components/ui/badge";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/schema";
 import { pillars } from "@/lib/site";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
+const pillarIcon = {
+  retirement: Landmark,
+  "money-psychology": Brain,
+  "decision-tools": Wrench,
+} as const;
+
+const chips = [
+  { href: "/checkup", label: "Retirement checkup" },
+  { href: "/decisions", label: "Decision library" },
+  { href: "/late-starters", label: "Late starter path" },
+  { href: "/search?q=How%20much%20do%20I%20need%20to%20retire", label: "Retirement math" },
+];
+
 export default function HomePage() {
   return (
     <AppShell active="home">
       <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
-      <section className="grid justify-items-center gap-5 py-10 text-center md:py-14">
-        <h1 className="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight">Know Plain</h1>
-        <p className="max-w-[42ch] text-muted">
-          Big ideas, known plain. Search across explainers, videos, tools, and community.
+
+      <section className="grid justify-items-center gap-5 py-12 text-center md:py-16">
+        <Badge variant="secondary" className="gap-1.5 font-normal text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-success" />
+          Big ideas, known plain
+        </Badge>
+        <h1 className="text-[clamp(2rem,5vw,3rem)] font-semibold leading-[1.1] tracking-tight">
+          Retirement &amp; money,
+          <br className="hidden sm:block" /> without the jargon.
+        </h1>
+        <p className="max-w-[46ch] text-[1.05rem] text-muted-foreground">
+          Search, run a checkup, compare decisions, and leave with the next plain step.
         </p>
         <SearchForm variant="hero" />
-        <div className="flex flex-wrap justify-center gap-2">
-          <Link className="kp-chip" href="/search?q=How%20much%20do%20I%20need%20to%20retire">
-            Retirement math
-          </Link>
-          <Link className="kp-chip" href="/tools">
-            Roadmap pack
-          </Link>
-          <Link className="kp-chip" href="/watch">
-            Watch playbook
-          </Link>
-          <Link className="kp-chip" href="/forum">
-            Ask the forum
-          </Link>
+        <p className="text-xs text-muted-foreground">
+          or press{" "}
+          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 [font-family:system-ui,sans-serif] text-[0.65rem]">
+            ⌘K
+          </kbd>{" "}
+          to search anywhere
+        </p>
+        <div className="flex flex-wrap justify-center gap-2 pt-1">
+          {chips.map((c) => (
+            <Link key={c.href} href={c.href} className="inline-flex items-center rounded-full border border-border bg-secondary px-3.5 py-1.5 text-sm text-secondary-foreground transition-colors hover:bg-accent">
+              {c.label}
+            </Link>
+          ))}
         </div>
       </section>
 
-      <div className="mb-3 mt-8 flex items-baseline justify-between gap-4">
+      <div className="mb-4 mt-6 flex items-baseline justify-between gap-4">
+        <h2 className="text-base font-semibold tracking-tight">Start with your numbers</h2>
+        <span className="text-sm text-muted-foreground">5-minute snapshot</span>
+      </div>
+      <Link
+        href="/checkup"
+        className="group grid gap-3 rounded-xl border border-border bg-card p-5 transition-all hover:border-foreground/20 hover:shadow-sm md:grid-cols-[auto_1fr_auto] md:items-center"
+      >
+        <span className="grid size-10 place-items-center rounded-lg bg-secondary text-foreground">
+          <CheckCircle2 className="size-5" />
+        </span>
+        <span>
+          <strong className="block tracking-tight">Run the Know Plain Retirement Checkup</strong>
+          <span className="mt-1 block text-sm text-muted-foreground">
+            Estimate your spending gap, plain scores, top risks, and next tools.
+          </span>
+        </span>
+        <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+      </Link>
+
+      <div className="mb-4 mt-10 flex items-baseline justify-between gap-4">
         <h2 className="text-base font-semibold tracking-tight">Topic hubs</h2>
-        <span className="text-sm text-muted">Pillars for topical authority</span>
+        <span className="text-sm text-muted-foreground">Pillars for topical authority</span>
       </div>
       <div className="grid gap-3 md:grid-cols-3">
-        {(Object.keys(pillars) as Array<keyof typeof pillars>).map((id) => (
-          <Link key={id} href={pillars[id].path} className="kp-card">
-            <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Pillar</div>
-            <strong className="tracking-tight">{pillars[id].title}</strong>
-            <p className="text-sm text-muted">{pillars[id].lede}</p>
-          </Link>
-        ))}
+        {(Object.keys(pillars) as Array<keyof typeof pillars>).map((id) => {
+          const Icon = pillarIcon[id];
+          return (
+            <Link
+              key={id}
+              href={pillars[id].path}
+              className="group relative grid gap-2 rounded-xl border border-border bg-card p-5 transition-all hover:border-foreground/20 hover:shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <span className="grid size-9 place-items-center rounded-lg bg-secondary text-foreground">
+                  <Icon className="size-[18px]" />
+                </span>
+                <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+              <strong className="tracking-tight">{pillars[id].title}</strong>
+              <p className="text-sm text-muted-foreground">{pillars[id].lede}</p>
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="mb-3 mt-8 flex items-baseline justify-between gap-4">
+      <div className="mb-4 mt-10 flex items-baseline justify-between gap-4">
         <h2 className="text-base font-semibold tracking-tight">Continue</h2>
-        <span className="text-sm text-muted">Mixed content types</span>
+        <span className="text-sm text-muted-foreground">Mixed content types</span>
       </div>
       <div className="grid gap-3 md:grid-cols-[1.4fr_1fr]">
-        <Link href="/topics/retirement/retirement-isnt-a-date" className="kp-card">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Explainer</div>
+        <Link
+          href="/topics/retirement/retirement-isnt-a-date"
+          className="group grid gap-2 rounded-xl border border-border bg-card p-5 transition-all hover:border-foreground/20 hover:shadow-sm"
+        >
+          <Badge variant="secondary" className="w-fit gap-1.5 font-normal">
+            <FileText className="size-3" /> Explainer
+          </Badge>
           <strong className="tracking-tight">Retirement isn’t a date — it’s math</strong>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground">
             Plain model for “enough” and why the calendar is the wrong target.
           </p>
         </Link>
-        <Link href="/watch" className="kp-card">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Video</div>
+        <Link
+          href="/watch"
+          className="group grid gap-2 rounded-xl border border-border bg-card p-5 transition-all hover:border-foreground/20 hover:shadow-sm"
+        >
+          <Badge variant="secondary" className="w-fit gap-1.5 font-normal">
+            <PlayCircle className="size-3" /> Video
+          </Badge>
           <strong className="tracking-tight">Complete Retirement Playbook</strong>
-          <p className="text-sm text-muted">18 min · chapters + transcript page for SEO.</p>
+          <p className="text-sm text-muted-foreground">18 min · chapters + transcript page for SEO.</p>
         </Link>
       </div>
     </AppShell>

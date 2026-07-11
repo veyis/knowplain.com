@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { pageMeta, site } from "@/lib/site";
+import { toolPages } from "@/lib/tools";
 
 export const metadata = pageMeta(
   "/tools",
@@ -13,50 +15,64 @@ export default function ToolsPage() {
     <AppShell active="tools">
       <div className="mb-4 grid gap-3 rounded-2xl border border-line bg-surface p-6">
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[0.72rem] font-semibold text-accent">
+          <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[0.72rem] font-semibold text-brand">
             Tool
           </span>
-          <span className="rounded-full bg-[#ecfdf3] px-2.5 py-1 text-[0.72rem] font-semibold text-ok">
+          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[0.72rem] font-semibold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
             Free
           </span>
         </div>
         <h1 className="text-[1.5rem] font-semibold tracking-tight">Retirement Roadmap Pack</h1>
-        <p className="max-w-[52ch] text-muted">
+        <p className="max-w-[52ch] text-muted-foreground">
           Spreadsheet + one-page plan + checklist. Know if you’re roughly on track in under 30
           minutes.
         </p>
         <div className="mt-1 flex flex-wrap gap-2">
-          <a className="kp-btn-primary" href={site.legacyRoadmapUrl} rel="noopener noreferrer">
-            Open live calculator
-          </a>
-          <Link className="kp-btn" href="/topics/retirement">
-            Browse retirement hub
-          </Link>
+          <Button asChild>
+            <a href={site.legacyRoadmapUrl} rel="noopener noreferrer">Open live calculator</a>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/topics/retirement">Browse retirement hub</Link>
+          </Button>
         </div>
       </div>
 
       <div className="mb-3 mt-8 flex items-baseline justify-between">
-        <h2 className="text-base font-semibold">Planning tools</h2>
-        <span className="text-sm text-muted">Affiliate links disclosed</span>
+        <h2 className="text-base font-semibold">Owned planning tools</h2>
+        <span className="text-sm text-muted-foreground">Transparent assumptions</span>
       </div>
       <div className="grid gap-3 md:grid-cols-3">
-        <a className="kp-card" href={site.empowerUrl} rel="sponsored noopener noreferrer" target="_blank">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Affiliate</div>
+        {Object.entries(toolPages).map(([slug, tool]) => (
+          <Link key={slug} href={`/tools/${slug}`} className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20">
+            <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Tool</div>
+            <strong>{tool.title}</strong>
+            <p className="text-sm text-muted-foreground">{tool.description}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mb-3 mt-8 flex items-baseline justify-between">
+        <h2 className="text-base font-semibold">Recommended planning apps</h2>
+        <span className="text-sm text-muted-foreground">Affiliate links disclosed</span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-3">
+        <a className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20" href={site.empowerUrl} rel="sponsored noopener noreferrer" target="_blank">
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Affiliate</div>
           <strong>Empower dashboard</strong>
-          <p className="text-sm text-muted">Free net worth + retirement planner.</p>
+          <p className="text-sm text-muted-foreground">Free net worth + retirement planner.</p>
         </a>
-        <a className="kp-card" href={site.boldinUrl} rel="noopener noreferrer" target="_blank">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Tool</div>
+        <a className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20" href={site.boldinUrl} rel="noopener noreferrer" target="_blank">
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Tool</div>
           <strong>Boldin</strong>
-          <p className="text-sm text-muted">DIY stress-test planner.</p>
+          <p className="text-sm text-muted-foreground">DIY stress-test planner.</p>
         </a>
-        <Link href="/tools/withdrawal-simulator" className="kp-card">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted">Coming</div>
+        <Link href="/tools/withdrawal-simulator" className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20">
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Coming</div>
           <strong>Withdrawal simulator</strong>
-          <p className="text-sm text-muted">Owned interactive tool.</p>
+          <p className="text-sm text-muted-foreground">Owned interactive tool.</p>
         </Link>
       </div>
-      <p className="mt-6 rounded-xl border border-dashed border-line bg-white p-4 text-sm text-muted">
+      <p className="mt-6 rounded-xl border border-dashed border-line bg-card p-4 text-sm text-muted-foreground">
         Some links are affiliates. If you use them, Know Plain may earn a commission at no extra cost
         to you. See <Link href="/disclosure">Disclosure</Link>.
       </p>

@@ -2,6 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type Props = {
   variant?: "hero" | "bar";
@@ -27,20 +30,23 @@ export function SearchForm({
     return (
       <form
         onSubmit={onSubmit}
-        className={`flex w-full max-w-[580px] items-center gap-2.5 rounded-full border border-line bg-white px-4 py-3.5 shadow-soft ${className}`}
+        className={cn(
+          "flex w-full max-w-[580px] items-center gap-2.5 rounded-xl border border-border bg-card px-4 py-3 shadow-soft transition-colors focus-within:border-foreground/30 focus-within:ring-4 focus-within:ring-ring/10",
+          className,
+        )}
       >
-        <SearchIcon />
+        <Search className="size-[18px] shrink-0 text-muted-foreground" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           type="search"
           placeholder="Ask anything…"
           aria-label="Ask anything"
-          className="min-w-0 flex-1 bg-transparent text-[1.05rem] outline-hidden placeholder:text-[#a3a3a3]"
+          className="min-w-0 flex-1 bg-transparent text-[1.05rem] text-foreground outline-hidden placeholder:text-muted-foreground"
         />
-        <button type="submit" className="rounded-full bg-ink px-4 py-1.5 text-sm font-medium text-white">
+        <Button type="submit" size="sm">
           Search
-        </button>
+        </Button>
       </form>
     );
   }
@@ -48,9 +54,12 @@ export function SearchForm({
   return (
     <form
       onSubmit={onSubmit}
-      className={`flex max-w-[560px] flex-1 items-center gap-2.5 rounded-full border border-line bg-canvas px-3.5 py-2 focus-within:border-ink focus-within:bg-white ${className}`}
+      className={cn(
+        "flex max-w-[560px] flex-1 items-center gap-2.5 rounded-lg border border-border bg-background px-3.5 py-2 transition-colors focus-within:border-foreground/30 focus-within:bg-card",
+        className,
+      )}
     >
-      <SearchIcon />
+      <Search className="size-4 shrink-0 text-muted-foreground" />
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
@@ -58,17 +67,8 @@ export function SearchForm({
         name="q"
         placeholder="Search explainers, videos, tools…"
         aria-label="Search Know Plain"
-        className="min-w-0 flex-1 bg-transparent text-sm outline-hidden placeholder:text-[#a3a3a3]"
+        className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-hidden placeholder:text-muted-foreground"
       />
     </form>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0 opacity-40">
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
   );
 }

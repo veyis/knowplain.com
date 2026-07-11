@@ -124,7 +124,7 @@ export function Simulator({ user }: { user: User | null }) {
               <button 
                 type="submit" 
                 disabled={isPending || !simName.trim()}
-                className="flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
               >
                 <Save className="h-4 w-4" />
                 {isPending ? "Saving..." : "Save"}
@@ -145,7 +145,7 @@ export function Simulator({ user }: { user: User | null }) {
         <div className="mb-6 flex items-start justify-between">
           <div>
             <h3 className="text-2xl font-bold tracking-tight">30-Year Projection</h3>
-            <p className="text-muted">Portfolio balance over time</p>
+            <p className="text-muted-foreground">Portfolio balance over time</p>
           </div>
           {runsOutYear !== undefined && (
             <div className="flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 dark:bg-red-950/30 dark:text-red-400">

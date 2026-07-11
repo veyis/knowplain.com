@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
-import { SearchForm } from "./SearchForm";
+import { CommandMenu } from "./CommandMenu";
 import { Sidebar } from "./Sidebar";
+import { ThemeToggle } from "./ThemeToggle";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
 export async function AppShell({
@@ -22,51 +24,71 @@ export async function AppShell({
   }
 
   return (
-    <div className="grid min-h-screen md:grid-cols-[220px_1fr]">
+    <div className="grid min-h-screen md:grid-cols-[240px_1fr]">
       <Sidebar active={active} />
       <div className="flex min-w-0 flex-col">
-        <div className="flex items-center gap-4 border-b border-line bg-surface px-4 py-3 md:px-5">
-          <SearchForm />
-          <div className="ml-auto flex items-center gap-2">
-            <Link href="/about" className="kp-btn hidden sm:inline-flex">
-              About
-            </Link>
+        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/80 px-4 py-2.5 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 md:px-5">
+          <CommandMenu />
+          <div className="ml-auto flex items-center gap-1.5">
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+              <Link href="/about">About</Link>
+            </Button>
             {user ? (
-              <div className="flex items-center gap-2">
-                <Link href="/profile" className="kp-btn">
-                  Profile
-                </Link>
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/profile">Profile</Link>
+                </Button>
                 <form action="/login" method="POST">
-                  <button formAction={async () => {
-                    'use server'
-                    const { signout } = await import('@/app/login/actions')
-                    await signout()
-                  }} className="kp-btn border-transparent bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-muted">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground"
+                    formAction={async () => {
+                      "use server";
+                      const { signout } = await import("@/app/login/actions");
+                      await signout();
+                    }}
+                  >
                     Sign out
-                  </button>
+                  </Button>
                 </form>
-              </div>
+              </>
             ) : (
-              <Link href="/login" className="kp-btn">
-                Sign in
-              </Link>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/login">Sign in</Link>
+              </Button>
             )}
-            <Link href="/tools" className="kp-btn-primary">
-              Get roadmap
-            </Link>
+            <ThemeToggle />
+            <Button size="sm" asChild>
+              <Link href="/tools">Get roadmap</Link>
+            </Button>
           </div>
-        </div>
+        </header>
         <main className="mx-auto w-full max-w-shell flex-1 px-4 py-6 md:px-6 md:py-8">
           {children}
         </main>
-        <footer className="mx-auto w-full max-w-shell border-t border-line px-4 py-8 text-xs text-muted md:px-6">
+        <footer className="mx-auto w-full max-w-shell border-t border-border px-4 py-8 text-xs text-muted-foreground md:px-6">
           <div className="mb-3 flex flex-wrap gap-4">
-            <Link href="/about">About</Link>
-            <Link href="/editorial-policy">Editorial standards</Link>
-            <Link href="/glossary">Glossary</Link>
-            <Link href="/disclosure">Disclosure</Link>
-            <Link href="/privacy">Privacy</Link>
-            <a href="https://www.youtube.com/@explainstudio9" rel="noopener noreferrer">
+            <Link href="/about" className="transition-colors hover:text-foreground">
+              About
+            </Link>
+            <Link href="/editorial-policy" className="transition-colors hover:text-foreground">
+              Editorial standards
+            </Link>
+            <Link href="/glossary" className="transition-colors hover:text-foreground">
+              Glossary
+            </Link>
+            <Link href="/disclosure" className="transition-colors hover:text-foreground">
+              Disclosure
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              Privacy
+            </Link>
+            <a
+              href="https://www.youtube.com/@explainstudio9"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
               YouTube
             </a>
           </div>

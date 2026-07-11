@@ -1,49 +1,125 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Vercel-style palette on shadcn's CSS-variable model.
+  --background/--foreground/--primary/... are the source of truth (light + dark).
+  The legacy --color-* names the existing pages use are aliased onto them in
+  @theme inline below, so every page becomes theme-aware with no per-file churn.
+*/
+:root {
+  --radius: 0.625rem;
+
+  --background: oklch(0.98 0 0);          /* #fafafa page */
+  --foreground: oklch(0.145 0 0);         /* near-black text */
+  --card: oklch(1 0 0);                   /* #fff surfaces */
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);            /* monochrome primary (Vercel black btn) */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);   /* #737373 secondary text */
+  --accent: oklch(0.97 0 0);              /* subtle gray hover — shadcn owns this */
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);             /* #e5e5e5 hairline */
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* app extras */
+  --brand: oklch(0.55 0.2 262);           /* Vercel-blue links */
+  --brand-soft: oklch(0.95 0.03 262);
+  --success: oklch(0.52 0.13 160);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);         /* near-black page */
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.185 0 0);               /* lifted surface */
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.185 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);            /* white primary btn in dark */
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);   /* #a1a1a1 */
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);           /* subtle white hairline */
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --brand: oklch(0.7 0.16 254);
+  --brand-soft: oklch(0.28 0.06 258);
+  --success: oklch(0.7 0.15 160);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-success: var(--success);
+
+  /* Legacy token names the existing pages use, aliased onto the palette above. */
+  --color-canvas: var(--background);
+  --color-surface: var(--card);
+  --color-ink: var(--foreground);
+  --color-line: var(--border);
+  --color-chip: var(--secondary);
+  --color-accent-soft: var(--brand-soft);
+  --color-ok: var(--success);
+  --color-muted: var(--muted);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
 
 @theme {
-  --color-canvas: #f7f7f5;
-  --color-surface: #ffffff;
-  --color-ink: #121212;
-  --color-muted: #667085;
-  --color-line: #e6e6e1;
-  --color-accent: #1c4ed8;
-  --color-accent-soft: #eef2ff;
-  --color-chip: #efeee9;
-  --color-ok: #067647;
-  --font-sans: var(--font-instrument-sans), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --max-width-shell: 1080px;
   --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-:root {
-  color-scheme: light;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  @apply bg-canvas text-ink antialiased;
-}
-
-@layer components {
-  .kp-chip {
-    @apply rounded-full bg-chip px-3.5 py-1.5 text-sm text-ink transition hover:bg-[#e5e4de];
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-  .kp-card {
-    @apply grid gap-1.5 rounded-[14px] border border-line bg-surface p-4 transition hover:border-[#cfcfc8];
+  :root {
+    color-scheme: light;
   }
-  .kp-btn {
-    @apply inline-flex items-center justify-center rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition hover:border-[#cfcfc8];
+  .dark {
+    color-scheme: dark;
   }
-  .kp-btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg border border-ink bg-ink px-3.5 py-2 text-sm font-medium text-white transition hover:opacity-90;
+  html {
+    scroll-behavior: smooth;
   }
-  .kp-spoke {
-    @apply flex items-center justify-between gap-4 rounded-[10px] bg-canvas px-3 py-2.5 text-sm;
-  }
-  .kp-badge {
-    @apply rounded px-1.5 py-0.5 text-[0.68rem] font-semibold uppercase tracking-wide bg-accent-soft text-accent;
+  body {
+    @apply bg-background text-foreground antialiased;
   }
 }

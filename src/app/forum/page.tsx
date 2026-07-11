@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { seededQuestions } from "@/lib/forum-seeds";
 import { createThread } from "./actions";
 import { MessageSquare, Heart, PlusCircle } from "lucide-react";
 
@@ -57,7 +59,7 @@ export default async function ForumPage() {
       <div className="mb-8 flex items-end justify-between">
         <div>
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Community Forum</h1>
-          <p className="text-muted">Discuss retirement strategies and money psychology.</p>
+          <p className="text-muted-foreground">Discuss retirement strategies and money psychology.</p>
         </div>
       </div>
       
@@ -66,6 +68,24 @@ export default async function ForumPage() {
           <strong>Database setup required:</strong> {errorMsg} Run the SQL schema to enable the forum.
         </div>
       )}
+      <div className="mb-8 rounded-2xl border border-border bg-card p-5">
+        <div className="mb-3 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-semibold tracking-tight">Curated answer hubs</h2>
+            <p className="text-sm text-muted-foreground">Moderated starter questions for common retirement decisions.</p>
+          </div>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/forum/questions">View all</Link>
+          </Button>
+        </div>
+        <div className="grid gap-2 md:grid-cols-2">
+          {Object.entries(seededQuestions).slice(0, 4).map(([slug, q]) => (
+            <Link key={slug} href={`/forum/questions/${slug}`} className="rounded-lg bg-secondary/70 px-3 py-2.5 text-sm hover:bg-accent">
+              <strong>{q.title}</strong>
+            </Link>
+          ))}
+        </div>
+      </div>
       
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
         {/* Threads List */}
@@ -73,7 +93,7 @@ export default async function ForumPage() {
           {threads?.map((t: ThreadList) => {
             const replyCount = t.knowplain_forum_posts?.[0]?.count || 0;
             const likeCount = t.knowplain_forum_likes?.[0]?.count || 0;
-            const pColor = pillarColors[t.pillar] || "bg-gray-100 text-gray-800";
+            const pColor = pillarColors[t.pillar] || "bg-secondary text-secondary-foreground";
 
             return (
               <Link 
@@ -88,12 +108,12 @@ export default async function ForumPage() {
                   <h3 className="mb-1 text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     {t.title}
                   </h3>
-                  <div className="text-sm text-muted">
+                  <div className="text-sm text-muted-foreground">
                     Started by <span className="font-medium text-ink">{t.knowplain_profiles?.display_name || "Anonymous"}</span> • {new Date(t.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-4 text-sm text-muted">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1.5">
                     <Heart className="h-4 w-4" />
                     <span>{likeCount}</span>
@@ -107,7 +127,7 @@ export default async function ForumPage() {
             );
           })}
           {(!threads || threads.length === 0) && !errorMsg && (
-            <div className="rounded-2xl border border-dashed border-line py-12 text-center text-muted">
+            <div className="rounded-2xl border border-dashed border-line py-12 text-center text-muted-foreground">
               No threads yet. Be the first to start a discussion!
             </div>
           )}
@@ -140,7 +160,7 @@ export default async function ForumPage() {
                   <option value="money-psychology">Money Psychology</option>
                   <option value="decision-tools">Decision Tools</option>
                 </select>
-                <button type="submit" className="kp-btn-primary w-full justify-center">Post Thread</button>
+                <Button type="submit" className="w-full">Post Thread</Button>
               </form>
             </div>
           ) : (
@@ -149,9 +169,9 @@ export default async function ForumPage() {
               <p className="mb-4 text-sm text-blue-800 dark:text-blue-200">
                 Sign in to start a new discussion or reply to existing threads.
               </p>
-              <Link href="/login" className="kp-btn bg-white w-full justify-center text-black">
-                Sign In
-              </Link>
+              <Button asChild className="w-full">
+                <Link href="/login">Sign In</Link>
+              </Button>
             </div>
           )}
         </div>

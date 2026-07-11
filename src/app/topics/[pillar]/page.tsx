@@ -57,32 +57,32 @@ export default async function PillarPage({
       />
       <div className="mb-4 rounded-2xl border border-line bg-surface p-6">
         <h1 className="mb-2 text-[1.35rem] font-semibold tracking-tight">{p.title}, known plain</h1>
-        <p className="mb-4 max-w-[60ch] text-sm text-muted">
+        <p className="mb-4 max-w-[60ch] text-sm text-muted-foreground">
           {p.lede} Educational only — not financial advice.
         </p>
         <div className="grid gap-2">
           {list.map((a) => (
-            <Link key={a.slug} href={`/topics/${a.pillar}/${a.slug}`} className="kp-spoke">
+            <Link key={a.slug} href={`/topics/${a.pillar}/${a.slug}`} className="flex items-center justify-between gap-4 rounded-lg bg-secondary/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent">
               <strong>{a.title}</strong>
-              <span className="shrink-0 text-xs text-muted">Explainer</span>
+              <span className="shrink-0 text-xs text-muted-foreground">Explainer</span>
             </Link>
           ))}
           {pillar === "retirement" && (
             <>
-              <Link href="/tools" className="kp-spoke">
+              <Link href="/tools" className="flex items-center justify-between gap-4 rounded-lg bg-secondary/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent">
                 <strong>Free Retirement Roadmap</strong>
-                <span className="text-xs text-muted">Tool</span>
+                <span className="text-xs text-muted-foreground">Tool</span>
               </Link>
-              <Link href="/watch" className="kp-spoke">
+              <Link href="/watch" className="flex items-center justify-between gap-4 rounded-lg bg-secondary/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent">
                 <strong>Complete Retirement Playbook</strong>
-                <span className="text-xs text-muted">Video</span>
+                <span className="text-xs text-muted-foreground">Video</span>
               </Link>
             </>
           )}
           {pillar === "decision-tools" && (
-            <Link href="/tools" className="kp-spoke">
+            <Link href="/tools" className="flex items-center justify-between gap-4 rounded-lg bg-secondary/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent">
               <strong>Retirement Roadmap Pack</strong>
-              <span className="text-xs text-muted">Tool</span>
+              <span className="text-xs text-muted-foreground">Tool</span>
             </Link>
           )}
         </div>

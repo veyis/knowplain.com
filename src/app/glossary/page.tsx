@@ -39,19 +39,19 @@ export default function GlossaryPage() {
       />
       <header className="mb-6 max-w-[680px]">
         <h1 className="mb-2 text-[1.6rem] font-semibold tracking-tight">Glossary</h1>
-        <p className="text-muted">
+        <p className="text-muted-foreground">
           Retirement and money terms, known plain. Each definition links to a fuller explainer.
         </p>
       </header>
       <dl className="grid gap-3">
         {glossary.map((t) => (
-          <div key={t.id} id={t.id} className="kp-card scroll-mt-24">
+          <div key={t.id} id={t.id} className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20 scroll-mt-24">
             <dt className="tracking-tight">
               <strong>{t.term}</strong>
             </dt>
-            <dd className="text-sm leading-relaxed text-[#2a2a2a]">{t.definition}</dd>
+            <dd className="text-sm leading-relaxed text-foreground/80">{t.definition}</dd>
             {t.see && (
-              <Link href={t.see.href} className="text-sm font-medium text-accent hover:underline">
+              <Link href={t.see.href} className="text-sm font-medium text-brand hover:underline">
                 See: {t.see.label} →
               </Link>
             )}

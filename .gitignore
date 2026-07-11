@@ -23,3 +23,6 @@ next-env.d.ts
 
 # content collections generated output
 .content-collections
+
+# supabase cli local temp
+/supabase/.temp

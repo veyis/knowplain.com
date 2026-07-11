@@ -12,7 +12,35 @@ const articles = defineCollection({
     title: z.string(),
     description: z.string(),
     plainAnswer: z.string(),
+    published: z.string().optional(),
     updated: z.string(),
+    reviewed: z.string().optional(),
+    author: z.string().optional(),
+    reviewer: z.string().optional(),
+    contentType: z
+      .enum(["explainer", "decision", "tool-guide", "source-note"])
+      .optional(),
+    riskLevel: z.enum(["low", "medium", "high"]).optional(),
+    sources: z
+      .array(
+        z.object({
+          title: z.string(),
+          publisher: z.string(),
+          url: z.string(),
+          accessed: z.string().optional(),
+          note: z.string().optional(),
+        }),
+      )
+      .optional(),
+    faqs: z
+      .array(z.object({ q: z.string(), a: z.string() }))
+      .optional(),
+    relatedTools: z
+      .array(z.object({ href: z.string(), label: z.string() }))
+      .optional(),
+    relatedDecisions: z
+      .array(z.object({ href: z.string(), label: z.string() }))
+      .optional(),
     related: z
       .array(z.object({ href: z.string(), label: z.string() }))
       .optional(),
