@@ -1,3 +1,6 @@
+// Explicit .ts extension so `node --test` can import this module directly (see test/checkup.test.mjs).
+import { SWR, futureValue, portfolioTarget } from "./facts-2026.ts";
+
 export type CheckupInput = {
   age: number;
   targetRetirementAge: number;
@@ -43,22 +46,23 @@ export function currency(value: number) {
   }).format(Number.isFinite(value) ? value : 0);
 }
 
-function futureValue(balance: number, contribution: number, years: number, returnRate: number) {
-  let value = balance;
-  for (let i = 0; i < years; i += 1) {
-    value = value * (1 + returnRate) + contribution;
-  }
-  return Math.max(0, Math.round(value));
-}
-
 export function runRetirementCheckup(input: CheckupInput): CheckupResult {
   const yearsToRetirement = Math.max(0, input.targetRetirementAge - input.age);
   const guaranteedIncome = Math.max(0, input.socialSecurityAnnual + input.pensionAnnual);
   const annualGap = Math.max(0, input.annualSpending + input.debtPaymentsAnnual - guaranteedIncome);
-  const projectedSavingsLow = futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.03);
-  const projectedSavingsHigh = futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.06);
-  const targetPortfolioLow = Math.round(annualGap / 0.045);
-  const targetPortfolioHigh = Math.round(annualGap / 0.035);
+  const projectedSavingsLow = Math.round(
+    futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.03),
+  );
+  const projectedSavingsHigh = Math.round(
+    futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.06),
+  );
+  // Target range is bracketed by the two credible, cited withdrawal-rate anchors —
+  // never an invented band. A higher rate needs a smaller portfolio, so Bengen's
+  // 4.7% (historical worst case) sets the LOW target and Morningstar's 3.9%
+  // (forward-looking, 90% success over 30 years) sets the HIGH one. The two answer
+  // different questions and must never be averaged — see SWR in facts-2026.ts.
+  const targetPortfolioLow = Math.round(portfolioTarget(annualGap, SWR.bengenRevised));
+  const targetPortfolioHigh = Math.round(portfolioTarget(annualGap, SWR.morningstar2026));
 
   const midpointTarget = (targetPortfolioLow + targetPortfolioHigh) / 2 || 1;
   const midpointProjection = (projectedSavingsLow + projectedSavingsHigh) / 2;

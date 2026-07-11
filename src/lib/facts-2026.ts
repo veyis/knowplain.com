@@ -21,8 +21,85 @@ export const CONTRIBUTION_2026 = {
   iraCatchUp50: 1_100,
   // SECURE 2.0: catch-ups must be Roth if prior-year FICA wages from the plan
   // sponsor exceed this (indexed). Effective Jan 1, 2026.
+  // NOTE: $145,000 is the statutory base and is STILL widely misquoted for 2026.
+  // Notice 2025-67 raised it to $150,000. Final regs: T.D. 10033 (2025-09-16).
   mandatoryRothCatchUpWageThreshold: 150_000,
+  total415c: 72_000, // employee + employer ceiling (mega-backdoor headroom)
+  qcdLimit: 111_000, // qualified charitable distribution, age 70½+
+  rothIraPhaseOutSingle: [153_000, 168_000],
+  rothIraPhaseOutJoint: [242_000, 252_000],
 } as const;
+
+// ── Federal income tax 2026 ──────────────────────────────────────────────────
+// Source: IRS Rev. Proc. 2025-32 — https://www.irs.gov/pub/irs-drop/rp-25-32.pdf
+export const TAX_2026 = {
+  standardDeduction: { single: 16_100, mfj: 32_200, hoh: 24_150 },
+  // Extra standard deduction per qualifying condition (age 65+ and/or blind).
+  additionalDeductionAge65: { married: 1_650, unmarried: 2_050 },
+  // Long-term capital gains 0% bracket ceiling, by taxable income.
+  ltcgZeroBracket: { single: 49_450, mfj: 98_900, hoh: 66_200 },
+  // Ordinary brackets: [rate, top of bracket]. TCJA rates made permanent by OBBBA.
+  bracketsSingle: [
+    [0.1, 12_400],
+    [0.12, 50_400],
+    [0.22, 105_700],
+    [0.24, 201_775],
+    [0.32, 256_225],
+    [0.35, 640_600],
+    [0.37, Infinity],
+  ],
+  bracketsMfj: [
+    [0.1, 24_800],
+    [0.12, 100_800],
+    [0.22, 211_400],
+    [0.24, 403_550],
+    [0.32, 512_450],
+    [0.35, 768_700],
+    [0.37, Infinity],
+  ],
+} as const;
+
+// ── OBBBA "senior bonus deduction" ── VOLATILE (expires after 2028) ──────────
+// One Big Beautiful Bill Act (July 2025). $6,000 per person aged 65+, available to
+// itemizers AND non-itemizers, on top of the standard deduction. It is NOT
+// "no tax on Social Security" — the $25k/$32k benefit-taxation thresholds are untouched.
+// Source: https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors
+export const SENIOR_DEDUCTION = {
+  perPerson65Plus: 6_000,
+  phaseOutStart: { single: 75_000, mfj: 150_000 },
+  phaseOutRate: 0.06, // reduced by 6% of MAGI above the threshold
+  fullyPhasedOut: { single: 175_000, mfj: 250_000 },
+  firstYear: 2025,
+  lastYear: 2028, // ⚠️ sunsets — re-verify before the 2029 tax year
+} as const;
+
+/**
+ * The OBBBA senior deduction actually available to a household, after phase-out.
+ *
+ * `people65Plus` is how many filers are 65 or older (0, 1, or 2 — an MFJ couple with
+ * both over 65 gets $12,000 before phase-out).
+ *
+ * The phase-out is computed PER PERSON, not once on the combined amount (IRS Schedule
+ * 1-A). That is why a couple's deduction disappears at $250,000 rather than $350,000:
+ * 6% of the $100,000 excess wipes out each spouse's $6,000 individually. Reducing the
+ * $12,000 as a lump would overstate the deduction for couples in the phase-out band.
+ */
+export function seniorDeduction2026(
+  magi: number,
+  filing: "single" | "mfj",
+  people65Plus: number,
+): number {
+  const people = Math.max(0, Math.min(2, Math.floor(people65Plus)));
+  if (people === 0) return 0;
+
+  // A single filer can only ever count themselves; only MFJ can claim two.
+  const count = filing === "single" ? 1 : people;
+  const start = SENIOR_DEDUCTION.phaseOutStart[filing];
+  const excess = Math.max(0, magi - start);
+  const reduction = excess * SENIOR_DEDUCTION.phaseOutRate;
+  const perPerson = Math.max(0, SENIOR_DEDUCTION.perPerson65Plus - reduction);
+  return Math.round(perPerson * count);
+}
 
 // ── Social Security 2026 ─────────────────────────────────────────────────────
 // Source: SSA 2026 COLA fact sheet — https://www.ssa.gov/news/en/cola/factsheets/2026.html
@@ -34,6 +111,12 @@ export const SOCIAL_SECURITY_2026 = {
   maxDelayAge: 70,
   earningsTestUnderFra: 24_480, // $1 withheld per $2 over
   earningsTestFraYear: 65_160, // $1 withheld per $3 over
+  maxBenefitAtFraMonthly: 4_152,
+  // Benefit-taxation thresholds (combined income). NOT indexed — unchanged since
+  // 1984/1993, and OBBBA did NOT change them. The senior deduction is the substitute,
+  // so "no tax on Social Security" is false. Say so.
+  benefitTaxThresholdSingle: 25_000,
+  benefitTaxThresholdJoint: 32_000,
 } as const;
 
 // ── Medicare 2026 ────────────────────────────────────────────────────────────
@@ -42,8 +125,12 @@ export const MEDICARE_2026 = {
   eligibilityAge: 65,
   partBStandardPremiumMonthly: 202.9,
   partBDeductible: 283,
+  partAInpatientDeductible: 1_736, // per benefit period
+  partDOutOfPocketCap: 2_100, // was $2,000 in 2025
+  partDMaxDeductible: 615,
   irmaaFirstTierSingle: 109_000, // MAGI from 2 years prior (2026 → 2024 return)
   irmaaFirstTierJoint: 218_000,
+  irmaaLookbackYears: 2, // the planning point: a Roth conversion at 63 hits your premium at 65
 } as const;
 
 // ── RMDs (SECURE 2.0) ────────────────────────────────────────────────────────
@@ -67,6 +154,21 @@ export const SWR = { morningstar2026: 0.039, bengenRevised: 0.047, classic4Rule:
 export const ACA_2026 = {
   subsidyCliffFplPercent: 400, // above this, $0 premium tax credit under current law
   enhancedSubsidiesExpired: true, // ⚠️ re-verify — legislation active
+  lastVerified: "2026-07-11",
+  monitoringOwner: "Editorial lead",
+  // National-average 2026 unsubsidized premiums for a 60-year-old. These are not
+  // quotes; local benchmark plans vary materially by county and state.
+  averageAge60AnnualPremium: {
+    lowestCostBronze: 11_625,
+    benchmarkSilver: 15_914,
+    lowestCostGold: 15_672,
+  },
+  restoredEnhancedCreditReference: {
+    age: 60,
+    annualIncome: 65_000,
+    benchmarkIncomeCap: 0.085,
+    annualIncreaseAfterExpiration: 10_389,
+  },
 } as const;
 
 // Federal Poverty Level. 2026 marketplace subsidies are computed against the
@@ -131,6 +233,82 @@ export function maxEmployeeDeferral2026(age: number): number {
   return CONTRIBUTION_2026.electiveDeferral + catchUpContribution2026(age);
 }
 
+export type CatchUpTier = "none" | "standard" | "super";
+
+export type CatchUpPlan2026 = {
+  /** Age 50+ — the only people who get a catch-up at all. */
+  eligible: boolean;
+  tier: CatchUpTier;
+  /** Catch-up dollars available on top of the base deferral. */
+  catchUp: number;
+  baseDeferral: number;
+  /** Base + catch-up. Employer contributions sit on top of this, up to the 415(c) limit. */
+  maxDeferral: number;
+  /** Headroom left this year given what they already defer (never negative). */
+  remainingRoom: number;
+  /** True when they are already at or above the limit. */
+  atLimit: boolean;
+  /**
+   * SECURE 2.0 §414(v)(7): if prior-year (2025) Social Security wages FROM THE PLAN
+   * SPONSOR exceeded $150,000, the catch-up portion MUST be Roth for 2026. Pre-tax is
+   * not an option. Only bites if they are catch-up eligible in the first place.
+   */
+  catchUpMustBeRoth: boolean;
+  iraLimit: number;
+  iraCatchUp: number;
+  iraTotal: number;
+  /** Every tax-advantaged employee dollar available: 401(k) deferral + catch-up + IRA. */
+  totalTaxAdvantaged: number;
+};
+
+/**
+ * What an older saver can still put away in 2026, and whether the law forces the
+ * catch-up to be Roth.
+ *
+ * `priorYearFicaWages` = 2025 Social Security wages from the employer sponsoring the
+ * plan. Someone with no FICA wages from that employer (e.g. a self-employed partner)
+ * is not subject to the Roth mandate, so pass 0.
+ *
+ * Sources: IRS Notice 2025-67 (limits; $145,000 → $150,000 threshold) and the catch-up
+ * final regulations, T.D. 10033 (2025-09-16).
+ */
+export function catchUpPlan2026(
+  age: number,
+  priorYearFicaWages: number,
+  currentAnnualDeferral: number,
+): CatchUpPlan2026 {
+  const catchUp = catchUpContribution2026(age);
+  const eligible = catchUp > 0;
+  const tier: CatchUpTier = !eligible
+    ? "none"
+    : catchUp === CONTRIBUTION_2026.superCatchUp60to63
+      ? "super"
+      : "standard";
+
+  const baseDeferral = CONTRIBUTION_2026.electiveDeferral;
+  const maxDeferral = baseDeferral + catchUp;
+  const deferred = Math.max(0, currentAnnualDeferral);
+
+  const iraCatchUp = age >= 50 ? CONTRIBUTION_2026.iraCatchUp50 : 0;
+  const iraTotal = CONTRIBUTION_2026.iraLimit + iraCatchUp;
+
+  return {
+    eligible,
+    tier,
+    catchUp,
+    baseDeferral,
+    maxDeferral,
+    remainingRoom: Math.max(0, maxDeferral - deferred),
+    atLimit: deferred >= maxDeferral,
+    catchUpMustBeRoth:
+      eligible && priorYearFicaWages > CONTRIBUTION_2026.mandatoryRothCatchUpWageThreshold,
+    iraLimit: CONTRIBUTION_2026.iraLimit,
+    iraCatchUp,
+    iraTotal,
+    totalTaxAdvantaged: maxDeferral + iraTotal,
+  };
+}
+
 /**
  * Future value of a balance plus a fixed annual contribution made at year end
  * (ordinary annuity), compounded annually at `annualReturn`.
@@ -164,6 +342,25 @@ export function acaSubsidyCliffMagi(householdSize: number): number {
   return federalPovertyLevel(householdSize) * (ACA_2026.subsidyCliffFplPercent / 100);
 }
 
+/** Reference cost for the lost enhanced subsidy in KFF's 60-year-old, $65k scenario. */
+export function acaLostEnhancedCreditReference(): number {
+  const { annualIncome, benchmarkIncomeCap } = ACA_2026.restoredEnhancedCreditReference;
+  return Math.round(ACA_2026.averageAge60AnnualPremium.benchmarkSilver - annualIncome * benchmarkIncomeCap);
+}
+
+/**
+ * Simplified restored-subsidy benchmark cap for the user's MAGI. Under the expired
+ * enhanced credits, households above 400% FPL did not hit a cliff and paid no more
+ * than 8.5% of income for the benchmark silver plan. This is a scenario comparison,
+ * not a local premium quote.
+ */
+export function acaRestoredEnhancedBenchmarkCost(magi: number): number {
+  return Math.min(
+    ACA_2026.averageAge60AnnualPremium.benchmarkSilver,
+    Math.max(0, magi * ACA_2026.restoredEnhancedCreditReference.benchmarkIncomeCap),
+  );
+}
+
 export type AcaSubsidyStatus = {
   fplPercent: number;
   cliffMagi: number;
@@ -173,6 +370,9 @@ export type AcaSubsidyStatus = {
   belowFloor: boolean;
   /** Positive = dollars of MAGI room before losing subsidy eligibility at the cliff. */
   headroomToCliff: number;
+  currentLawBenchmarkCost: number;
+  restoredEnhancedBenchmarkCost: number;
+  restoredEnhancedBenchmarkSavings: number;
 };
 
 /**
@@ -184,11 +384,19 @@ export type AcaSubsidyStatus = {
 export function acaSubsidyStatus(magi: number, householdSize: number): AcaSubsidyStatus {
   const cliffMagi = acaSubsidyCliffMagi(householdSize);
   const pct = fplPercent(magi, householdSize);
+  const currentLawBenchmarkCost =
+    pct > ACA_2026.subsidyCliffFplPercent
+      ? ACA_2026.averageAge60AnnualPremium.benchmarkSilver
+      : acaRestoredEnhancedBenchmarkCost(magi);
+  const restoredEnhancedBenchmarkCost = acaRestoredEnhancedBenchmarkCost(magi);
   return {
     fplPercent: pct,
     cliffMagi,
     overCliff: pct > ACA_2026.subsidyCliffFplPercent,
     belowFloor: pct < 100,
     headroomToCliff: cliffMagi - magi,
+    currentLawBenchmarkCost,
+    restoredEnhancedBenchmarkCost,
+    restoredEnhancedBenchmarkSavings: Math.max(0, currentLawBenchmarkCost - restoredEnhancedBenchmarkCost),
   };
 }
