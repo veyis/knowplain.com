@@ -51,13 +51,17 @@ export default function ToolsPage() {
         ))}
       </div>
 
-      <div className="mb-3 mt-8 flex items-baseline justify-between">
-        <h2 className="text-base font-semibold">Recommended planning apps</h2>
-        <span className="text-sm text-muted-foreground">Affiliate links disclosed</span>
-      </div>
+      {/* FTC 16 CFR 255: the disclosure must be plain-language, unavoidable, and adjacent to
+          the endorsement — before the first paid link, not only in the footer or on /disclosure. */}
+      <h2 className="mb-2 mt-8 text-base font-semibold">Planning apps we link to</h2>
+      <p className="mb-3 text-sm text-muted-foreground">
+        We may earn a commission if you sign up through paid links below. It costs you nothing extra.
+        That pays for this site, and it is why we label each one. See our{" "}
+        <Link href="/disclosure">Disclosure</Link>.
+      </p>
       <div className="grid gap-3 md:grid-cols-3">
         <a className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20" href={site.empowerUrl} rel="sponsored noopener noreferrer" target="_blank">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Affiliate</div>
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Paid link</div>
           <strong>Empower dashboard</strong>
           <p className="text-sm text-muted-foreground">Free net worth + retirement planner.</p>
         </a>
