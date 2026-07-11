@@ -1,1948 +1,612 @@
-# Know Plain Complete Website Guide
+# Know Plain — Complete Website Guide
 
-## 2026 Strategic Revision: Plain Network Master Plan
+**Revision 2 · Verified 2026-07-11 · Supersedes the earlier 2026-07-11 draft**
 
-Decision date: 2026-07-11
+This revision fact-checked the previous draft against primary sources (IRS, SSA, CMS, KFF, Google Search Central, the Federal Register, and the case law), and audited it against the actual codebase. The previous draft was wrong or stale in eleven places, four of which would have caused material product or trust risk — a calculator that misprices an early retiree's healthcare by five figures a year, a compliance rule it never mentioned, and engineering work on schema that no longer has practical value.
 
-This document now covers two levels:
+It was also behind its own repo. Most of what it listed as "missing" is built.
 
-1. The **Plain Network**: the full 10-channel decision-media business.
-2. **Money Made Simple**: the first full implementation and primary revenue engine, built from the original Know Plain retirement strategy below.
+---
 
-The most important strategic change is this: Know Plain should not be treated as one retirement website. It should become the operating system for a plain-English decision network. The channels are vertical brands. The moat is shared trust infrastructure, shared research, shared templates, shared tools, shared distribution, and cross-channel routing.
+## Executive decision
 
-Network promise:
+Build **Money Made Simple** as the only active vertical until it is trusted, instrumented, and monetized. Keep the 10-channel Plain Network as an architectural option, not a launch roadmap.
 
-> Complex decisions, known plain.
+The current strategic sequence:
 
-Internal operating principle:
+1. Close the P0 trust and product defects in §2.
+2. Make the **ACA Bridge / Cliff Warner** the 2026 flagship.
+3. Make tools, checkup, email capture, YouTube, and original research the business.
+4. Treat articles as necessary support, not the moat.
+5. Open a second vertical only after the gate in §14 is met.
 
-> One research engine. Ten audience faces. Shared quality bar. Different buyer intents.
+The core bet:
 
-### Final Channel Ranking
+> A language model can summarize an article. It cannot safely run a user's retirement numbers, preserve their privacy, monitor volatile tax/ACA facts, and stand behind the answer with named reviewers.
 
-Ranked by validated network ROI: money potential, fit with the current asset base, evergreen value, execution risk, trust burden, and cross-channel reuse.
+---
 
-| Rank | Channel | Status | Strategic Role |
-|------|---------|--------|----------------|
-| 1 | **Money Made Simple** | Original | Primary money engine and first complete site build |
-| 2 | **AI Decoded** | Original | Workflow engine for AI adoption, productivity, creators, and small business |
-| 3 | **Mind Mechanics** | Original | Behavioral engine that explains why people fail to act |
-| 4 | **Tax Plain** | New | High-value annual rules engine, high trust burden |
-| 5 | **Curiosity Engine** | Original | Evergreen audience feeder and concept library |
-| 6 | **Digital Shield** | New | Scam, privacy, identity, and cybersecurity protection engine |
-| 7 | **Coverage Lab** | New | High-LTV insurance and coverage education, launch later |
-| 8 | **Legal Lens** | Original | High-value legal concepts, delay for review and risk controls |
-| 9 | **Longevity Lab** | Original | Healthspan/longevity education, delay for medical review burden |
-| 10 | **Trend Pulse** | Original | Optional testing lab, not a core SEO or revenue pillar |
+## 0. How to read this
 
-### Network Portfolio Logic
+**Status legend — used throughout. Respect it.**
 
-The channels are not equal. They sit in three operating layers.
+| Tag | Meaning |
+|---|---|
+| ✅ **VERIFIED** | Confirmed against a primary source, cited inline. Safe to publish. |
+| ⚠️ **VOLATILE** | Verified today, but changes with legislation or the tax year. Must carry a "last verified" date and a monitoring owner. |
+| 🚫 **DO NOT PUBLISH** | Widely repeated, could not be confirmed against a primary source. Listed in Appendix B. Do not put these on the site. |
+| 💭 **JUDGMENT** | My analysis, not a sourced fact. Argue with it. |
 
-#### Layer 1: Revenue Engines
+Two rules that govern everything below:
 
-These solve expensive problems and should get the strongest product, SEO, email, and monetization support.
+1. **No number reaches a user without a source.** The site's entire competitive claim is source discipline. A single confidently wrong figure on a retirement page costs more trust than ten articles earn.
+2. **Where the research and the plan disagree, the research wins.** Several of my own recommendations below contradict the previous draft's. That is the point.
 
-- Money Made Simple
-- Tax Plain
-- Coverage Lab
-- Digital Shield
-- AI Decoded
+---
 
-#### Layer 2: Trust and Audience Engines
+## 1. Correction log — what this revision changed
 
-These broaden reach, deepen retention, and support the revenue engines.
+The eleven fixes. Severity is about **harm to the user or wasted engineering**, not about tone.
 
-- Mind Mechanics
-- Curiosity Engine
+| # | Previous draft said | Verdict | What's actually true | Severity |
+|---|---|---|---|---|
+| 1 | An "ACA Bridge Before Medicare" tool, listed 5th of 9, with no mention of subsidy rules | 🔴 **DANGEROUS OMISSION** | **The ARPA/IRA enhanced premium tax credits expired 2025-12-31 and were not extended. The 400%-of-FPL subsidy cliff is back for plan-year 2026.** A 60-year-old at $65,000 income now pays **$10,389/yr more** than in 2025. ([KFF](https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/)) | **CRITICAL** |
+| 2 | Catch-up planner citing only the $8,000 / $11,250 limits | 🔴 **INCOMPLETE — compliance** | **The SECURE 2.0 mandatory Roth catch-up is live for 2026.** If 2025 FICA wages from the plan sponsor exceeded **$150,000** (not the widely-quoted $145,000), catch-up contributions **must** be Roth. ([IRS Notice 2025-67](https://www.irs.gov/pub/irs-drop/n-25-67.pdf); [final regs, 2025-09-16](https://www.federalregister.gov/documents/2025/09/16/2025-17865/catch-up-contributions)) | **HIGH** |
+| 3 | "Add FAQPage schema when a visible FAQ exists" (in 4 places) | 🔴 **DEAD** | FAQPage is no longer listed in Google's supported structured-data gallery. Treat `faqJsonLd()` as inert markup unless Google restores support. Keep visible FAQs for humans; do not maintain FAQ schema as an SEO project. | **HIGH** (wasted work) |
+| 4 | "Home: Organization, WebSite, SearchAction" | 🟠 **STALE** | Google killed the **sitelinks search box on 2024-11-21**. `SearchAction` is inert. Keep `Organization`; keep `WebSite` **only** for the site-name feature. ([Google](https://developers.google.com/search/blog/2024/10/sitelinks-search-box)) | MEDIUM |
+| 5 | "Every tool has schema as SoftwareApplication or WebApplication" | 🟠 **CARGO CULT** | The software-app rich result requires `offers.price` **and** `aggregateRating`/`review`. A free calculator with no genuine ratings gets nothing from this rich-result type. Satisfying it by inventing ratings is a spam violation. Emit it only if the tool genuinely behaves like a software app and has real review/rating data. | MEDIUM |
+| 6 | "Add `reviewedBy` as a schema.org property" implying Google value | 🟠 **OVERSTATED** | `reviewedBy` appears **nowhere** in Google's Article docs. Keep it — for humans and LLM parsing — but it buys zero from Google. The **visible** "Reviewed by" line is what raters see and is worth more than the markup. | LOW |
+| 7 | Cites "Google's helpful content system" as a live system | 🟠 **STALE** | Folded into core ranking in the **March 2024** core update; Google lists it under **"Retired systems."** There is no standalone classifier and no "recovery." Also: **E-E-A-T is not a ranking factor** — Google says so explicitly. Current Quality Rater Guidelines: **2025-09-11**. | MEDIUM |
+| 8 | Portfolio target "using 3.5%–4.5% planning withdrawal rates" | 🟡 **UNDER-SPECIFIED** | Defensible as a band, indefensible as a bare number. The two credible anchors measure **different things**: Morningstar **3.9%** (2025 edition — *forward-looking*, 30yr, 90% success, 30–50% equity) vs. Bengen **4.7%** (*historical worst case*, 7-asset-class portfolio). You cannot average them. Label the method or don't show the number. | MEDIUM |
+| 9 | Plans `/sources/scf-retirement-savings` | 🟡 **WOULD CITE A NONEXISTENT SOURCE** | **The 2022 SCF is still the latest wave** as of today. The 2025 wave has no announced release date. Also: SCF balances are **conditional on having an account** — only **54.3%** of families do. Publishing "median 55–64 = $185,000" without that caveat is the signature deception of this genre. | HIGH |
+| 10 | "Build warns that Next.js `middleware` is deprecated → migrate to `proxy`" | ⚪ **ALREADY DONE** | `src/proxy.ts` exists; `src/middleware.ts` does not. Along with ~15 other "gaps" in §Idea 10 that are built. See §2. | (stale) |
+| 11 | Missing entirely | 🟡 **GAPS** | **OBBBA senior deduction** ($6,000/person 65+, 2025–2028); **inherited-IRA annual RMDs now enforced** (waivers ended 2025); **Part D $2,100 cap**; **IRA catch-up $1,100**; **415(c) $72,000**; **Saver's Match (2027)**; **WEP/GPO repeal**. All directly relevant to the target audience. | MEDIUM |
 
-#### Layer 3: Delayed or Experimental Engines
+**Two claims the previous draft got right and should keep, now with evidence:**
 
-These are useful, but should not consume early operational capacity.
+- ✅ **"Confidence is falling."** True. EBRI's **2026** Retirement Confidence Survey (fielded Jan 2026, n=2,544, released 2026-04-21): worker confidence **67% → 61%**; retiree confidence **78% → 73%**. Workers *expect* to retire at a median of **65**; retirees actually retired at **62**, and nearly half retired **earlier than planned**. That last gap is the single most publishable statistic in the entire survey and it is the emotional core of the brand.
+- ✅ **"Late, anxious, confused, but fixable."** Keep the phrase. It is the correct wedge and the data supports it.
 
-- Legal Lens
-- Longevity Lab
-- Trend Pulse
+---
 
-### Brand Architecture
+## 2. Where the site actually is today
 
-Use a hybrid model.
+Audited against the working tree, 2026-07-10. **The previous draft's "current known gaps" section is obsolete and has been deleted.** Do not re-plan work that is done.
 
-Website architecture should be an **endorsed network**:
+**Already built** (the draft listed most of these as missing):
 
-- `/money` = Money Made Simple
-- `/ai` = AI Decoded
-- `/mind` = Mind Mechanics
-- `/tax` = Tax Plain
-- `/curiosity` = Curiosity Engine
-- `/security` = Digital Shield
-- `/coverage` = Coverage Lab
-- `/legal` = Legal Lens
-- `/longevity` = Longevity Lab
-- `/trends` = Trend Pulse
+`/checkup` (with a real scoring engine in `src/lib/checkup.ts`) · `/decisions` + 4 decision pages · `/late-starters` · `/authors/[slug]` and `/reviewers/[slug]` with `ProfilePage` schema · `/methodology` · `/corrections` · `/editorial-policy` · `/tools/[slug]` with **6 working calculators** · `/glossary` (15 terms) · `/forum` + 9 seeded Q&A pages · `/watch` with static fallbacks and transcripts · `Article`, `BreadcrumbList`, `ProfilePage`, `VideoObject`, `QAPage`, `WebApplication`, `ItemList` JSON-LD · the **full trust frontmatter schema** (published/updated/reviewed/author/reviewer/sources/faqs/riskLevel/relatedTools) · `ArticleTrust`, `SourceList`, `FAQBlock`, `DecisionCta` · the `middleware`→`proxy` migration · affiliate links with per-link labels and a `/disclosure` page · **and `src/lib/facts-2026.ts`**, which is a genuinely good single-source-of-truth module that already has the $1,100 IRA catch-up, the $150,000 Roth threshold, the ACA cliff math, and Morningstar's 3.9%.
 
-Public video/social brands can act as a **house of brands**:
+**The real gaps — this is the actual backlog.** Items marked ✅ were closed on 2026-07-11; the rest are open.
 
-- Money Made Simple
-- AI Decoded
-- Mind Mechanics
-- Tax Plain
-- Digital Shield
+| # | Gap | Why it matters | Status |
+|---|---|---|---|
+| 1 | **`captureCheckupLead` silently lied.** It inserted into `knowplain_leads` — a table that **did not exist** in `supabase/schema.sql` — inside a `try/catch` that swallowed the failure and returned `{ ok: true }`. | Every user who asked for their results by email was told it worked. Nothing was stored, nothing was sent. On a site whose only asset is trust, this was the worst bug in the repo. | ✅ **FIXED** — table created (insert-only RLS, not publicly readable), errors surfaced, UI no longer claims an email was sent. **Still open: no ESP is wired** (needs a provider decision). |
+| 2 | **13 of 21 articles had bare frontmatter** — no author, reviewer, sources, or dates. | The actual YMYL trust hole. The schema and components existed; the content didn't use them. | ✅ **FIXED** — **21/21** now carry the trust stack. Sources attached only where the article makes a checkable claim (DOIs for the behavioural studies already named in prose; `.gov` primaries for the finance pages). |
+| 3 | **`health-care-before-medicare.mdx` was materially wrong.** It said ACA subsidies "key off **taxable income**" (they key off ACA MAGI, which adds back *all* Social Security and tax-exempt interest) and never mentioned the cliff. | This is Correction #1 showing up in live content — the exact page an early retiree would trust. | ✅ **FIXED** — rewritten with the cliff, the MAGI definition, the $10,389/yr figure, and a "last verified" date. |
+| 4 | **No analytics of any kind.** Zero. And the CSP (`connect-src 'self'`) would block a third-party script today. | Every metric in §15 is unmeasurable. You are flying blind. | 🔴 **OPEN — now the top P0.** |
+| 5 | `/profile` and `/login` were crawlable. `/forum/[id]` threads neither in the sitemap nor noindexed. | Thin/auth pages in the index drag site-wide quality. | ✅ **FIXED** for `/profile` + `/login` (`noindex` + robots disallow). `/forum/[id]` still open — decide when moderation is real. |
+| 6 | **Dead schema shipping.** `faqJsonLd()` (FAQ rich result removed 2026-05-07), `SearchAction` (removed 2024-11-21), `webApplicationJsonLd()` (earns nothing without ratings), and `QAPage` **misapplied** to staff-answered pages that cannot satisfy its "users must be able to submit answers" requirement. | Maintaining markup that does nothing, plus one genuine misapplication. | ✅ **FIXED** — all four removed; `WebSite` kept for the site-name feature only. |
+| 7 | **`checkup.ts` hardcoded `0.035`/`0.045`** instead of reading `facts-2026.ts`, i.e. the exact uncited band Correction #8 says to stop publishing. | Broke the single-source-of-truth rule inside the flagship tool. | ✅ **FIXED** — now derives the range from the two cited SWR anchors and labels the method on-screen. Guarded by `test/checkup.test.mjs`. |
+| 8 | No `/research`, no `/sources` hub. | §10.4 — the only durable backlink asset. | 🟡 **OPEN (P2)** |
 
-Reasoning:
+💭 **Two things the audit got wrong, corrected by implementation:**
 
-- The website benefits from shared authority, shared schema, shared internal links, and centralized trust.
-- YouTube and social platforms benefit from clear niche packaging.
-- The parent brand should quietly endorse the channels without making every channel feel generic.
+- **The Checkup was already fully client-side.** `runRetirementCheckup` runs in a `useMemo`; ages, balances, and debts never leave the browser. Only the email and a generic verdict sentence are ever sent. §9.2's hardening was therefore *already true* — the privacy exposure was much smaller than the audit assumed.
+- **The Checkup already respected the advice line.** No asset allocation, no named securities; every "next step" is an internal tool link. §9.3 was already satisfied. It is now *enforced* by a test that fails if anyone adds allocation language.
 
-Recommended public naming pattern on site:
+---
 
-- "Money Made Simple by Know Plain"
-- "AI Decoded by Know Plain"
-- "Mind Mechanics by Know Plain"
-- "Tax Plain by Know Plain"
-
-### Channel Jobs-To-Be-Done
-
-| Channel | User Question | Product Promise |
-|---------|---------------|-----------------|
-| Money Made Simple | What should I do with my money? | Know where you stand and what to do next |
-| AI Decoded | How do I use AI to save time or make better work? | Tested workflows, not hype |
-| Mind Mechanics | Why do I freeze, avoid, or make bad decisions? | Understand the mental pattern and design around it |
-| Tax Plain | What tax rule applies to me this year? | Current rules explained without panic |
-| Curiosity Engine | Explain this idea simply | Durable concept explainers |
-| Digital Shield | How do I protect myself online? | Simple protection from scams, hacks, and privacy traps |
-| Coverage Lab | What coverage decision protects me? | Insurance and healthcare choices without sales pressure |
-| Legal Lens | What legal concept affects this decision? | Legal ideas explained, not legal advice |
-| Longevity Lab | Which healthspan claims are real? | Sober longevity education with source discipline |
-| Trend Pulse | What changed and does it matter? | Fast signal that feeds evergreen channels |
-
-### Build Order
-
-The correct sequencing is not the same as the revenue ranking. Build by compounding infrastructure.
-
-#### Phase 0: Shared Network Foundation
-
-Build once and reuse everywhere:
-
-- Channel taxonomy.
-- Author profiles.
-- Reviewer profiles.
-- Editorial policy.
-- Corrections policy.
-- AI-use policy.
-- Affiliate disclosure policy.
-- Medical/legal/tax/financial disclaimer variants.
-- Source database.
-- Last-updated and last-reviewed fields.
-- Article, video, tool, glossary, research, and forum templates.
-- Schema helpers.
-- Newsletter capture per channel.
-- Cross-channel recommendation blocks.
-- Analytics events shared across channels.
-
-Do not launch high-risk channels before this foundation works.
-
-#### Phase 1: Money Made Simple
-
-This is the first complete build because the current repo already has retirement, tools, glossary, forum, Supabase auth, and finance positioning.
-
-Core pillars:
-
-- Retirement
-- Debt
-- Saving
-- Investing basics
-- Social Security
-- Credit
-- Big purchases
-- Couples and money
-- Late starters
-- Money psychology crossover
-
-Flagship products:
-
-- Retirement Checkup
-- Am I On Track?
-- Debt vs Investing Calculator
-- Emergency Fund Planner
-- Roth vs Traditional Tool
-- Social Security Timing Tool
-- Late-Starter Catch-Up Planner
-
-Primary monetization:
-
-- Retirement planning tools
-- Budgeting apps
-- Financial software
-- Downloadable templates
-- Email courses
-- Affiliate tools with clear disclosure
-
-#### Phase 2: AI Decoded
-
-Reframe AI Decoded away from AI news and into workflow proof.
-
-Core pillars:
-
-- AI for office work
-- AI for creators
-- AI for small business
-- AI agents explained
-- AI automation
-- AI tool comparisons
-- AI safety and disclosure
-
-Rules:
-
-- No generic "best AI tools" list without original testing.
-- Every workflow should show input, process, output, limits, and human review.
-- Avoid model gossip unless it changes real workflows.
-
-Products:
-
-- Workflow library.
-- Prompt/workflow packs.
-- Tool comparison pages.
-- Screen-recorded tutorials.
-- Automation recipes.
-
-#### Phase 3: Mind Mechanics
-
-Promote from feeder to core. This is the network's behavioral explanation layer.
-
-Core pillars:
-
-- Decision paralysis
-- Present bias
-- Loss aversion
-- Shame
-- Habit loops
-- Attention
-- Motivation
-- Risk perception
-- Scam psychology
-- Couples/family decisions
-
-Strategic role:
-
-- Supports Money Made Simple: why people avoid money.
-- Supports AI Decoded: why adoption feels hard.
-- Supports Digital Shield: why scams work.
-- Supports Tax Plain: why tax avoidance happens.
-- Supports Coverage Lab: why insurance decisions feel overwhelming.
-
-Boundary:
+## 3. The network plan: the honest argument against it
 
-- Education, not therapy or diagnosis.
+The previous draft opens by declaring Know Plain should become a **ten-channel decision-media network** — money, AI, psychology, tax, security, insurance, legal, longevity, trends — with a 12-month roadmap launching seven of them.
 
-#### Phase 4: Tax Plain
+💭 **I think this is the single biggest risk in the document, and I want to make the case against it properly rather than on taste.**
 
-High ROI, high risk. Launch after trust infrastructure is visible.
-
-Core pillars:
-
-- Annual tax brackets
-- Standard deduction
-- Retirement contribution limits
-- IRA/Roth rules
-- 1099 and self-employment
-- Estimated taxes
-- Tax credits
-- Capital gains
-- RMDs
-- Forms explained
-
-Mandatory page requirements:
-
-- Tax year label.
-- IRS source.
-- Last reviewed date.
-- "Not tax advice" boundary.
-- Update calendar.
-- Clear "who this applies to" section.
+**First, kill a bad argument.** It is tempting to say "Google penalizes unfocused sites." **It does not.** There is no topical-authority ranking factor; Google's "topic authority" system is news-specific, and Mueller has said plainly there is no site-wide authority score. And **site reputation abuse — which people reach for here — is about hosting *third-party* content on your domain**, not about a publisher expanding its own coverage. If you argue against the network on those grounds you will be arguing from a myth, and you will lose the argument to the next person who checks.
 
-Monetization:
+**Now the argument that actually holds.** Four things, in order of force:
 
-- Tax software.
-- Bookkeeping tools.
-- Payroll software.
-- Small-business templates.
-- CPA referrals only after compliance review.
+**3.1 The compliance surface multiplies, and it is not shared.** The plan's own risk table rates Tax Plain, Coverage Lab, Legal Lens, and Longevity Lab as **"Very High"** risk. That is correct, and it is disqualifying at current capacity. Each of those verticals needs its *own* credentialed reviewer — a CPA will not review a Medicare page, a CFP will not review a will, and nobody sane reviews longevity claims without a physician. The plan's "shared trust infrastructure" moat is real for *templates* and *schema*. It is worth **zero** for *review capacity*, which is the binding constraint. You cannot amortize a CPA across a cybersecurity article.
 
-#### Phase 5: Curiosity Engine
-
-Use as evergreen reach and concept infrastructure.
-
-Core pillars:
-
-- Economics basics
-- Technology concepts
-- Science explainers
-- History of ideas
-- Systems thinking
-- Human behavior
-- Everyday risk
+**3.2 A single editorial entity claiming expertise in nine unrelated YMYL fields is a negative trust signal.** Retirement content is **"YMYL Financial Security"** in the Quality Rater Guidelines and gets "the most scrutiny for Page Quality rating." Raters do off-site reputation research and apply a Who/How/Why test. "Know Plain Editorial," author of both *Roth conversion strategy* and *how to spot phishing* and *which longevity claims are real*, does not survive that test — not because of a topic rule, but because **no reader believes it, and raters are instructed to model readers.** Today you have **two** editorial entities (`know-plain-editorial`, `retirement-review-board`) covering **one** vertical, and 13 of 21 articles don't even use them. Breadth is not the problem to solve.
 
-Rules:
+**3.3 The real Google policy risk is *scaled content abuse*, and the plan walks into it.** Google's spam policy defines this as generating many pages "primarily to manipulate rankings and not help users," explicitly including AI-assisted mass production. A solo operator publishing **100 evergreen assets across 7 verticals in 12 months**, each requiring a source pack and a reviewer, will either miss the deadline or hit it by producing exactly the kind of thin, unreviewed, AI-assisted corpus the policy names. The plan's own quality bar and its own volume target are in direct conflict, and volume usually wins.
 
-- Keep production efficient.
-- Use it to feed other channels.
-- Do not over-invest before revenue engines are working.
+**3.4 It contradicts the strongest finding in the research.** Post-AI-Overviews, **the article corpus is the cost center and the tools are the asset** (§4, §12). The network plan is a plan to build *nine more article corpora*. It scales the thing that is depreciating and dilutes the thing that isn't.
 
-#### Phase 6: Digital Shield
+**What I recommend instead:**
 
-Strong fit and rising urgency.
+> **Take Money Made Simple to a proven, monetized, trusted state on one vertical before opening a second. Keep the network as an *option*, not a *roadmap*.**
 
-Core pillars:
-
-- Password managers
-- Passkeys and 2FA
-- Identity theft
-- Credit freezes
-- AI scams
-- Phishing
-- Romance scams
-- Bank fraud
-- Device safety
-- Family digital safety
-- Privacy settings
+The Phase-0 shared foundation is genuinely good architecture — build it, because it costs almost nothing extra and it makes channel #2 cheap *if it is ever justified*. The `ChannelId` union type, the shared schema helpers, and the taxonomy are all fine. **Just don't launch on them.** The gate for opening a second vertical should be explicit and numeric:
 
-Products:
+**Open channel #2 only when Money Made Simple has:** (a) a credentialed reviewer on every high-risk page, (b) ≥$3,000/mo in revenue, (c) ≥25k pageviews/mo, and (d) the P0 list in §2 closed. If those four are not true, a second channel does not make the first one better — it makes it later.
 
-- Family Cyber Safety Checklist.
-- Scam Response Checklist.
-- Credit Freeze Guide.
-- Password Manager Setup Guide.
-- Identity Theft Recovery Path.
+The one exception worth arguing about: **Tax Plain has genuine synergy** with retirement (brackets, RMDs, Roth, IRMAA, the senior deduction) and shares a reviewer type (CPA/EA). If any channel goes second, it's that one — and even then, only after the gate.
 
-Monetization:
+If you keep the full network plan anyway, that's a legitimate call and I'll build to it — but make it with §3.1 and §3.3 in front of you, not around them.
 
-- Password managers.
-- Identity protection.
-- Security software.
-- Privacy tools.
+**3.5 Do not build yet.** These are explicit guardrails, not vague preferences:
 
-Boundary:
+| Do not build | Until |
+|---|---|
+| Tax Plain as a standalone vertical | Money Made Simple P0s are closed and a CPA/EA reviewer is available |
+| Coverage Lab lead generation | Privacy, consent, partner-quality, and compliance review are complete |
+| Legal Lens | A legal reviewer and jurisdiction policy exist |
+| Longevity Lab | Medical review and evidence-grading policy exist |
+| Advisor matching / advisor lead-gen | A lawyer designs the promoter, privacy, Safeguards Rule, and ranking-disclosure workflow |
+| Broad article sprint across channels | Analytics, source workflow, and reviewer workflow are proven in Money Made Simple |
+| "Best tools" rankings involving owned products | Ownership and compensation disclosure components are built and visible |
 
-- Avoid fearmongering.
-- Avoid advanced security advice that normal users cannot verify.
-- Explain practical baseline protection.
+---
 
-#### Phase 7: Coverage Lab
+## 4. The 2026 operating environment
 
-High LTV, launch later.
+This section did not exist in the previous draft and it should determine everything downstream.
 
-Core pillars:
+**4.1 The click-through bet has partly failed, precisely for this content.** ✅ Pew Research (published 2025-07-22; 900 US adults, 68,879 real Google searches collected March 2025):
 
-- Medicare
-- ACA before Medicare
-- Life insurance
-- Disability insurance
-- Homeowners
-- Auto
-- Umbrella
-- Long-term care
-- Deductibles
-- HSA/HDHP decisions
+- Users clicked a traditional result on **8%** of searches with an AI summary vs **15%** without.
+- They clicked a link *inside* the AI summary **1%** of the time.
+- They **ended the session entirely** 26% of the time with an AI summary, vs 16% without.
+- AI summaries appeared on 18% of all searches — **but on 60% of question-formatted searches.**
 
-Rules:
+💭 That last line is the one that should change your plan. *"How much do I need to retire?"* and *"When should I claim Social Security?"* are question-formatted informational queries. **Your entire article corpus lives in the 60% bucket.** Corroborating: Ahrefs finds position-1 CTR down 34.5% on AIO queries (rising to 58% by Dec 2025); Seer finds informational CTR down ~61%.
 
-- Education first, lead capture later.
-- Do not collect sensitive insurance lead data until privacy, consent, and partner quality are proven.
-- Avoid dark-pattern comparison pages.
+**4.2 What Google actually says about getting cited by AI.** ✅ Google shipped a dedicated doc in May 2026 ([AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)). It is unusually blunt, and it demolishes most of the advice being sold right now:
 
-Products:
+> "You don't need to create new machine readable files, AI text files, markup, or Markdown to appear in Google Search (including its generative AI capabilities), as Google Search itself doesn't use them."
 
-- Coverage Gap Checkup.
-- Medicare Decision Map.
-- ACA Bridge Planner.
-- Life Insurance Needs Estimator.
+On **llms.txt**: creating one "will neither harm nor help your site's visibility or rankings in Google Search, as Google Search ignores them." On **schema**: "Structured data isn't required for generative AI search, and there's no special schema.org markup you need to add." On **chunking**: "There's no requirement to break your content into tiny pieces."
 
-#### Phase 8: Legal Lens
+Google's own myth list: llms.txt, chunking, rewriting for AI, seeking inauthentic mentions, and **overfocusing on structured data**. The only stated eligibility bar is: **indexed and snippet-eligible**.
 
-Delay until review workflow is mature.
+The best available evidence agrees. ✅ Ahrefs ran the only quasi-causal study in the corpus (1,885 pages adding JSON-LD vs 4,000 matched controls, difference-in-differences, Aug 2025–Mar 2026): **AI Overview citations −4.6%, AI Mode +2.4%, ChatGPT +2.2%.** Schema had **no clear positive effect on AI citation.** Meanwhile ~99% of AI Overview citations come from URLs already in the organic top 10 (seoClarity), and 87% of ChatGPT citations match Bing's top results (Seer).
 
-Core pillars:
+💭 **Translation: there is no AEO/GEO trick. Rank, and be worth citing.** Every hour spent on "AI optimization" schema is an hour not spent on the thing that actually gets cited.
 
-- Wills
-- Trusts
-- Power of attorney
-- Probate
-- Contracts
-- Tenant rights
-- Consumer rights
-- Business entity basics
-- Estate planning basics
+**4.3 What survives.** An AI Overview can summarize your explanation of the 4% rule. It **cannot run your simulator on the user's numbers.** Three things a summarizer structurally cannot replace:
 
-Boundary:
+1. **Interactive artifacts** — calculators, the checkup, the simulator.
+2. **Proprietary data** — original research, your own aggregate usage data.
+3. **Community and identity** — the forum, the email list, the YouTube audience.
 
-- Legal education, not legal advice.
-- State-specific content only with review.
+**This is the strategic core of the whole document.** Everything in §8–§10 is ordered by it.
 
-#### Phase 9: Longevity Lab
+---
 
-Delay due to medical YMYL risk.
+## 5. Positioning
 
-Core pillars:
+Unchanged from the previous draft, because it was right. Restated tightly:
 
-- Sleep
-- Strength training
-- Cardio
-- Protein
-- Preventive screenings
-- Wearables
-- Supplements
-- Longevity claims
-- Medicare/health overlap
+> **Know where you stand, understand the tradeoffs, and take the next plain step.**
 
-Rules:
+**Primary audience:** 45–62, feels behind, has partial savings and no coherent plan, searches specific fearful questions. **Emotional wedge:** *"Late, anxious, confused — but fixable."*
 
-- Avoid supplement hype.
-- Prefer consensus sources and medical review.
-- Separate evidence strength from speculation.
+**The 2026-specific wedge, which is new and urgent:** ⚠️ **the 60–64 income-management years.** Because the ACA subsidy cliff came back (§1.1), a household one dollar over 400% FPL loses *all* premium tax credit. For a 60-year-old that is worth **$10,389/year**. This single fact ties together Roth conversions, capital-gains harvesting, withdrawal sequencing, and retirement timing — and it makes *"should I do a Roth conversion this year?"* a question that can cost five figures if answered casually.
 
-#### Phase 10: Trend Pulse
+💭 Nobody plain-English owns this yet, it is the most consequential retirement decision of 2026, and it is exactly the kind of question an AI Overview answers badly because the answer depends entirely on the user's own numbers. **This is the flagship.**
 
-Do not build as a standalone business at first.
+**Still avoid:** the "best credit cards" affiliate treadmill · head-term investing encyclopedia · generic FIRE · political Social Security speculation · anything resembling personalized investment advice (§11).
 
-Use it for:
+---
 
-- Shorts.
-- Newsletter hooks.
-- Fast topic testing.
-- "What changed this week?"
-- Trend-to-evergreen conversion.
+## 6. The trust layer
 
-Rule:
+The bar, stated correctly (the previous draft's framing of this was stale — see §1.7):
 
-- Trends should feed evergreen assets, not distract the team.
+✅ Google's guidance: **"Trust is the most important member of the E-E-A-T family… untrustworthy pages have low E-E-A-T no matter how Experienced, Expert, or Authoritative they may seem."** But **E-E-A-T is not a ranking factor** — it is a rater framework. Build for it because it earns human trust and raters model humans, **not** because it is a lever. Current Quality Rater Guidelines: **2025-09-11**. Retirement content is **YMYL Financial Security** — highest scrutiny tier.
 
-### Content Operating System
+**6.1 The work that matters, in order.**
 
-Every topic should move through the same pipeline.
+1. **Close the frontmatter gap (P0).** 13 of 21 articles have no author, no sources, no review date. The schema, the components, and the registry all exist. This is *content* work, not engineering, and it is the highest-value trust work available. Nothing else in this section matters until it's done.
+2. **Get one real credentialed reviewer.** ✅ Today `src/lib/editorial.ts` has two *entities* — `know-plain-editorial` and `retirement-review-board` — not two *people*. For YMYL finance, **a named human with a verifiable credential and a `sameAs` link to a CFP Board / AICPA profile is worth more than every schema change in this document combined.** One CFP® reviewing the high-risk pages does the heavy lifting.
+3. **Visible byline > markup.** "Written by X · Reviewed by Y, CFP® · Updated Jul 10, 2026" on the page. `reviewedBy` in JSON-LD is fine to keep, but it does nothing for Google (§1.6).
+4. **Honest dates.** `published` set once and never bumped; `dateModified` moved **only** on substantive revision. Faking freshness is a trust risk, and it's the one form of SEO manipulation that a corrections-policy site cannot survive being caught doing.
+5. **Corrections that are visible.** `/corrections` exists. Use it — a visible correction note on a revised article is a stronger trust signal than any badge.
 
-#### 1. Topic Intake Score
+**6.2 What to stop doing.** Delete `faqJsonLd()` (dead, §1.3). Drop `SearchAction` (dead, §1.4). Drop `webApplicationJsonLd()` from tool pages (earns nothing, §1.5). `DefinedTermSet` on the glossary produces no rich result — harmless, low priority to remove.
 
-Score each idea from 1-5:
+---
 
-- Search demand.
-- Audience pain.
-- Monetization potential.
-- Evergreen durability.
-- Trust/risk burden.
-- Cross-channel reuse.
-- Tool/checklist potential.
-- Video potential.
-- Newsletter potential.
-- Competitive difficulty.
+## 7. `facts-2026.ts` — the single source of truth
 
-Priority formula:
+✅ **This module is the best thing in the repo.** Keep the discipline absolutely: every number on the site and in every calculator reads from here, cited once, updated once per tax year.
 
-```text
-Priority = (pain + monetization + evergreen + reuse + tool potential + video potential)
-           - (risk burden + competitive difficulty)
-```
-
-Reject or delay topics that have high risk and low reuse.
-
-#### 2. Source Pack
-
-Before writing any serious piece, create a source pack:
-
-- Primary source.
-- Secondary source.
-- Recent update.
-- Definitions.
-- Key numbers.
-- Common misconceptions.
-- Risk boundaries.
-- What changed since last year, if applicable.
-
-No source pack means no YMYL publication.
-
-#### 3. Asset Stack
-
-One strong topic should become:
-
-- Website article.
-- YouTube script.
-- Three to five shorts.
-- Newsletter section.
-- Checklist or tool.
-- Social carousel.
-- Internal links.
-- Email capture CTA.
-- Cross-channel recommendations.
-
-This is how the network scales without producing 10 disconnected operations.
-
-#### 4. Cross-Channel Routing
-
-Every high-value topic should route to adjacent channels.
-
-Example: "Should I claim Social Security at 62?"
-
-- Money Made Simple: claiming decision guide and calculator.
-- Tax Plain: taxation of Social Security benefits.
-- Coverage Lab: Medicare and health coverage timing.
-- Mind Mechanics: panic claiming and loss aversion.
-- Digital Shield: Social Security scam prevention.
-- Curiosity Engine: how Social Security works.
-
-The network advantage comes from turning one user intent into a decision path.
-
-### Universal Page Template
-
-Every serious page should include:
-
-1. Plain answer.
-2. Who this applies to.
-3. What changed recently, when relevant.
-4. The decision or concept in one sentence.
-5. Main framework.
-6. Calculator, checklist, or worksheet if useful.
-7. Examples or cases.
-8. Common mistakes.
-9. Sources and notes.
-10. Author/reviewer block.
-11. Channel-specific disclaimer.
-12. Next step.
-13. Cross-channel recommendations.
-
-### Universal Video Template
-
-Long-form video:
-
-1. Hook: name the confusion.
-2. Stakes: why it matters.
-3. Plain answer.
-4. Three-part framework.
-5. Example.
-6. Mistake to avoid.
-7. Tool/checklist CTA.
-8. Comment prompt.
-9. Disclosure when monetized.
-
-Short-form video:
-
-1. One misconception.
-2. One correction.
-3. One useful next step.
-
-### First 100 Evergreen Assets
-
-Do not split the first 100 pieces evenly. Allocate by network ROI.
-
-| Channel | Allocation |
-|---------|-----------:|
-| Money Made Simple | 35 |
-| AI Decoded | 20 |
-| Mind Mechanics | 15 |
-| Tax Plain | 10 |
-| Digital Shield | 10 |
-| Curiosity Engine | 5 |
-| Coverage Lab | 5 |
-| Legal Lens | 0 |
-| Longevity Lab | 0 |
-| Trend Pulse | 0 evergreen; shorts/tests only |
-
-### First 30 Priority Pieces
-
-Money Made Simple:
-
-1. How much is enough to retire?
-2. Is $1 million enough to retire?
-3. Starting retirement savings at 45.
-4. Pay off debt or invest?
-5. Emergency fund, known plain.
-6. Roth vs Traditional.
-7. Social Security at 62 vs 67 vs 70.
-8. What is sequence risk?
-9. How to build a one-page money plan.
-10. How to talk to your spouse about money.
-
-AI Decoded:
-
-11. AI workflows for beginners.
-12. How to use AI for email.
-13. How to use AI for spreadsheets.
-14. AI agents explained.
-15. The best AI workflow for YouTube research.
-16. What not to automate with AI.
-17. AI for small business owners.
-
-Mind Mechanics:
-
-18. Present bias explained.
-19. Why money decisions freeze your brain.
-20. Loss aversion explained.
-21. Why scams work.
-22. How to make hard decisions with less anxiety.
-
-Tax Plain:
-
-23. 2026 tax brackets explained.
-24. Standard deduction explained.
-25. 401(k) and IRA limits for 2026.
-26. Estimated taxes for freelancers.
-
-Digital Shield:
-
-27. How to freeze your credit.
-28. Password managers explained.
-29. How to spot phishing.
-30. AI voice scams explained.
-
-### Revenue Model
-
-Do not rely on ads. Use a ladder.
-
-1. Affiliate revenue.
-2. Email list.
-3. Tools and templates.
-4. Sponsorships.
-5. Digital products.
-6. Lead generation only where ethical and privacy-safe.
-7. Courses.
-8. Professional referral partnerships.
-
-Channel revenue ranking:
-
-| Rank | Channel | Best Revenue |
-|------|---------|--------------|
-| 1 | Coverage Lab | Insurance education, comparisons, later privacy-safe referrals |
-| 2 | Tax Plain | Tax software, bookkeeping, payroll, templates |
-| 3 | Money Made Simple | Finance tools, retirement tools, templates, email products |
-| 4 | Digital Shield | Password managers, identity protection, privacy tools |
-| 5 | AI Decoded | SaaS affiliates, workflow packs, sponsorships |
-| 6 | Legal Lens | Legal software, document tools, attorney directories later |
-| 7 | Longevity Lab | Wearables, courses, carefully selected products |
-| 8 | Mind Mechanics | Courses, books, journals, productivity tools |
-| 9 | Curiosity Engine | Indirect audience growth |
-| 10 | Trend Pulse | Sponsorship/testing only |
-
-Launch Money Made Simple first even though Coverage Lab may have higher revenue per visitor, because Money Made Simple has better current fit, lower compliance burden, and existing code/content momentum.
-
-### Risk Map
-
-| Channel | Risk Level | Main Risk | Control |
-|---------|-----------:|-----------|---------|
-| Money Made Simple | High | Financial advice boundary | Sources, disclaimers, reviewer workflow, calculators as educational estimates |
-| AI Decoded | Medium | Hype and low-quality AI content | Original workflow tests and tool limitations |
-| Mind Mechanics | Medium | Therapy/medical boundary | Educational framing, no diagnosis |
-| Tax Plain | Very High | Stale or wrong tax guidance | IRS sources, tax-year labels, annual update calendar |
-| Curiosity Engine | Low | Low monetization | Keep efficient and use as feeder |
-| Digital Shield | Medium | Bad security advice or fearmongering | Practical baseline advice and source checks |
-| Coverage Lab | Very High | Lead-gen ethics and insurance compliance | Education first, no sensitive lead capture early |
-| Legal Lens | Very High | Legal advice boundary | Delay; state-specific review |
-| Longevity Lab | Very High | Medical misinformation | Delay; evidence grading and medical review |
-| Trend Pulse | Medium | Decay and distraction | Use only as testing layer |
-
-### Shared Data Model
-
-Each content item should support this taxonomy:
+**What to add** (all verified — see Appendix A for sources):
 
 ```ts
-type ChannelId =
-  | "money"
-  | "ai"
-  | "mind"
-  | "tax"
-  | "curiosity"
-  | "security"
-  | "coverage"
-  | "legal"
-  | "longevity"
-  | "trends";
-
-type ContentRisk = "low" | "medium" | "high" | "very-high";
-
-type MonetizationType =
-  | "none"
-  | "affiliate"
-  | "sponsor"
-  | "template"
-  | "tool"
-  | "lead-gen"
-  | "course"
-  | "referral";
-
-type ContentItem = {
-  title: string;
-  slug: string;
-  channel: ChannelId;
-  pillar: string;
-  intent: "learn" | "decide" | "compare" | "calculate" | "protect" | "update";
-  format: "article" | "video" | "tool" | "checklist" | "research" | "glossary" | "qa";
-  risk: ContentRisk;
-  monetization: MonetizationType[];
-  evergreen: boolean;
-  published: string;
-  updated: string;
-  reviewed?: string;
-  author: string;
-  reviewer?: string;
-  sources: Source[];
-  relatedChannels: ChannelId[];
-};
+// Missing from the current module:
+TAX_2026 = {
+  standardDeduction: { single: 16_100, mfj: 32_200, hoh: 24_150 },
+  additionalAge65: { married: 1_650, unmarried: 2_050 },
+  // OBBBA senior deduction — ⚠️ EXPIRES after 2028
+  seniorDeduction: {
+    perPerson65Plus: 6_000,
+    phaseOutStart: { single: 75_000, mfj: 150_000 },
+    phaseOutRate: 0.06,          // 6% of MAGI over the threshold
+    fullyPhasedOut: { single: 175_000, mfj: 250_000 },
+    yearsApplicable: [2025, 2026, 2027, 2028],
+  },
+  ltcgZeroBracket: { single: 49_450, mfj: 98_900, hoh: 66_200 },
+  // brackets: see Appendix A
+}
+CONTRIBUTION_2026.total415c = 72_000        // mega-backdoor headroom
+CONTRIBUTION_2026.rothIraPhaseOut = { single: [153_000, 168_000], mfj: [242_000, 252_000] }
+CONTRIBUTION_2026.qcdLimit = 111_000
+MEDICARE_2026.partADeductible = 1_736
+MEDICARE_2026.partDOopCap = 2_100           // changed from $2,000
+MEDICARE_2026.partDMaxDeductible = 615
+SOCIAL_SECURITY_2026.benefitTaxThresholds = { single: 25_000, joint: 32_000 }  // ✅ NOT indexed — unchanged since 1984/1993
 ```
 
-### Shared Schema Strategy
-
-Use schema by page type, not by channel.
-
-- Home: Organization, WebSite, SearchAction.
-- Channel hub: CollectionPage, BreadcrumbList, ItemList.
-- Author/reviewer: ProfilePage, Person.
-- Article/decision page: Article, BreadcrumbList, FAQPage when visible FAQ exists.
-- Tool: WebApplication or SoftwareApplication.
-- Video: VideoObject, Clip when chapters exist.
-- Glossary: DefinedTermSet.
-- Research/dataset: Article plus Dataset when data is downloadable.
-- Forum/Q&A: QAPage only for true one-question pages with user answers; DiscussionForumPosting for discussions.
-
-### Channel Hub Template
+**Three notes on the existing module:**
 
-Each channel hub should include:
-
-1. Channel promise.
-2. Start-here path.
-3. Top decisions or workflows.
-4. Latest assets.
-5. Tools/checklists.
-6. Glossary terms.
-7. Newsletter CTA.
-8. Disclosure/trust note.
-9. Cross-channel recommendations.
-
-Example `/money`:
-
-- Start: "Know where you stand."
-- Top decisions: retirement, debt, Roth/traditional, Social Security.
-- Tools: Retirement Checkup, Debt vs Investing, Emergency Fund Planner.
-- Cross-links: Mind Mechanics for money anxiety, Tax Plain for tax rules, Coverage Lab for Medicare/ACA.
-
-Example `/ai`:
+- `SWR.morningstar2026` is mislabeled. The figure (3.9%) is from the **2025 Edition**, published 2025-12-03, and it applies *to* retirements starting in 2026. Rename to make the report edition explicit — on a source-discipline site, the label *is* the product.
+- `FPL_2025` is correct ($15,650 + $5,500/person, 48 states), and `acaSubsidyCliffMagi()` correctly yields **$62,600** for a single — matching KFF's published figure. Good.
+- ⚠️ Add an **`ACA_2026.lastVerified` date and a named owner.** This is the one constant in the codebase that can change by act of Congress, retroactively, and silently make the flagship calculator wrong.
 
-- Start: "Build one useful workflow."
-- Top workflows: email, spreadsheets, research, YouTube, small business.
-- Tools: AI workflow templates.
-- Cross-links: Digital Shield for AI scams, Mind Mechanics for adoption friction.
-
-### Newsletter Architecture
+**7.1 Source-volatility register.** Put this table in the project tracker and assign real owners before launch.
 
-Do not run one generic newsletter forever. Start with one network newsletter, then segment by behavior.
+| Fact area | Why volatile | Cadence | Owner | Next check |
+|---|---|---:|---|---|
+| ACA enhanced subsidy / 400% FPL cliff | Congress can extend or modify subsidies mid-cycle | Weekly until resolved, then monthly | Editorial lead | Every Monday |
+| HHS poverty guidelines | Annual update affects ACA FPL math | Annual + before ACA publish | Editorial lead | January release |
+| IRS annual limits | Contribution limits, brackets, standard deduction, phaseouts change yearly | Annual + before tax article publish | Tax reviewer | IRS fall release |
+| SECURE 2.0 catch-up implementation | Regulatory mechanics and transition relief can change | Quarterly in 2026 | Tax reviewer | Calendar quarter |
+| SSA COLA, wage base, earnings test | Annual SSA release | Annual | Editorial lead | October release |
+| Medicare premiums, deductibles, IRMAA | Annual CMS release; high impact on retirees | Annual + before Medicare publish | Coverage reviewer | CMS fall release |
+| FTC civil penalties / endorsement guidance | Penalties adjust and enforcement examples evolve | Semiannual | Compliance owner | Jan / Jul |
+| Google structured-data support | Supported rich-result types change | Quarterly | SEO owner | Calendar quarter |
+| Search/AI click-through studies | Vendor/institutional data changes quickly | Quarterly | Growth owner | Calendar quarter |
 
-Initial list:
+---
 
-- Know Plain Weekly
+## 8. The tools — this is the product
 
-Segments:
+💭 Reordering the previous draft's list, because §4.3 says the tools are the asset and the ACA cliff (§5) is the 2026 wedge. **Build in this order:**
 
-- Money Made Simple
-- AI Decoded
-- Mind Mechanics
-- Tax Plain annual updates
-- Digital Shield alerts
-- Coverage Lab open enrollment/Medicare timing
+**Tier 1 — build now.**
 
-Email capture should be tied to useful assets:
+1. **⭐ ACA Bridge / Cliff Warner (60–64).** The flagship. Inputs: age, retirement age, household size, projected **ACA MAGI**. Output: % of FPL, **dollars of MAGI headroom to the 400% cliff**, and what falling over it costs. The math is already in `facts-2026.ts` (`acaSubsidyStatus`).
+   - ✅ **ACA MAGI includes ALL Social Security benefits** (not just the taxable portion), traditional IRA/401(k) withdrawals, **Roth conversions**, capital gains, pensions, and tax-exempt interest. **Roth withdrawals do not count.** Getting this definition wrong is the whole ballgame.
+   - ✅ Anchors: 400% FPL = **$62,600** (single, 2026 coverage). Unsubsidized 60-year-old: **$11,625** bronze / **$15,914** benchmark silver. A 60-year-old at $65,000 pays **$10,389/yr more** than under the expired credits.
+   - ⚠️ Show *both* scenarios (cliff and restored-subsidy), cite current statute, and carry a visible "verified on" date. No extension is enacted as of today, but this is live politics.
+2. **Sequence-risk stress test.** Extends the withdrawal simulator you already have — cheapest high-value build. Same average return, good-first vs bad-first order. Frame via the **portfolio-size effect**: a loss early, when the balance is biggest and you're selling into it, is permanent in a way the same loss later is not.
+3. **Social Security break-even.** ✅ Math already correct in `facts-2026.ts` (`ssBenefitFactor`, `ssBreakEvenAge`): claim at 62 with FRA 67 = **70% of PIA**; 70 = **124%**. Break-even ≈ **78–79** (62 vs 67) and **~82–83** (67 vs 70). **The page must say break-even is an incomplete frame** — health, survivor benefits, taxes, and cash-flow need dominate it.
+4. **Roth vs Traditional.** Now far more interesting than the previous draft assumed, because MAGI control drives **ACA subsidies (60–64)** and **IRMAA (63+, two-year lookback)**. A Roth conversion at 61 can cost $10k in lost premium tax credits *and* raise the Part B premium two years later. That's the article nobody has written well.
 
-- Retirement Checkup result.
-- AI workflow pack.
-- Money decision checklist.
-- Tax-year checklist.
-- Scam response checklist.
-- Coverage decision worksheet.
+**Tier 2.** Am I On Track · Retirement Age Tradeoff · Catch-Up Planner (**must model the $150,000 mandatory-Roth rule**) · Debt vs Investing · Inflation-Adjusted Spending.
 
-### Analytics Events
+**8.1 The withdrawal-rate problem — get this right or don't ship the number.**
 
-Shared:
+The previous draft said "3.5%–4.5%." Defensible as a band; indefensible as a bare number, because the two credible anchors **answer different questions**:
 
-- `channel_viewed`
-- `article_viewed`
-- `source_opened`
-- `faq_opened`
-- `tool_started`
-- `tool_completed`
-- `checklist_downloaded`
-- `email_submitted`
-- `affiliate_clicked`
-- `video_play_clicked`
-- `cross_channel_clicked`
+| Anchor | Number | What it actually asks |
+|---|---|---|
+| **Morningstar, 2025 Edition** (pub. 2025-12-03) | **3.9%** | *Forward-looking.* Given today's yields and valuations, what starting rate survives **90% of simulated 30-year futures** with a 30–50% equity portfolio and rigid inflation-adjusted spending? |
+| **Bengen, *A Richer Retirement*** (Wiley, Aug 2025) | **4.7%** | *Backward-looking.* What is the highest rate that survived the **single worst 30-year start in US history**, for a 7-asset-class portfolio with a small/micro-cap tilt? A **floor**, not a target. |
 
-Channel-specific:
+They are not in conflict and **cannot be averaged.** History: 2021 3.3% → 2022 3.8% → 2023 4.0% → 2024 3.7% → **2025 3.9%**.
 
-- `retirement_checkup_completed`
-- `ai_workflow_copied`
-- `tax_year_page_viewed`
-- `security_checklist_completed`
-- `coverage_estimator_completed`
+**Required copy** (this is the kind of honesty that is the entire brand):
 
-### 12-Month Roadmap
+> *"There is no single safe withdrawal rate. Morningstar's forward-looking research says 3.9% for a rigid, inflation-adjusted paycheck at 90% confidence over 30 years. Bengen's historical worst case, with a more aggressive portfolio, says 4.7%. Both are defensible. The gap is the method, not a disagreement about arithmetic."*
 
-#### Months 1-2: Network Foundation and Money Engine
+And name the real lever: **flexibility**. ✅ Morningstar's own variants score far higher when spending can flex (an RMD-style recalculated withdrawal reached ~4.7% in the 2024 edition; retirees tolerating real fluctuation can start near 6%). ✅ Guyton–Klinger (JFP, 2006) supported **5.2%–5.6%** initial rates with decision rules — though ⚠️ **Kitces argues those guardrails are riskier than advertised**; say so rather than selling them. **Frame the static rate as the price of refusing to be flexible.**
 
-- Implement channel taxonomy.
-- Build trust/source/reviewer infrastructure.
-- Turn current retirement content into Money Made Simple.
-- Launch `/money`.
-- Ship Retirement Checkup.
-- Publish first 20 Money assets.
-- Add email capture.
+**8.2 Tool acceptance criteria** (revised): every tool shows assumptions **before** results · states its method and limits (§11.1) · has a companion explainer · ends with a next step · reads every constant from `facts-2026.ts` · **and emits no `SoftwareApplication` schema** (§1.5).
 
-#### Months 3-4: AI Decoded and Mind Mechanics
+---
 
-- Launch `/ai`.
-- Publish 12 workflow-tested AI assets.
-- Launch `/mind`.
-- Publish 10 behavioral assets that cross-link to money and AI.
-- Start short-form testing for AI workflows and psychology concepts.
+## 9. The Retirement Checkup
 
-#### Months 5-6: Tax Plain
+Keep the design in the previous draft — the flow, the ten numbers, the Plain Scores, the "ranges not false precision" rule are all good, and `src/lib/checkup.ts` already implements a version of it. **Three changes:**
 
-- Launch `/tax`.
-- Publish current tax-year source-backed pages.
-- Build tax update calendar.
-- Add tax-specific disclaimers.
-- Add IRS-heavy source pages.
+**9.1 Fix the lead capture (P0).** `captureCheckupLead` writes to a table that doesn't exist, swallows the error, and returns `{ ok: true }`. Users are told their results were emailed. They weren't. **Either create `knowplain_leads` + wire an ESP, or remove the promise from the UI.** Shipping a trust site with a lying success message is not a tradeoff, it's a defect.
 
-#### Months 7-8: Digital Shield
+**9.2 Compute client-side; do not persist the financial inputs (P1).** 💭 This is the highest-leverage, zero-cost decision in the entire document. If age, income, savings, and debt never reach a server, most of §11.3 evaporates. Gate *saving*, not *seeing*. If you must persist: minimize, encrypt, short TTL, and don't join to email identity unless the user explicitly asks.
 
-- Launch `/security`.
-- Publish first protection guides.
-- Build scam response checklist.
-- Build family digital safety checklist.
-- Cross-link to AI scams and money fraud.
+**9.3 Constrain the output (P0 — legal).** See §11.1. The Checkup must **never** emit an asset allocation, a named fund or security, or a model portfolio. "Top 3 next steps" must stay on non-securities levers: savings rate, spending, debt order, emergency fund, claiming age, Medicare/IRMAA timing, HSA, and tax-wrapper choice. **This is the bright line that keeps the entire site outside the Investment Advisers Act.**
 
-#### Months 9-10: Coverage Lab Education Beta
+---
 
-- Launch `/coverage` as education only.
-- Publish Medicare, ACA, life insurance, disability, homeowners basics.
-- Build coverage decision worksheets.
-- Do not launch lead generation yet.
+## 10. Content system
 
-#### Months 11-12: Research and Expansion
+**10.1 Decision pages.** Template unchanged from the previous draft (it's good) with **one deletion: no FAQPage schema** (§1.3). Keep the visible "Common questions" block — for humans, and because it's plainly what LLMs extract. Just don't wire markup for a rich result that no longer exists.
 
-- Publish first original network research report.
-- Add Curiosity Engine as evergreen feeder.
-- Decide whether Legal Lens or Longevity Lab has review capacity.
-- Keep Trend Pulse as shorts/newsletter testing only.
-
-### What This Means For The Current File
-
-The original retirement-focused guide below should now be interpreted as the **Money Made Simple implementation blueprint**. It remains the first full build because it has the best blend of current assets, monetization fit, and manageable risk. Later channel guides should reuse the same structure: trust layer, source model, flagship tools, conversion loop, schema, risk controls, and phased build plan.
-
-Research date: 2026-07-11
-
-## Executive Thesis
-
-Know Plain should not become another generic personal-finance blog. The stronger position is a plain-English decision layer for retirement questions: a user arrives worried or confused, answers a few structured questions, sees what matters most, reads the right explanation, uses the right tool, and leaves with a specific next step.
-
-The current site already has useful foundations: topic hubs, MDX explainers, search, tools, watch pages, Supabase auth/forum wiring, glossary, disclosures, and a clean app shell. What is missing is the product loop:
-
-1. Visible trust and review signals for YMYL finance content.
-2. Primary-source citations and source-backed annual update pages.
-3. A personalized checkup that connects content to the user's situation.
-4. Owned tools that create a defensible moat.
-5. A conversion path from article to saved plan, checklist, email, or question.
-6. Moderated community pages that become high-quality answer hubs.
-7. Video pages that are full content assets, not just embeds.
-8. Original research that gives the brand something competitors cannot copy quickly.
-
-Google's helpful-content guidance explicitly asks whether content provides original information, comprehensive coverage, clear sourcing, author background, and substantial value compared with search results. It also notes that trust is especially important for topics that affect financial stability, commonly called YMYL. Google structured data also supports the exact page types Know Plain needs: Article, Breadcrumb, ProfilePage, Q&A, DiscussionForumPosting, SoftwareApplication, and VideoObject.
-
-Primary sources to build around:
-
-- Google helpful content: https://developers.google.com/search/docs/fundamentals/creating-helpful-content
-- Google structured data gallery: https://developers.google.com/search/docs/appearance/structured-data/search-gallery
-- Google Article schema and author best practices: https://developers.google.com/search/docs/appearance/structured-data/article
-- Google Video schema: https://developers.google.com/search/docs/appearance/structured-data/video
-- Google DiscussionForumPosting schema: https://developers.google.com/search/docs/appearance/structured-data/discussion-forum
-- Google QAPage schema: https://developers.google.com/search/docs/appearance/structured-data/qapage
-- IRS 2026 retirement contribution limits: https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500
-- IRS RMD rules: https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-required-minimum-distributions-rmds
-- SSA claiming-age reductions: https://www.ssa.gov/benefits/retirement/planner/agereduction.html
-- Medicare 2026 costs: https://www.medicare.gov/basics/costs/medicare-costs
-- HealthCare.gov retiree coverage before Medicare: https://www.healthcare.gov/retirees/
-- Federal Reserve Survey of Consumer Finances: https://www.federalreserve.gov/econres/scfindex.htm
-
-## Audience Positioning
-
-Primary audience:
-
-- Ages 40-60.
-- Feels late, uncertain, or behind.
-- Has partial retirement savings but no coherent plan.
-- Searches specific questions like "is 1 million enough," "can I retire at 62," "how much should I save at 45," or "what happens if I claim Social Security early."
-- Wants plain language, not a full advisor relationship on first visit.
-
-Secondary audience:
-
-- Ages 30-40 who are behind or have no retirement account.
-- Couples trying to make a shared plan.
-- Early retirees dealing with ACA coverage before Medicare.
-- Retirees anxious about withdrawals, inflation, healthcare, and Social Security uncertainty.
-
-Brand promise:
-
-"Know where you stand, understand the tradeoffs, and take the next plain step."
-
-Avoid this positioning:
-
-- "Best credit cards" affiliate treadmill.
-- Head-term investing encyclopedia.
-- Generic FIRE content.
-- Political Social Security speculation.
-- Personalized investment advice.
-
-## Site Architecture
-
-Recommended navigation:
-
-- Home: Search + Retirement Checkup entry.
-- Checkup: Guided 5-minute retirement snapshot.
-- Decisions: User-intent library organized by decisions, not only topics.
-- Topics: Retirement, Money Psychology, Decision Tools, Late Starters.
-- Tools: Owned calculators and downloadable packs.
-- Watch: Video explainers with transcripts and tool links.
-- Forum: Invite-only Q&A and moderated answer hubs.
-- Research: Original studies, data notes, methodology.
-- Glossary: Short definitions linked to explainers and tools.
-- About: Mission, editorial standards, team, contact, disclosures.
-
-Recommended URL map:
-
-- `/checkup`
-- `/checkup/results/[id]` for logged-in or tokenized result pages
-- `/decisions`
-- `/decisions/retire-now-or-wait`
-- `/decisions/claim-social-security-now-or-later`
-- `/decisions/roth-vs-traditional`
-- `/late-starters`
-- `/late-starters/starting-at-45`
-- `/late-starters/no-retirement-account-at-50`
-- `/tools/am-i-on-track`
-- `/tools/retirement-age-tradeoff`
-- `/tools/social-security-break-even`
-- `/tools/roth-vs-traditional`
-- `/tools/aca-bridge`
-- `/tools/sequence-risk`
-- `/tools/inflation-spending`
-- `/tools/debt-vs-investing`
-- `/tools/catch-up-contributions`
-- `/research/retirement-calculator-assumptions`
-- `/research/healthcare-assumptions-retirement-age`
-- `/research/social-security-claiming-at-62`
-- `/sources/irs-retirement-limits-2026`
-- `/sources/medicare-costs-2026`
-- `/sources/social-security-claiming-rules`
-- `/authors/[slug]`
-- `/reviewers/[slug]`
-
-## Idea 1: Real Author and Reviewer Trust Layer
-
-Why it matters:
-
-Finance content is YMYL. The site must make it obvious who wrote, reviewed, sourced, and updated each page. Google's Article schema guidance recommends author `type`, `url`, and `sameAs` fields, and warns against vague author markup. The current byline points to `/about`, which is not enough for a retirement decision site.
-
-Build:
-
-- `/authors/know-plain-editorial`
-- `/reviewers/[reviewer-slug]`
-- `/editorial-policy`
-- `/corrections`
-- `/methodology`
-- `/disclosure`
-- Author box on every article.
-- Reviewer box on finance-sensitive articles.
-- Source list component.
-- "Last reviewed" and "Last updated" as separate dates.
-
-Article frontmatter should expand from:
-
-```yaml
-title:
-description:
-plainAnswer:
-updated:
-related:
-```
-
-to:
-
-```yaml
-title:
-description:
-plainAnswer:
-published:
-updated:
-reviewed:
-author:
-reviewer:
-contentType: explainer | decision | tool-guide | source-note
-sources:
-  - title:
-    publisher:
-    url:
-    accessed:
-    note:
-faqs:
-  - q:
-    a:
-relatedTools:
-relatedDecisions:
-riskLevel: low | medium | high
-```
-
-Author profile fields:
-
-```ts
-type EditorialPerson = {
-  slug: string;
-  name: string;
-  role: string;
-  bio: string;
-  credentials?: string[];
-  disclosures?: string[];
-  sameAs?: string[];
-  headshot?: string;
-};
-```
-
-Reviewer policy:
-
-- Use editorial review for general explainers.
-- Use credentialed review for tax, Social Security, Medicare, withdrawal strategy, and investment allocation pages.
-- Do not imply fiduciary advice.
-- Add "Reviewed for accuracy, not individualized advice."
-
-Schema:
-
-- Article `author` as `Person` or `Organization` with `url`.
-- Add `reviewedBy` as schema.org property even if not a Google rich-result requirement.
-- Author/reviewer pages use `ProfilePage` + `Person`.
-- About page uses `Organization`.
-
-Acceptance criteria:
-
-- Every indexable article has visible author, update date, source list, and educational disclaimer.
-- Every high-risk retirement article has reviewer or "editorial review pending" state.
-- Article JSON-LD matches visible page authors.
-
-## Idea 2: Primary-Source Citations Inside Articles
-
-Why it matters:
-
-The site should win by being clear and verifiable. For retirement, the source stack should favor government, academic, and original-data sources over other finance blogs.
-
-Source hierarchy:
-
-1. Government: IRS, SSA, Medicare, HealthCare.gov, BLS, Federal Reserve, Treasury, CBO, CRS.
-2. Academic/research: Journal of Financial Planning, AAII Journal, NBER, SSRN/arXiv when appropriate.
-3. Nonprofit/industry research: EBRI, Society of Actuaries, Vanguard, Morningstar, Fidelity, T. Rowe Price.
-4. News/context: Kiplinger, Investopedia, MarketWatch, Barron's, WSJ, AP.
-
-Core source pages to create:
-
-- `/sources/irs-retirement-limits-2026`: 401(k), IRA, catch-up, Roth phaseouts.
-- `/sources/social-security-claiming-rules`: claiming at 62, full retirement age, delayed credits.
-- `/sources/medicare-costs-2026`: Part B premium, deductible, Part D caveats.
-- `/sources/aca-before-medicare`: Marketplace bridge, special enrollment, premium tax credits.
-- `/sources/scf-retirement-savings`: Federal Reserve SCF methodology and chart notes.
-
-Citation UX:
-
-- Inline citations after specific factual claims.
-- Collapsible "Sources and notes" block near article end.
-- "What changed in this update" changelog for annual pages.
-- Warning label when a rule changes annually.
-
-Examples:
-
-- A Social Security article should cite SSA's page stating benefits can start at 62, full benefits require full retirement age, and delayed benefits can increase up to age 70.
-- A catch-up contribution article should cite IRS 2026 limits: 401(k) employee deferral limit of $24,500, IRA limit of $7,500, 50+ 401(k) catch-up of $8,000, and ages 60-63 higher catch-up of $11,250.
-- A healthcare bridge article should cite HealthCare.gov's retiree page explaining Marketplace access before 65 and special enrollment after losing job-based coverage.
-- A Medicare cost article should cite Medicare.gov's 2026 Part B premium and deductible.
-
-Acceptance criteria:
-
-- Top 20 retirement pages have at least 3 primary sources each.
-- Annual-rule articles have source review reminders.
-- Source URLs are stored in frontmatter, not hardcoded only in body text.
-
-## Idea 3: Personalized Retirement Path
-
-Product name:
-
-Know Plain Retirement Checkup
-
-Core promise:
-
-"In five minutes, see the retirement questions that matter most for you."
-
-Do not promise:
-
-- A complete financial plan.
-- Personalized investment, legal, or tax advice.
-- Guaranteed retirement readiness.
-
-Input flow:
-
-1. Household
-   - Age.
-   - Partner age.
-   - State.
-   - Filing status.
-   - Dependents.
-
-2. Work and timeline
-   - Desired retirement age.
-   - Expected ability to work part-time.
-   - Current annual income.
-   - Expected income growth.
-
-3. Savings
-   - Retirement account balance.
-   - Taxable savings.
-   - Cash reserves.
-   - Monthly retirement contribution.
-   - Employer match.
-
-4. Spending
-   - Current monthly spending.
-   - Expected retirement spending.
-   - Housing payment.
-   - Debt payments.
-
-5. Income sources
-   - Estimated Social Security at full retirement age.
-   - Pension estimate.
-   - Rental/business income.
-
-6. Healthcare
-   - Retiring before 65?
-   - Employer retiree health coverage?
-   - Medicare timing.
-   - HSA availability.
-
-7. Risk and behavior
-   - Market-drop reaction.
-   - Willingness to cut spending temporarily.
-   - Money anxiety level.
-   - Couple alignment.
-
-Outputs:
-
-- Plain readiness summary.
-- Retirement gap estimate.
-- "Retirement in 10 Numbers."
-- Plain Scores.
-- Top 3 risks.
-- Top 3 next steps.
-- Recommended articles.
-- Recommended tools.
-- Checklist download/email.
-- Optional account save.
-
-Retirement in 10 Numbers:
-
-1. Current age.
-2. Target retirement age.
-3. Annual spending gap.
-4. Retirement savings.
-5. Savings rate.
-6. Debt pressure.
-7. Social Security estimate.
-8. Healthcare bridge months before Medicare.
-9. Tax bucket mix.
-10. Flexibility score.
-
-Plain Scores:
-
-- Confidence Score: how coherent the plan is.
-- Flexibility Score: ability to adapt through work, spending, housing, or timing.
-- Sequence Risk Score: sensitivity to poor early returns.
-- Healthcare Gap Score: pre-Medicare and out-of-pocket exposure.
-- Tax Complexity Score: traditional/Roth/taxable/RMD complexity.
-
-Scoring design:
-
-- Use ranges, not false precision.
-- Explain each score in one sentence.
-- Show "why this matters" and "what improves it."
-- Keep math transparent.
-- Default assumptions must be visible and editable.
-
-Example score rules:
-
-- Confidence improves when spending gap is modest relative to portfolio, savings rate is high, debt is low, and Social Security/pension income covers essentials.
-- Flexibility improves with part-time work option, discretionary spending, no mortgage, ability to delay retirement, and cash reserves.
-- Sequence risk worsens when the user expects high withdrawals in the first 5-10 years, has low guaranteed income, and cannot reduce spending.
-- Healthcare gap worsens when user plans to retire before 65 without retiree coverage and has high expected income uncertainty for ACA subsidies.
-- Tax complexity rises with large traditional balances, upcoming RMD age, mixed account types, high Social Security taxation risk, and Roth conversion questions.
-
-Data model:
-
-```ts
-type CheckupInput = {
-  household: {
-    age: number;
-    partnerAge?: number;
-    state?: string;
-    filingStatus?: "single" | "married" | "head";
-  };
-  timeline: {
-    targetRetirementAge: number;
-    partTimePossible: boolean;
-  };
-  money: {
-    retirementSavings: number;
-    taxableSavings: number;
-    cash: number;
-    annualContributions: number;
-    annualSpending: number;
-    expectedRetirementSpending: number;
-    debtPaymentsAnnual: number;
-  };
-  income: {
-    socialSecurityAtFra: number;
-    pensionAnnual?: number;
-    otherGuaranteedAnnual?: number;
-  };
-  healthcare: {
-    retireBefore65: boolean;
-    retireeCoverage: boolean;
-    hsaEligible?: boolean;
-  };
-  behavior: {
-    marketDropReaction: "sell" | "hold" | "buy" | "unsure";
-    spendingFlexibility: "low" | "medium" | "high";
-    anxietyLevel: 1 | 2 | 3 | 4 | 5;
-  };
-};
-```
-
-Result model:
-
-```ts
-type CheckupResult = {
-  summary: string;
-  gapAnnual: number;
-  targetPortfolioRange: [number, number];
-  plainScores: {
-    confidence: number;
-    flexibility: number;
-    sequenceRisk: number;
-    healthcareGap: number;
-    taxComplexity: number;
-  };
-  topRisks: string[];
-  nextSteps: Array<{
-    label: string;
-    href: string;
-    reason: string;
-  }>;
-};
-```
-
-Privacy:
-
-- Anonymous mode by default.
-- Store locally until user signs in or asks to email results.
-- Never require exact account numbers for first result.
-- Add "delete my saved checkup" in profile.
-
-## Idea 4: Tool Moat
-
-The tool suite should be the product, not an accessory. Each tool needs a clear decision, transparent assumptions, shareable result, source notes, and related content.
-
-### Tool 1: Am I On Track?
-
-Question:
-
-"Given my age, savings, contribution rate, and spending gap, am I roughly on track?"
-
-Inputs:
-
-- Age.
-- Target retirement age.
-- Current retirement savings.
-- Annual contribution.
-- Employer match.
-- Expected retirement spending.
-- Social Security estimate.
-- Expected return range.
-- Inflation assumption.
-
-Outputs:
-
-- Estimated retirement savings range.
-- Spending gap.
-- Portfolio target range using 3.5%-4.5% planning withdrawal rates.
-- "On track," "close," "needs action," or "unclear."
-
-Content pairings:
-
-- How much is enough to retire?
-- Starting retirement savings at 45.
-- Is $1 million enough?
-
-### Tool 2: Retirement Age Tradeoff
-
-Question:
-
-"What changes if I retire at 60, 62, 65, 67, or 70?"
-
-Inputs:
-
-- Current age.
-- Possible retirement ages.
-- Savings.
-- Contribution.
-- Annual spending.
-- Social Security estimate.
-- Health coverage status.
-
-Outputs:
-
-- More years saving.
-- Fewer years withdrawing.
-- Social Security claiming effect.
-- Healthcare bridge risk.
-- Work-flexibility note.
-
-### Tool 3: Social Security Break-Even
-
-Question:
-
-"What are the tradeoffs between claiming at 62, full retirement age, and 70?"
-
-Sources:
-
-- SSA early claiming page.
-- SSA benefit estimator/calculators.
-
-Important caveat:
-
-Break-even is incomplete unless the page also explains health, spouse/survivor benefits, taxes, investment opportunity cost, and cash-flow needs.
-
-### Tool 4: Roth vs Traditional
-
-Question:
-
-"Should new contributions go traditional, Roth, or mixed?"
-
-Inputs:
-
-- Current marginal tax rate.
-- Expected retirement tax rate.
-- Employer plan options.
-- Roth IRA eligibility.
-- Current account mix.
-- Years to retirement.
-
-Outputs:
-
-- Tax-now vs tax-later explanation.
-- Suggested mix category: Roth-leaning, traditional-leaning, split, needs advisor.
-- Link to IRS contribution and income phaseout source pages.
-
-### Tool 5: ACA Bridge Before Medicare
-
-Question:
-
-"If I retire before 65, what healthcare bridge do I need?"
-
-Sources:
-
-- HealthCare.gov retiree coverage.
-- Medicare.gov eligibility/cost pages.
-
-Inputs:
-
-- Age.
-- Retirement age.
-- Household income estimate.
-- Retiree coverage yes/no.
-- State.
-- HSA/cash reserve.
-
-Outputs:
-
-- Months before Medicare.
-- Need for Marketplace estimate.
-- Warning if income management affects premium tax credits.
-- Checklist: SEP, marketplace quote, COBRA comparison, Medicare enrollment timing.
-
-### Tool 6: Sequence-Risk Stress Test
-
-Question:
-
-"What happens if the market is bad early in retirement?"
-
-Inputs:
-
-- Portfolio.
-- Withdrawal amount.
-- Stock/bond mix.
-- Inflation.
-- Flexible spending toggle.
-- Bad first decade scenario.
+**10.2 Forum.** Invite-only first, moderation before schema. ✅ Two corrections to the schema plan:
+- **`DiscussionForumPosting` is for user-generated posts only.** Never apply it to your own editorial content.
+- **`QAPage` requires that users can actually submit answers.** Your 9 seeded, staff-answered `/forum/questions/*` pages **do not qualify** and currently emit `qaPageJsonLd`. Either open them to user answers or drop the markup. This is a real misapplication shipping today.
 
-Outputs:
+**10.3 Video.** ✅ `VideoObject` is one of the few schema types here that still earns a live rich result (required: `name`, `thumbnailUrl`, `uploadDate`). Fallbacks and transcripts already exist. 💭 And per §4.3, **retirement YouTube is a large, high-CPM audience Google has not disintermediated** — it deserves more weight than the previous draft gave it.
 
-- Portfolio path scenarios.
-- Risk explanation.
-- What improves it: cash buffer, lower first-year withdrawals, delayed retirement, part-time income, guaranteed income.
+**10.4 Original research.** The only durable backlink asset. Start with **what only you have: your own tools' aggregate, anonymized usage.** *"What withdrawal rate do people actually model?"* / *"What retirement age do our users target vs. what their numbers support?"* Publish method before conclusions.
 
-### Tool 7: Inflation-Adjusted Spending Planner
-
-Question:
+⚠️ **Do not build `/sources/scf-retirement-savings` as specified.** The 2022 SCF is still the latest wave (no 2025 release date announced), and the age-band balance table everyone quotes traces to secondary aggregators, not Fed primary docs. If you publish SCF data, pull it from the Fed's own interactive table and **state that balances are conditional on having an account — only 54.3% of families do.** The unconditional median in several age bands is likely **$0**. Saying so, when nobody else does, *is* the brand.
 
-"What does my spending need to become in retirement?"
+---
 
-Inputs:
+## 11. Compliance and risk
 
-- Current spending categories.
-- Retirement changes.
-- Inflation assumptions by category.
-- Healthcare separate from general inflation.
+This chapter did not exist in the previous draft. It is the one most likely to save you.
 
-Outputs:
+**11.1 The securities line — and a correction to how people usually frame it.**
 
-- Base, lean, and comfort budgets.
-- Essential vs flexible spending.
-- "Cut in bad markets" candidate list.
-
-### Tool 8: Debt Payoff vs Investing
-
-Question:
+The instinct is to lean on the **publisher's exclusion** (Advisers Act §202(a)(11)(D); *Lowe v. SEC*, 472 U.S. 181 (1985)). 💭 **For the Checkup, that's the wrong shield** — an individualized output is not a "publication of general and regular circulation," so the exclusion doesn't cover it.
 
-"Should I pay debt faster or invest more?"
+**But that doesn't make you an adviser.** The definition requires three elements: **(a) advice about securities, (b) for compensation, (c) as a business.** Your defense is that **element (a) never attaches.** Retirement readiness, savings gaps, spending, debt, and Social Security claiming are not advice about the value or advisability of securities. Keep it that way and the Act never reaches you.
 
-Inputs:
+✅ **The bright lines** (SEC Release IA-1092 treats asset-allocation advice as securities advice, because it necessarily directs the user into securities):
 
-- Debt balances/rates.
-- Employer match.
-- Emergency fund.
-- Retirement contribution.
-- Risk tolerance.
-
-Output logic:
-
-- Always prioritize high-interest debt and employer match explanation.
-- Show after-tax guaranteed return of debt payoff vs uncertain investment return.
-- Avoid individualized investment recommendations.
+| Rule | Status |
+|---|---|
+| **No asset allocation output.** Not "60/40," not "increase equity exposure," not risk-tolerance-driven mixes. | **The brightest line. Never cross it.** |
+| **No named securities, funds, ETFs, or model portfolios** anywhere. | Hard rule |
+| **No compensation tied to a securities outcome** (see 11.2) | Hard rule |
+| Frame as "educational estimate" — never "plan," "recommendation," "advice," or "advisor" | Hard rule |
+| Adopt **FINRA Rule 2214**-style disclosure voluntarily: criteria, methodology, **key assumptions and limitations**, results vary, projections are **hypothetical, not guarantees** | Not binding on you — but it is the only regulator-blessed template for exactly this artifact, and it's the standard you'd be measured against |
 
-### Tool 9: Catch-Up Contribution Planner for 45+
-
-Question:
+**Disclaimers that work vs. theater.** ✅ *Work* (because they describe reality or defeat an element): methodology + assumptions + limitations; "hypothetical, not a guarantee"; material-connection disclosure; "we recommend no securities and take no compensation from any securities issuer or adviser" — **if true**. 🚫 *Theater*: "this is not investment advice" pasted under content that **is** individualized securities advice. Substance governs form (*SEC v. Park*; *SEC v. Wall Street Publishing*). A disclaimer that contradicts the conduct is evidence, not a defense.
 
-"What can I still change if I started late?"
+**Never use the words** "financial planner," "financial advisor," "advisory," or "personalized plan" in a product name, page title, or meta description. Title risk is self-inflicted and free to avoid.
 
-Sources:
+**11.1.1 Implementation rules we can act on.**
 
-- IRS 2026 contribution limits.
-
-Inputs:
-
-- Age.
-- Account access.
-- Income.
-- Current contribution.
-- Catch-up eligibility.
-- Monthly cash flow.
-
-Outputs:
-
-- Possible annual tax-advantaged savings.
-- Employer match gap.
-- Monthly increase ladder.
-- Ages 50+ and 60-63 catch-up notes.
-
-Tool acceptance criteria:
-
-- Every tool has source notes.
-- Every tool has reset/share/save/email states.
-- Every tool has schema as SoftwareApplication or WebApplication.
-- Every tool has a companion explainer.
-- Every result has "what to do next."
-
-## Idea 5: Current Anxiety Cluster
-
-The editorial strategy should name the anxiety directly while staying calm and factual.
-
-Recent themes from 2026 coverage:
-
-- Confidence is falling for workers and retirees.
-- Many people expect to delay retirement.
-- Inflation, healthcare costs, longevity, market volatility, and Social Security uncertainty dominate concerns.
-- Significant shares of 30-something and 50-something households lack dedicated retirement accounts or pensions, based on reporting that uses Federal Reserve SCF data.
-- People want structured plans, not just more information.
-
-Own this phrase:
-
-"Late, anxious, confused, but fixable."
-
-Do not make the brand fear-based. Use the anxiety as the entry point and the plan as the product.
-
-Content cluster:
-
-- `/late-starters`: hub.
-- `/late-starters/starting-at-45`: already exists as retirement article; make it a hub-quality decision page.
-- `/late-starters/starting-at-50-with-no-retirement-account`.
-- `/late-starters/catch-up-contributions-2026`.
-- `/late-starters/pay-off-debt-or-save-for-retirement`.
-- `/late-starters/retire-later-without-burning-out`.
-- `/late-starters/part-time-retirement-plan`.
-- `/late-starters/couples-retirement-catch-up`.
-
-Emotional jobs-to-be-done:
-
-- "Tell me whether I am doomed."
-- "Tell me what lever matters most."
-- "Tell me what to do this month."
-- "Help me talk to my spouse."
-- "Help me avoid a panic Social Security claim."
-
-Each page should include:
-
-- Plain answer.
-- The 3 levers.
-- Calculator block.
-- Example cases.
-- Sources.
-- FAQ.
-- Next step.
-
-## Idea 6: Forum Safety and Quality
-
-The forum should launch slowly. A public unmoderated finance forum creates spam, compliance, and quality risks.
-
-Phase 1: Invite-only Q&A
-
-- Only approved users can start threads.
-- Public can read selected threads.
-- First post from any new user requires moderation.
-- No external links for new users.
-- No medical/legal/tax/investment-personalized advice.
-- Add report button.
-- Add accepted answer.
-- Add editorial summary at top after moderation.
-
-Phase 2: Seeded expert answer hubs
-
-- Turn 10 high-quality threads into answer pages.
-- Add `QAPage` only where one question has user-submitted answers.
-- Add `DiscussionForumPosting` for genuine forum discussions.
-- Do not use QAPage on ordinary blog posts or FAQs; Google's QAPage guidance says it is for one question followed by answers where users can submit answers.
-
-Initial seeded questions:
-
-1. "I am 45 with $40k saved. What should I do first?"
-2. "Should I claim Social Security early because I worry it will run out?"
-3. "Can I retire before Medicare if I need ACA coverage?"
-4. "Is $1 million enough if my house is paid off?"
-5. "Should I pay off my mortgage before retiring?"
-6. "How much cash should I keep before retiring?"
-7. "Roth or traditional if I am in my peak earning years?"
-8. "How do couples align when one wants to retire early?"
-9. "What if the market drops right after I retire?"
-10. "Can part-time work save a late retirement plan?"
-
-Moderation rules:
-
-- Block exact investment picks.
-- Block individualized tax/legal advice.
-- Block product spam.
-- Require source or reasoning for factual claims.
-- Allow personal stories, clearly labeled as experience.
-- Escalate high-risk questions to "talk to a qualified professional."
-
-Database additions:
-
-- `status`: pending, approved, rejected, archived.
-- `accepted_post_id`.
-- `moderator_summary`.
-- `risk_level`.
-- `locked_reason`.
-- `source_links`.
-- `report_count`.
-
-## Idea 7: Video SEO Depth
-
-Current risk:
-
-The `/watch` page can be empty if Supabase has no videos. That is a poor user and crawler experience.
-
-Fix:
-
-- Add static fallback video list from content files or YouTube config.
-- Treat each video as an article-quality page.
-- Store transcript text.
-- Add chapter summaries.
-- Add key takeaways.
-- Add related tools.
-- Add VideoObject schema.
-
-Video page structure:
-
-1. Title.
-2. Embed.
-3. Plain answer.
-4. Key takeaways.
-5. Chapters.
-6. Transcript.
-7. Mentioned sources.
-8. Related calculator.
-9. Related articles.
-10. Ask a follow-up.
-
-Video content model:
-
-```yaml
-title:
-description:
-youtubeId:
-published:
-updated:
-duration:
-thumbnail:
-chapters:
-  - time:
-    title:
-    summary:
-transcript:
-sources:
-relatedArticles:
-relatedTools:
-```
-
-Schema:
-
-- VideoObject with name, description, thumbnailUrl, uploadDate, duration, embedUrl.
-- Clip markup for chapters when timestamps are available.
-- BreadcrumbList.
-
-## Idea 8: Conversion Loop
-
-Every page should answer: "What should the user do now?"
-
-Conversion goals:
-
-- Save plan.
-- Run relevant tool.
-- Email checklist.
-- Ask follow-up.
-- Join invite list.
-- Download roadmap.
-- Click affiliate only after useful context.
+These rules are the product spec. If a proposed feature violates them, it does not ship without legal review.
 
-Article CTA ladder:
-
-1. In-article calculator block.
-2. End-of-article checklist.
-3. "Save this to my plan."
-4. "Ask a follow-up."
-5. Email capture for roadmap or results.
+| Rule | Product implication |
+|---|---|
+| No asset allocation output | Tools may show savings gaps, withdrawal pressure, MAGI headroom, claiming-age tradeoffs, and cash-flow ranges; they may not output "60/40," "more stocks," "less bonds," or risk-based model mixes |
+| No named securities, funds, ETFs, or model portfolios | Content can explain account types and concepts; it cannot recommend ticker symbols, funds, portfolios, or broker-specific allocations |
+| No advisor matching | The Checkup can say "talk to a qualified professional"; it cannot rank, match, or route users to paid advisers |
+| No "personalized plan" language | Use "educational estimate," "snapshot," "worksheet," "scenario," or "next questions" |
+| Show assumptions before results | Every calculator result screen must expose return, inflation, tax, health-cost, withdrawal, and date assumptions relevant to that tool |
+| Client-side by default | Users can see results without sending age, income, balances, or debt to the server |
+| Save only by explicit opt-in | If saving is added, explain exactly what is stored, how long, and how to delete it |
+| Disclose monetization beside the endorsement | Affiliate/sponsor language must appear before or at the relevant link, not only in the footer |
 
-User states:
+**11.2 The lead-gen decision — pick a lane deliberately.**
 
-- Anonymous: local saved items, email optional.
-- Signed in: saved checkup, saved articles, forum posting, profile.
-- Returning: dashboard with next steps.
+💭 This is the most consequential strategic choice in the document and it deserves to be made on purpose.
 
-Profile/dashboard:
+Advisor lead-gen is the **highest revenue per visitor** in this niche (§12) and it is **the one thing that could unmake the entire legal structure.** The moment an RIA pays you per lead from the Checkup:
 
-- Latest checkup summary.
-- Saved decisions.
-- Saved calculators.
-- Next 3 actions.
-- Questions asked.
-- Checklist downloads.
-- Email preferences.
+1. Element **(b) compensation** is satisfied — and it's now tied to a securities advisory outcome.
+2. Your tool "recommends" (by selection and ordering) an entity that manages securities. The "no securities advice" claim gets much harder to sustain.
+3. You become a **promoter** under **SEC Marketing Rule 206(4)-1** (compliance date 2022-11-04): the endorsement must disclose, *at the time of the endorsement*, that you're compensated and the **material conflicts** arising from it, plus a written agreement and adviser oversight.
+4. ⚠️ You likely become a **"finder"** under the FTC's amended **Safeguards Rule (16 CFR 314)** — which would impose a written infosec program, a Qualified Individual, MFA, **encryption at rest and in transit**, and annual reporting, **over a database of consumers' retirement balances.** I could not find an FTC case applying "finder" to an advisor-matching site, so this is uncertain — but the exposure is asymmetric and the downside is a breach of exactly the data you'd least want breached.
+5. **LendEDU governs the match page.** ✅ *In re Shop Tutors (LendEDU)*, FTC Docket C-4719 (2020): a financial comparison site marketed rankings as "objective" and "unbiased" while selling placement. **This is your case.** Never write "objective," "unbiased," or "independent rankings" if compensation influences inclusion or ordering.
 
-Email flows:
+> **Choose: be a clean publisher (display + affiliate + newsletter + products), or be a lead-gen business and lawyer it properly before launch. The worst available outcome is doing lead-gen casually.**
 
-- Checkup result email.
-- 5-day retirement clarity sequence.
-- Late starter sequence.
-- Pre-Medicare healthcare bridge sequence.
-- Social Security timing sequence.
+**11.3 Privacy — cheaper than you think, if you design for it.**
 
-Analytics events:
+✅ **Good news, twice over.** Income, savings, and debt are **not** "sensitive personal information" under CPRA — §1798.140(ae) enumerates exhaustively and they aren't on the list. And CCPA's 100,000-consumer prong is **"buys, sells, or shares"**, *not* "collects" — so merely collecting from many users doesn't make you a "business."
 
-- `checkup_started`
-- `checkup_completed`
-- `score_viewed`
-- `tool_started`
-- `tool_completed`
-- `source_opened`
-- `cta_save_plan`
-- `email_submitted`
-- `forum_question_started`
-- `forum_question_submitted`
-- `affiliate_click`
-
-## Idea 9: Original Research
-
-Original research is the moat against commodity explainers.
-
-Study 1: What 100 Retirement Calculators Assume
-
-Method:
-
-- Sample 100 public calculators.
-- Record assumptions: inflation, returns, Social Security treatment, taxes, healthcare, retirement age, life expectancy, fees, spouse handling.
-- Score transparency.
-- Publish dataset and methodology.
-
-Output:
-
-- Research article.
-- Interactive comparison table.
-- "Calculator Assumption Transparency Score."
-- Embeddable chart.
-
-Study 2: How Healthcare Assumptions Change Retirement Age
-
-Method:
-
-- Model case households retiring at 60, 62, 64, 65.
-- Use ACA bridge logic and Medicare cost references.
-- Show how pre-65 coverage changes savings needs.
-
-Output:
-
-- Research article.
-- ACA bridge calculator.
-- State-by-state future extension.
-
-Study 3: The Hidden Cost of Claiming Social Security at 62
-
-Method:
-
-- Use SSA claiming reduction rules.
-- Model claiming at 62, full retirement age, and 70.
-- Include break-even, survivor benefit caveats, and cash-flow constraints.
-
-Output:
-
-- Decision page.
-- Break-even tool.
-- "Claiming panic checklist."
-
-Study 4: Retirement Confidence Index by Age Group
-
-Method:
-
-- Use a simple Know Plain survey.
-- Ask about confidence, savings, debt, healthcare, Social Security uncertainty, work plans, and couple alignment.
-- Publish anonymized methodology.
-
-Output:
-
-- Quarterly index.
-- PR hooks.
-- Linkable charts.
-
-Research quality rules:
-
-- Publish methodology before conclusions.
-- Show assumptions.
-- Make datasets downloadable when possible.
-- Distinguish facts, estimates, and opinions.
-- Avoid clickbait framing.
-
-## Idea 10: Technical SEO Polish
-
-Current known gaps:
-
-- Article frontmatter lacks separate published/modified/reviewed dates.
-- Author pages are missing.
-- Person/ProfilePage schema missing.
-- FAQPage support missing.
-- SoftwareApplication/WebApplication schema missing for tools.
-- VideoObject schema missing or incomplete.
-- Forum schema should wait until moderation quality is real.
-- Search Console/Bing setup still listed as open in docs.
-- Build warns that Next.js `middleware` convention is deprecated and should migrate to `proxy`.
-
-Schema map:
-
-- Home: Organization, WebSite, SearchAction.
-- About: Organization.
-- Author/reviewer: ProfilePage, Person.
-- Article/decision page: Article, BreadcrumbList, FAQPage when there is a visible FAQ.
-- Tool page: SoftwareApplication or WebApplication, BreadcrumbList, FAQPage.
-- Video page: VideoObject, Clip when chapters exist, BreadcrumbList.
-- Forum thread: QAPage only for single-question threads with user answers; DiscussionForumPosting for discussions.
-- Glossary: DefinedTermSet.
-- Research page: Article or Dataset when applicable.
-
-Indexing rules:
-
-- Index article, decision, tool, source, glossary, research, curated forum answer pages.
-- Noindex search results.
-- Noindex thin profile/private pages.
-- Noindex unapproved forum threads.
-- Canonical all generated result pages to public tool page unless the result page has unique indexable value.
-
-Technical tasks:
-
-1. Extend content schema.
-2. Add source and FAQ components.
-3. Add author/reviewer data module.
-4. Add schema helpers.
-5. Add tool schema helper.
-6. Add video content fallback.
-7. Add sitemap by page type.
-8. Add robots controls for forum/search/profile.
-9. Migrate `middleware.ts` to `proxy.ts` per Next.js warning.
-10. Add rich-result validation checklist.
-
-## Decision Page Template
-
-Every decision page should follow this structure:
-
-1. Breadcrumb.
-2. H1 phrased as the decision.
-3. Plain answer.
-4. "Use this when" and "do not use this when."
-5. Quick calculator or input widget.
-6. Main explanation.
-7. Tradeoff table.
-8. Example cases.
-9. Common mistakes.
-10. Checklist.
-11. FAQ.
-12. Sources and notes.
-13. Author/reviewer block.
-14. Related decisions.
-15. Save/email/ask CTA.
-
-Example:
-
-`/decisions/claim-social-security-now-or-later`
-
-- Plain answer: Claiming early gives income sooner but permanently reduces monthly benefits; delaying can increase the monthly check, but only works if health, cash flow, spouse/survivor needs, and employment realities support it.
-- Calculator: compare 62, FRA, 70.
-- Sources: SSA claiming age page, SSA calculators, Medicare timing page.
-- CTA: Run Social Security break-even.
-
-## 90-Day Build Plan
-
-### Weeks 1-2: Trust Foundation
-
-- Add author/reviewer data model.
-- Add `/authors/*` and `/reviewers/*`.
-- Extend MDX frontmatter.
-- Add source list and FAQ components.
-- Add Article schema with author URLs.
-- Add Person/ProfilePage schema.
-- Add visible "educational only" and "reviewed by" blocks.
-- Update top 8 retirement articles with primary sources.
-
-### Weeks 3-4: Retirement Checkup MVP
-
-- Build `/checkup`.
-- Implement anonymous local-state result.
-- Add 10 input fields, not the full flow yet.
-- Output gap, target range, top risks, and recommended next steps.
-- Add email capture for results.
-- Add analytics events.
-
-### Weeks 5-6: Tool Moat MVP
-
-- Build Am I On Track.
-- Build Retirement Age Tradeoff.
-- Build Social Security Break-Even.
-- Add WebApplication schema.
-- Link tools into top articles.
-
-### Weeks 7-8: Decision Library
-
-- Add `/decisions`.
-- Convert 4 pages:
-  - Claim Social Security now or later.
-  - Retire now or wait.
-  - Roth vs Traditional.
-  - Pay debt or invest.
-- Each page gets calculator, FAQ, sources, schema, and CTA.
-
-### Weeks 9-10: Late Starter Vertical
-
-- Add `/late-starters`.
-- Publish 6 pages.
-- Build Catch-Up Contribution Planner.
-- Build email sequence.
-- Add original case examples.
-
-### Weeks 11-12: Forum and Video Depth
-
-- Add forum moderation statuses.
-- Seed 10 curated Q&A threads.
-- Add accepted answers.
-- Add noindex for unapproved threads.
-- Add fallback video content.
-- Add transcript pages and VideoObject schema.
-
-### Week 13: Original Research Launch
-
-- Publish the first research piece: "What 100 Retirement Calculators Assume."
-- Add Research nav.
-- Add dataset download.
-- Pitch/chart for backlinks.
-- Run rich-result and source QA.
-
-## Success Metrics
-
-Traffic and SEO:
-
-- 30+ high-quality indexable URLs.
-- 8+ long-tail top-10 queries.
-- Brand query #1.
-- Rich result validation clean for core templates.
-
-Product:
-
-- Checkup completion rate.
-- Tool completion rate.
-- Email capture rate from checkup results.
-- Saved-plan rate.
-- Return visits to dashboard.
-
-Trust:
-
-- 100% top-page source coverage.
-- 100% top-page visible dates.
-- Reviewer coverage for high-risk pages.
-- Correction/update log exists.
-
-Community:
-
-- Approved-answer ratio.
-- Spam rejection rate.
-- Report resolution time.
-- Number of curated indexable Q&A pages.
-
-Revenue:
-
-- Roadmap pack conversion.
-- Affiliate click-through only after tool/article engagement.
-- Email subscriber value.
-- Future sponsor/research partnerships, if editorial separation is clear.
-
-## Build Principles
-
-- Plain language first, precision second, false certainty never.
-- Tools should show assumptions before results.
-- Every result should suggest the next useful page.
-- The site should say "talk to a qualified professional" when a decision is too individualized.
-- Do not index low-quality UGC.
-- Do not publish annual-rule content without review reminders.
-- Do not chase head terms until the decision library and tools are strong.
-- The moat is not quantity. The moat is useful structured decision help with transparent sources.
+⚠️ **But:** running Google Ads or a Meta pixel for cross-context behavioral advertising **is "sharing."** Your ad stack, not your calculator, is what drags you into CCPA.
+
+**Do these regardless of thresholds** (all cheap):
+1. **Don't sell data. Ever. Say so.**
+2. **Compute the Checkup client-side and don't persist financial inputs** (§9.2). This is the whole ballgame.
+3. **Honor Global Privacy Control unconditionally.** ✅ Mandatory in ~12 states (CA, CO since 2024-07-01, CT, TX since 2025-01-01, and more). Read `Sec-GPC: 1` and `navigator.globalPrivacyControl`; suppress ad-tech identifiers; log it. ⚠️ Updated California regs effective 2026-01-01 require **visibly indicating the signal was processed** ("Opt-Out Request Honored") — verify the final CPPA text before building the UI.
+   - ✅ The cautionary tale is directly on point: **Healthline — $1.55M, CA AG, July 2025**, the largest CCPA settlement, against a **health-adjacent content publisher**, for opt-outs that didn't propagate to ad/analytics partners.
+4. **Honor access/delete/correct for everyone, regardless of state.** Cheaper than state-by-state logic.
+
+**11.4 FTC / affiliate disclosure — one concrete fix.**
+
+✅ The 2023 Endorsement Guides require disclosure that is "**difficult to miss… and easily understandable by ordinary consumers**," **unavoidable** on interactive media, and **not contradicted**. Footer-only or a standalone disclosure page is **not sufficient**. The FTC's own FAQ says labeling something merely **"affiliate link" may not be understood** by ordinary consumers; "we may earn a commission if you buy through links on this page" **is** adequate — *if placed at the same time and place as the endorsement*.
+
+**Your `/tools` page is close but not there.** It has a per-link "Affiliate" badge and an "Affiliate links disclosed" line above the first link — better than most. But *"Affiliate links disclosed"* is exactly the kind of jargon the FTC FAQ singles out. **Change it to plain language above the first link:** *"We may earn a commission if you sign up through these links. It costs you nothing extra."* Keep `/disclosure` as a supplement, never a substitute.
+
+✅ Also live: the **Consumer Reviews and Testimonials Rule** (16 CFR 465, effective 2024-10-21) — a binding rule with civil penalties, not a guide. It bans fake reviews, sentiment-conditioned incentives, undisclosed insider reviews, and **company-controlled review sites that misrepresent independence**. 💭 The provision that bites *you*: **the moment you rank your own Checkup or course in a "best tools" roundup, you must disclose ownership.** And once the forum hosts user comments on tools, all of Part 465 attaches.
+
+**11.5 Email.** ✅ CAN-SPAM: valid physical postal address, working opt-out honored within 10 business days, no deceptive subjects. Penalty up to **$53,088 per email**. 💭 A "here are your results" email leans transactional — but the instant it carries an affiliate link it becomes commercial. Treat every email as commercial; it costs nothing. ✅ Deliverability is functionally binding: Google/Yahoo bulk-sender rules (5,000+/day) require **SPF + DKIM + DMARC**, **RFC 8058 one-click unsubscribe**, and a spam rate **below 0.30%** (target <0.10%).
+
+---
+
+## 12. Monetization — honest numbers
+
+The previous draft listed a revenue ladder with no figures and ranked **Coverage Lab #1**. 💭 That ranking is revenue-per-visitor thinking that ignores compliance cost and time-to-first-dollar. Here is what the research actually supports.
+
+**12.1 Entry thresholds** ✅ Journey by Mediavine: **1,000 sessions/mo**. Mediavine (full): **$5,000+ annual ad revenue** to apply. Raptive: **25,000 pageviews/mo** (lowered Oct 2025).
+
+**12.2 Realistic RPM.** ⚠️ Publisher-reported finance RPMs ($35–48) are self-selected survivors. 💭 **Plan on $15–25 session RPM for a new US retirement site, not $45.** And note the headwind: brands are reported cutting open-web display spend 20–30% in response to AI search. Today's RPM is likely the ceiling, not the floor.
+
+**12.3 What actually pays, ranked for *this* audience** 💭:
+
+1. **Advisor lead-gen** — highest revenue/visitor (publisher side ~**$70/lead**; advisors pay $30–$250+). **And the highest risk — see §11.2.**
+2. **Medicare** ($30–140 CPL) — violently seasonal (AEP: Oct 15 – Dec 7).
+3. **Tax software** (TurboTax ~15%; H&R Block 3.2–9.6%) — seasonal (Jan–Apr).
+4. **Estate planning** (Trust & Will ~20%, ~$80/sale).
+5. **Newsletter sponsorship** — finance is a premium vertical at **$50–100+ CPM direct**. 💭 But do the arithmetic: 10,000 subs × 45% open × 4 sends = 18,000 opens/mo ≈ **$720/mo at $40 CPM.** Meaningful only above ~5–10k engaged subscribers, and only with direct sales.
+6. **Robo-advisor affiliate — a trap.** Low payout, long funnel, and it is *precisely* the category that endangers your securities posture (§11.1). Skip.
+
+**12.4 The honest timeline** 💭 (derived from the thresholds above):
+
+- **Months 0–6:** ~zero. Indexing and trust; no rankings on anything competitive.
+- **Months 6–12:** long-tail trickle; still below the 25k pv/mo display floor.
+- **Months 12–18:** *if it goes well* — 25–60k pv/mo, Raptive-eligible, **$400–1,200/mo**.
+- **Months 18–30:** *if it goes well* — 100k+ pv/mo, **$2–5k/mo**.
+- **Probability-weighted: a material fraction of new YMYL finance sites never clear month 12.** You are competing against NerdWallet, Fidelity, Schwab, and SSA.gov in the most E-E-A-T-gated vertical in Google — and per §4.1, the prize at the end shrank by roughly half.
+
+💭 **None of this says don't build it. It says: the tools, the email list, and YouTube are the business; the article corpus is table stakes. Budget accordingly, and don't set a 12-month revenue expectation that the data says is a coin flip.**
+
+---
+
+## 13. Technical spec
+
+**13.1 Schema map — corrected.**
+
+| Page | Emit | Notes |
+|---|---|---|
+| Home | `Organization`, `WebSite` | ✅ `WebSite` **for the site-name feature only**. ❌ Drop `SearchAction` (dead 2024-11-21). |
+| Article / decision | `Article`, `BreadcrumbList` | ✅ Author as `Person` with `url`/`sameAs`. ❌ **No `FAQPage`** (dead 2026-05-07). Article yields no dedicated rich result — it's a page-understanding signal. |
+| Author / reviewer | `ProfilePage` + `Person` | ✅ Live and correct. `sameAs` is the highest-value property. |
+| Tool | `BreadcrumbList` only | ❌ Drop `WebApplication` — earns nothing without `offers` + `aggregateRating` (§1.5). |
+| Video | `VideoObject` (+ `Clip`) | ✅ Live rich result. Required: `name`, `thumbnailUrl`, `uploadDate`. |
+| Forum thread | `DiscussionForumPosting` | ✅ **User-generated posts only.** Never editorial content. |
+| Seeded Q&A | *(none, currently wrong)* | ❌ `QAPage` requires users be able to **submit answers**. The 9 staff-answered pages don't qualify but emit it today. Fix. |
+| Glossary | `DefinedTermSet` | ⚪ No rich result. Harmless. Low priority. |
+
+**13.2 Indexing.** Index: articles, decisions, tools, glossary, research, curated Q&A. **Noindex: `/search` (done), `/profile` and `/login` (NOT done — fix), unapproved forum threads, and `/forum/[id]` until moderation is real.**
+
+**13.3 Core Web Vitals.** ✅ LCP ≤ **2.5s**, **INP ≤ 200ms** (replaced FID in March 2024), CLS ≤ **0.1**, all at p75.
+
+**13.4 Analytics (P0).** There is none, and the CSP would block it. Nothing in §15 is measurable until this ships. 💭 Pick a first-party or CSP-compatible option; keep GPC honoring (§11.3) wired from day one rather than retrofitted.
+
+---
+
+## 14. Roadmap
+
+Revised: **one vertical, done properly.** The previous draft's 12-month, 7-channel plan is replaced (§3).
+
+**Weeks 1–2 — Stop the bleeding (all P0).**
+1. Fix or remove `captureCheckupLead` (§9.1). No lying success messages.
+2. Backfill trust frontmatter on all **13 bare articles** (§2.2).
+3. Ship analytics (§13.4).
+4. Constrain Checkup output — no allocation, no securities (§9.3).
+5. Fix the affiliate disclosure wording (§11.4). `noindex` on `/profile` and `/login`.
+
+**Weeks 3–6 — The 2026 wedge.**
+6. **⭐ ACA Bridge / Cliff Warner** (§8.1) — the flagship. Both scenarios, cited, dated.
+7. Extend `facts-2026.ts` with the tax/Medicare/OBBBA additions (§7).
+8. Move the Checkup client-side; stop persisting financial inputs (§9.2).
+9. Recruit **one credentialed reviewer** (§6.1.2). Start now — it has the longest lead time of anything here.
+
+**Weeks 7–10 — The decision layer.**
+10. Sequence-risk stress test; Social Security break-even; Roth vs Traditional (with the ACA/IRMAA MAGI interaction — the article nobody has written well).
+11. Delete the dead schema; fix the `QAPage` misapplication (§13.1).
+12. Email: real ESP, real list, capture at the Checkup result and the checklist — **not a sitewide popup**.
+
+**Weeks 11–13 — Compounding assets.**
+13. First original research piece from **your own aggregate usage data** (§10.4).
+14. Video depth + embedded calculators. 💭 Give YouTube real weight — it's the channel AI hasn't disintermediated.
+
+**Always on.** Update `facts-2026.ts` at each IRS/SSA/CMS release. ⚠️ **Watch the ACA subsidy legislation and update the flagship calculator the day statute changes.** Assign that to a named human.
+
+**The gate for a second vertical:** credentialed reviewer on every high-risk page · ≥$3,000/mo revenue · ≥25k pv/mo · P0 list closed. Not before.
+
+**14.1 Implementation backlog.** Use this as the issue list.
+
+| Priority | Task | Likely files | Dependency | Acceptance criteria |
+|---|---|---|---|---|
+| P0 | Fix or remove Checkup lead capture | `src/app/checkup/actions.ts`, `src/app/checkup/RetirementCheckup.tsx`, `supabase/schema.sql` | ESP decision or remove email promise | User is never shown a false success message; failed capture is visible or the email feature is absent |
+| P0 | Backfill trust frontmatter on 13 bare articles | `content/**/*.mdx` | Source packs | Every indexable article has author, reviewer/review status, published, updated, reviewed, sources, risk level |
+| P0 | Ship analytics | `src/app/layout.tsx`, CSP config, analytics helper | Vendor choice and GPC policy | Core events in §15 are recorded; GPC suppresses ad/third-party identifiers |
+| P0 | Constrain Checkup output | `src/lib/checkup.ts`, `src/app/checkup/RetirementCheckup.tsx` | §11.1 rules | No allocation, securities, fund, adviser, or personalized-plan wording appears in outputs |
+| P0 | Fix affiliate disclosure wording | `src/app/tools/page.tsx`, shared affiliate component if added | None | Plain commission disclosure appears before first monetized link |
+| P1 | Add `noindex` to thin/private pages | `src/app/profile/page.tsx`, `src/app/login/page.tsx`, forum routes | Metadata audit | Login/profile are noindex; unmoderated forum pages are noindex |
+| P1 | Build ACA Bridge / Cliff Warner | `src/lib/facts-2026.ts`, `src/app/tools/[slug]/page.tsx`, tool data/config | Volatility register owner | Shows MAGI, FPL %, cliff headroom, cliff/restored-subsidy scenarios, source/date |
+| P1 | Extend facts module | `src/lib/facts-2026.ts`, tests | Appendix A verification | Added constants are unit-tested and source-commented |
+| P1 | Move Checkup client-side | `src/app/checkup/RetirementCheckup.tsx`, `src/lib/checkup.ts` | Lead-capture decision | Results render without posting financial inputs to server |
+| P1 | Recruit credentialed reviewer | Editorial operations, author data | Budget/outreach | Named human reviewer with credential and sameAs profile appears on high-risk pages |
+| P2 | Sequence-risk, Social Security, Roth tools | `src/app/tools/[slug]/page.tsx`, `src/lib/facts-2026.ts` | Facts module | Each tool shows assumptions first, sources, limits, and next step |
+| P2 | Delete dead/misapplied schema | `src/lib/schema.ts`, article/tool/forum pages | Schema audit | No FAQPage/WebApplication/SearchAction/QAPage misuse remains |
+| P2 | Wire real email | Checkup result, ESP integration, privacy copy | ESP + CAN-SPAM setup | Double-checked opt-out/address requirements; results/checklists send reliably |
+| P3 | Original research from aggregate usage | `/research`, analytics/data export | Analytics live and privacy review | Methodology published before conclusions; data anonymized and downloadable if safe |
+| P3 | Video depth with calculators | `/watch`, video data, tool embeds | Tool pages | Video pages have transcript, chapters, sources, and related calculator |
+
+---
+
+## 15. Metrics
+
+💭 The previous draft's metrics were unfalsifiable ("checkup completion rate") with no targets. And none of them are measurable today (§13.4). Targets are honest guesses to be revised against real data.
+
+**Trust (leading — these predict everything else).** 100% of indexable articles with visible author, sources, and honest dates (**today: 8/21**). Credentialed reviewer on 100% of high-risk pages (**today: 0**). Corrections log in use.
+
+**Product (the moat).** Checkup completion rate (target >40% of starts). Tool → email conversion (target >8% at the result screen — the highest-intent moment on the site). Return-visitor rate.
+
+**Search — measure the right thing.** 💭 Given §4.1, **do not set a raw-traffic target for informational queries.** Track instead: (a) **non-brand impressions** (are you *visible*, even when not clicked), (b) **brand search volume** — the only terminal defensible asset, (c) rankings on **tool/decision** queries, which still convert.
+
+**Revenue.** Against §12.4, not against optimism.
+
+---
+
+## Appendix A — Cited 2026 facts
+
+Source of truth for `facts-2026.ts`. Every figure verified 2026-07-10 against the cited primary source.
+
+**IRS 2026** — [Notice 2025-67](https://www.irs.gov/pub/irs-drop/n-25-67.pdf) · [Rev. Proc. 2025-32](https://www.irs.gov/pub/irs-drop/rp-25-32.pdf)
+- 401(k)/403(b)/457/TSP deferral **$24,500** · catch-up 50+ **$8,000** · super catch-up 60–63 **$11,250** · IRA **$7,500** · **IRA catch-up $1,100** (first indexed bump; $8,600 total at 50+) · SIMPLE **$17,000** · **415(c) total DC limit $72,000** · QCD **$111,000**
+- ⚠️ **Mandatory Roth catch-up: live for 2026.** Threshold = **$150,000** of 2025 FICA wages *from the plan sponsor* (Notice 2025-67 raised it from the $145,000 statutory base). Final regs 2025-09-16; reg mechanics fully apply 2027, **good-faith standard for 2026**; later dates for collectively-bargained and governmental plans.
+- Roth IRA phase-out: single **$153k–$168k** · MFJ **$242k–$252k**
+- Standard deduction: single **$16,100** · MFJ **$32,200** · HoH **$24,150**; additional 65+/blind **$1,650** (married) / **$2,050** (unmarried)
+- 2026 brackets (top of bracket) — **Single:** 10% ≤$12,400 · 12% ≤$50,400 · 22% ≤$105,700 · 24% ≤$201,775 · 32% ≤$256,225 · 35% ≤$640,600 · 37% above. **MFJ:** 10% ≤$24,800 · 12% ≤$100,800 · 22% ≤$211,400 · 24% ≤$403,550 · 32% ≤$512,450 · 35% ≤$768,700 · 37% above
+- LTCG 0% bracket: single **≤$49,450** · MFJ **≤$98,900** · HoH **≤$66,200**
+- ⚠️ **OBBBA senior deduction: $6,000 per person 65+, tax years 2025–2028**, itemizers and non-itemizers. Phases out at **6% of MAGI over $75,000 / $150,000 MFJ**; gone at **$175,000 / $250,000**. **This is not "no tax on Social Security"** — the $25k/$32k benefit-taxation thresholds are untouched. ([IRS](https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors))
+- New for 2026: charitable deduction for **non-itemizers** up to $1,000 ($2,000 MFJ), cash only; **0.5%-of-AGI floor** for itemizers. Changes QCD-vs-cash-gift advice for retirees.
+- **Saver's Match** replaces the Saver's Credit for tax years after 2026 (i.e. **2027**): 50% of up to $2,000, **paid into the account**; phase-out $41k–$71k MFJ.
+
+**Social Security 2026** — [SSA 2026 fact sheet](https://www.ssa.gov/news/en/cola/factsheets/2026.html) · [SSA COLA](https://www.ssa.gov/oact/cola/latestCOLA.html)
+- COLA **+2.8%** · wage base **$184,500** · FRA **67** (born 1960+) · claim at 62 = **70% of PIA** (30% reduction) · delay to 70 = **124%** (8%/yr) · earnings test **$24,480** (under FRA, $1 per $2) / **$65,160** (FRA year, $1 per $3) · max benefit at FRA **$4,152/mo** · average retired worker **$2,071/mo**
+- ✅ Benefit-taxation thresholds **$25,000 / $32,000 — still un-indexed**, unchanged by OBBBA.
+- ✅ **Social Security Fairness Act** (signed 2025-01-05): **WEP and GPO repealed**, retroactive to Jan 2024 — affects ~3.2M teachers, police, firefighters, CSRS retirees.
+- Note: "124% at 70" is arithmetic from SSA's 8%/yr credit, not a figure SSA prints.
+
+**Medicare 2026** — [CMS 2026 Part B fact sheet](https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles)
+- Part B standard **$202.90/mo** (from $185.00) · Part B deductible **$283** · Part A deductible **$1,736**/benefit period
+- **Part D out-of-pocket cap $2,100** (from $2,000) · Part D max deductible **$615**
+- IRMAA first tier: **>$109,000 single / $218,000 MFJ**, based on **2024 MAGI** (two-year lookback — *this is the planning point*)
+
+**ACA / early-retiree bridge — ⚠️ VOLATILE, THE MOST IMPORTANT SECTION HERE** — [KFF](https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/)
+- **Enhanced premium tax credits expired 2025-12-31 and were NOT extended.** The **400% FPL subsidy cliff is back** for 2026. The 8.5%-of-income cap is **gone** (max required contribution 9.96%).
+- 400% FPL (2026 coverage, 48 states) ≈ **$62,600 single**. Above it: **$0 credit.**
+- 60-year-old unsubsidized: **$11,625** bronze / **$15,914** benchmark silver. **At $65,000 income: +$10,389/yr** vs. the expired credits.
+- Marketplace-wide: net premiums +58%, deductibles +37% to a record $3,786; enrollment projected 22.3M → ~17.5M.
+- **ACA MAGI includes ALL Social Security benefits, traditional withdrawals, Roth conversions, capital gains, pensions, and tax-exempt interest. Roth withdrawals do not count.**
+- No extension enacted as of 2026-07-10. **Re-verify before every publish.**
+
+**RMDs & inherited IRAs**
+- RMD start age **73** (born 1951–1959) · **75** (born 1960+). Roth 401(k): no lifetime RMDs since 2024.
+- ⚠️ **Inherited IRA 10-year rule — the waivers are over.** Final regs (2024-07-19) effective **2025-01-01**: if the owner died **on or after** their required beginning date, a non-eligible designated beneficiary must take **annual RMDs in years 1–9** *and* empty by year 10. Missed-RMD penalty **25%** (10% if timely corrected). ([CRS](https://www.congress.gov/crs-product/IF12750))
+
+**Withdrawal rates** — Morningstar **3.9%** (2025 Edition, pub. 2025-12-03: forward-looking, 30yr, 90% success, 30–50% equity) · Bengen **4.7%** (*A Richer Retirement*, Wiley, Aug 2025: historical worst case, 7 asset classes) · Guyton–Klinger **5.2–5.6%** with decision rules (JFP 2006), ⚠️ contested by Kitces. **See §8.1 — never publish one of these without its method.**
+
+**Savings benchmarks** — Fidelity: **1× salary by 30, 3× by 40, 6× by 50, 8× by 60, 10× by 67** (assumes 15% savings rate, retire at 67, 45% replacement from savings). T. Rowe: 3× by 45, 5× by 50, 7× by 55, ~11× at retirement. 💭 **J.P. Morgan's Guide to Retirement (2026, 14th ed.) is methodologically the best** — its checkpoints vary by **age *and* income** in dollars, because "10× salary" is wrong in both directions (too high for low earners, too low for high earners). If you publish multiples, publish the assumption block beside them.
+
+**Audience** — EBRI **2026** RCS (fielded Jan 2026, n=2,544, released 2026-04-21): worker confidence **67%→61%**, retiree **78%→73%**; **65% of workers say debt is a problem**; **fewer than half of workers *or* retirees have ever calculated what health care will cost them**; workers expect to retire at **65**, retirees actually retired at **62**. · Fidelity Retiree Health Care Cost Estimate: **$172,500** per single 65-year-old (2025 estimate, released 2025-07-30; excludes long-term care).
+
+---
+
+## Appendix B — 🚫 Do not publish
+
+These are widely repeated, could not be confirmed against a primary source, and **must not appear on the site**. On a source-discipline brand these are the numbers that would end you.
+
+| Claim | Why not |
+|---|---|
+| **Blanchett's "~1% real spending decline per year"** (the spending smile) | The *smile* is real and citable (JFP, May 2014). The **1% figure** could not be confirmed from the paper. Cite the smile, not the number. |
+| **Pfau's "77% of the outcome is set by the first 10 years"** | Appears everywhere in secondary sources; no primary paper found. The sequence-risk *mechanism* is solid — the statistic is not. |
+| ~~"$84,600" as the 400% FPL cliff for a couple~~ | **Cleared on review — publishable.** It is direct arithmetic from the verified 2025 HHS guidelines: 4 × ($15,650 + $5,500) = $84,600, which is what `federalPovertyLevel(2)` computes and `test/finance.test.mjs` asserts. What was unverifiable was only *attributing* it to a published KFF scenario table. **Derive it, don't source it to KFF.** |
+| **The age-band SCF retirement-balance table** (e.g. "$185,000 median, 55–64") | Traces to secondary aggregators, not Fed primary docs. If used, pull from the Fed's interactive table **and** state that balances are conditional on *having an account* — only 54.3% of families do. |
+| **Any 2026 Fidelity health-cost estimate** | Not published yet. The 2025 figure ($172,500) is current. |
+| **Any 2027 figure** (COLA, IRS limits, Medicare premiums) | Not announced. 2027 COLA lands ~Oct 2026; IRS limits and Medicare ~Nov 2026. |
+| **Any claimed traffic loss at NerdWallet / Bankrate / Motley Fool** | Unverified. The *aggregate* CTR studies (§4.1) are solid; company-specific claims are not. |
+| **"AI-referred visitors convert 4–9× better"** | Vendor marketing. The referral volume is real; the conversion multiple is not established. |
+
+---
+
+## Appendix C — Sources and confidence
+
+**High confidence (primary):** IRS Notice 2025-67 · IRS Rev. Proc. 2025-32 · Federal Register T.D. 10033 (catch-up final regs) · SSA 2026 COLA fact sheet & OACT tables · CMS 2026 Part B fact sheet · Medicare & You 2026 · HHS 2025 Poverty Guidelines · Google Search Central (structured data gallery, ranking systems guide, spam policies, AI optimization guide) · Search Quality Rater Guidelines (2025-09-11) · *Lowe v. SEC*, 472 U.S. 181 · SEC Release IA-1092 · SEC Rule 206(4)-1 · 16 CFR 255 & 465 · FTC *In re Shop Tutors (LendEDU)*, C-4719.
+
+**High confidence (institutional):** KFF (ACA 2026 analyses) · EBRI 2026 RCS · Morningstar State of Retirement Income (2025 ed.) · Bengen, *A Richer Retirement* (Wiley 2025) · Federal Reserve SCF 2022 · Pew Research (2025-07-22, AI summaries & clicks) · J.P. Morgan Guide to Retirement 2026 · Fidelity (2025 health estimate; savings multiples).
+
+**Medium confidence (vendor/correlational — cite with limits stated):** Ahrefs, Seer, seoClarity, SparkToro on AI-search CTR and citation. 💭 All are SEO vendors with a commercial interest, all are correlational, and none establishes causation. The Ahrefs schema difference-in-differences study is the only quasi-causal work in the corpus and it found **no positive effect of schema on AI citation** — which is the most useful thing in the set, precisely because it cuts against its author's interest.
+
+**⚠️ Volatile — re-verify before every publish:** the ACA enhanced-subsidy statute · anything with a tax year in the name · Medicare premiums · FTC civil-penalty amounts (2026 adjustment not confirmed).
+
+**Source links still to attach before external publication:** Pew AI-summary click study · Ahrefs schema/AI citation study · Seer AI referral/citation study · seoClarity AIO citation analysis · EBRI 2026 RCS report PDF · Mediavine/Raptive threshold pages · Google/Yahoo sender requirements · CAN-SPAM penalty page. The strategy can use them internally now, but any public-facing page should cite the exact URL beside the claim.
+
+---
+
+## Build principles
+
+- Plain language first, precision second, **false certainty never**.
+- Every number carries a source. Every tool shows its assumptions **before** its results.
+- **The tools are the asset; the article corpus is table stakes.** Budget accordingly.
+- Say "talk to a qualified professional" when a decision is genuinely individualized — and **mean it**, which means not being paid for the referral (§11.2).
+- Never emit an asset allocation. Never name a security. That line is what keeps the site legal.
+- Depth in one vertical beats breadth across ten. **Earn the second channel; don't schedule it.**
+- The moat is not quantity. It is **structured decision help with transparent sources** — and, increasingly, the things a language model cannot do for the user: run their numbers, hold their data, and stand behind an answer with a name on it.
