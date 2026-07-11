@@ -6,6 +6,7 @@ import { ArrowRight, Mail, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { captureCheckupLead } from "./actions";
 import { trackProductEvent } from "@/lib/analytics";
+import { REAL_RETURN, SWR } from "@/lib/facts-2026";
 import { currency, runRetirementCheckup, type CheckupInput } from "@/lib/checkup";
 
 const defaults: CheckupInput = {
@@ -57,9 +58,12 @@ export function RetirementCheckup() {
     trackProductEvent("Checkup Edited");
   };
 
-  const updateNumber = (key: keyof CheckupInput, value: string) => {
+  // Clamp on the way in — HTML min/max is advisory and does not stop typed input.
+  const updateNumber = (key: keyof CheckupInput, value: string, min: number, max: number) => {
     trackEdited();
-    setInput((current) => ({ ...current, [key]: Number(value) }));
+    const n = Number(value);
+    const clamped = Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min;
+    setInput((current) => ({ ...current, [key]: clamped }));
   };
 
   const saveEmail = (e: React.FormEvent<HTMLFormElement>) => {
@@ -93,22 +97,27 @@ export function RetirementCheckup() {
           </Button>
         </div>
         <div className="grid gap-4">
-          {[
-            ["age", "Current age"],
-            ["targetRetirementAge", "Target retirement age"],
-            ["retirementSavings", "Retirement savings"],
-            ["annualContribution", "Annual contribution"],
-            ["annualSpending", "Annual retirement spending"],
-            ["socialSecurityAnnual", "Annual Social Security estimate"],
-            ["pensionAnnual", "Annual pension/guaranteed income"],
-            ["debtPaymentsAnnual", "Annual debt payments"],
-          ].map(([key, label]) => (
+          {/* Bounded. An unbounded money field is a bug: clearing a number input yields
+              Number("") === 0, and nothing here should silently accept a negative balance
+              or an age of 4,000. */}
+          {([
+            ["age", "Current age", 18, 90],
+            ["targetRetirementAge", "Target retirement age", 40, 90],
+            ["retirementSavings", "Retirement savings", 0, 50_000_000],
+            ["annualContribution", "Annual contribution", 0, 500_000],
+            ["annualSpending", "Annual retirement spending", 0, 2_000_000],
+            ["socialSecurityAnnual", "Annual Social Security estimate", 0, 200_000],
+            ["pensionAnnual", "Annual pension/guaranteed income", 0, 500_000],
+            ["debtPaymentsAnnual", "Annual debt payments", 0, 500_000],
+          ] as const).map(([key, label, min, max]) => (
             <label key={key} className="grid gap-1.5 text-sm font-medium">
               {label}
               <input
                 type="number"
+                min={min}
+                max={max}
                 value={input[key as keyof CheckupInput] as number}
-                onChange={(e) => updateNumber(key as keyof CheckupInput, e.target.value)}
+                onChange={(e) => updateNumber(key as keyof CheckupInput, e.target.value, min, max)}
                 className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
               />
             </label>
@@ -180,12 +189,21 @@ export function RetirementCheckup() {
           </div>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
             The target range is bracketed by the two credible withdrawal-rate benchmarks, not an average of
-            them. The low end assumes <strong>4.7%</strong> (Bengen&rsquo;s historical worst case, a more
-            aggressive portfolio); the high end assumes <strong>3.9%</strong> (Morningstar&rsquo;s
+            them. The low end assumes <strong>{(SWR.bengenRevised * 100).toFixed(1)}%</strong>{" "}
+            (Bengen&rsquo;s historical worst case, a more aggressive portfolio); the high end assumes{" "}
+            <strong>{(SWR.morningstar2026 * 100).toFixed(1)}%</strong> (Morningstar&rsquo;s
             forward-looking rate for a rigid, inflation-adjusted paycheck at 90% confidence over 30 years).
-            They answer different questions, so there is no single &ldquo;safe&rdquo; number. Projections
-            assume 3%&ndash;6% annual returns and are hypothetical, not a guarantee. This is an educational
-            estimate, not financial advice.
+            They answer different questions, so there is no single &ldquo;safe&rdquo; number.{" "}
+            {/* This used to say "3%-6% annual returns", which was both stale AND the unit bug: a
+                nominal-looking return compared against a target built from TODAY'S spending. Both
+                sides are now in today's dollars, and the copy has to say so or the reader cannot
+                tell whether the headline number flatters them. */}
+            <strong>Everything here is in today&rsquo;s dollars.</strong> Savings are projected to grow at{" "}
+            {(REAL_RETURN.conservative * 100).toFixed(0)}%&ndash;
+            {(REAL_RETURN.optimistic * 100).toFixed(0)}% a year <em>after inflation</em>, so the projection
+            and the target are directly comparable, and holding your contribution flat in today&rsquo;s
+            dollars assumes you raise it with inflation each year. Hypothetical, not a guarantee. An
+            educational estimate, not financial advice.
           </p>
         </div>
 
