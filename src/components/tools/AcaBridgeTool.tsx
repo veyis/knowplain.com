@@ -139,10 +139,12 @@ export function AcaBridgeTool() {
                 : "You are under the cliff, so protecting MAGI headroom can protect the credit. Roth conversions and capital gains can use that headroom quickly."}
         </p>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          Verified {ACA_2026.lastVerified}. KFF reference: a 60-year-old at {currency(ACA_2026.restoredEnhancedCreditReference.annualIncome)}
-          pays {currency(acaLostEnhancedCreditReference())} more per year after enhanced credits expired.
-          National average 60-year-old annual premiums: {currency(ACA_2026.averageAge60AnnualPremium.lowestCostBronze)}
-          bronze and {currency(ACA_2026.averageAge60AnnualPremium.benchmarkSilver)} benchmark silver. Local
+          Verified {ACA_2026.lastVerified}. KFF reference: a 60-year-old at{" "}
+          {currency(ACA_2026.restoredEnhancedCreditReference.annualIncome)} pays{" "}
+          {currency(acaLostEnhancedCreditReference())} more per year after enhanced credits expired.
+          National average 60-year-old annual premiums:{" "}
+          {currency(ACA_2026.averageAge60AnnualPremium.lowestCostBronze)} bronze and{" "}
+          {currency(ACA_2026.averageAge60AnnualPremium.benchmarkSilver)} benchmark silver. Local
           premiums vary by county and state. Educational estimate only.
         </p>
       </div>
