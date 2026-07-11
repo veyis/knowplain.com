@@ -137,7 +137,7 @@ export function RothConversionTool() {
               <div className="text-sm">
                 <strong className="block">
                   This conversion pushes you over the ACA subsidy cliff.
-                </strong>
+                </strong>{" "}
                 You had {currency(cost.acaHeadroomBefore)} of income room before the cliff at{" "}
                 {currency(cliffMagi)}. Converting {currency(conversion)} takes you past it — and one
                 dollar over means you lose your <em>entire</em> premium tax credit for the year, not
@@ -157,7 +157,7 @@ export function RothConversionTool() {
               <div className="text-sm">
                 <strong className="block">
                   This raises your Medicare premium at age {age + MEDICARE_2026.irmaaLookbackYears}.
-                </strong>
+                </strong>{" "}
                 Medicare looks back two years at your income, so a conversion at {age} lands on your
                 premium at {age + MEDICARE_2026.irmaaLookbackYears}. Crossing the first IRMAA tier
                 costs about {currency(cost.irmaaAnnualCost)} for that year
@@ -171,7 +171,7 @@ export function RothConversionTool() {
             <div className="flex gap-3 rounded-lg border border-emerald-300/60 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200">
               <Check className="mt-0.5 size-4 shrink-0" />
               <div className="text-sm">
-                <strong className="block">No cliff, no surcharge — just the tax.</strong>
+                <strong className="block">No cliff, no surcharge — just the tax.</strong>{" "}
                 {preMedicare
                   ? `This conversion keeps you under the ${currency(cliffMagi)} ACA cliff and below the first IRMAA tier.`
                   : "You are past the ACA bridge years, and this stays below the first IRMAA tier."}{" "}

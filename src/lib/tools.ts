@@ -68,6 +68,24 @@ export const toolPages = {
       },
     ],
   },
+  "debt-vs-investing": {
+    title: "Debt Payoff vs Investing",
+    description:
+      "One of these returns is guaranteed and the other is a forecast. See which of your dollars should go where — and what beats both.",
+    kind: "debt-vs-investing",
+    sources: [
+      {
+        title: "2026 Retirement Confidence Survey",
+        publisher: "EBRI / Greenwald Research",
+        url: "https://www.ebri.org/retirement/retirement-confidence-survey",
+      },
+      {
+        title: "401(k) limit increases to $24,500 for 2026, IRA limit increases to $7,500",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500",
+      },
+    ],
+  },
   "social-security-break-even": {
     title: "Social Security Break-Even",
     description: "Compare claiming at 62, full retirement age, and 70 with clear caveats.",

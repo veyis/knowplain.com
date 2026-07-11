@@ -59,8 +59,8 @@ export const decisions = {
     description: "Compare debt payoff, employer match, emergency reserves, and retirement saving.",
     plainAnswer:
       "High-interest debt and a missed employer match are usually urgent. Lower-rate debt is a tradeoff between guaranteed payoff return, liquidity, and long-term investing.",
-    toolHref: "/tools/catch-up-contributions",
-    toolLabel: "Check catch-up room",
+    toolHref: "/tools/debt-vs-investing",
+    toolLabel: "Compare debt payoff with investing",
     sources: [
       {
         title: "Survey of Consumer Finances",

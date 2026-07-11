@@ -105,7 +105,7 @@ export function CatchUpPlannerTool() {
           <div className="flex gap-3 rounded-lg border border-amber-300/60 bg-amber-50 p-4 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <div className="text-sm">
-              <strong className="block">Your catch-up must be Roth in 2026.</strong>
+              <strong className="block">Your catch-up must be Roth in 2026.</strong>{" "}
               Because your 2025 wages from this employer were above{" "}
               {currency(CONTRIBUTION_2026.mandatoryRothCatchUpWageThreshold)}, SECURE 2.0 requires the{" "}
               {currency(plan.catchUp)} catch-up portion to go in as Roth (after-tax). Pre-tax is no

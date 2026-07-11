@@ -1,0 +1,205 @@
+"use client";
+
+import { useMemo, useRef, useState } from "react";
+import { AlertTriangle, Gift, Scale, TrendingUp } from "lucide-react";
+import { trackProductEvent } from "@/lib/analytics";
+import { currency } from "@/lib/checkup";
+import { INVEST_RISK_PREMIUM, debtVsInvesting } from "@/lib/facts-2026";
+
+const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+
+function Field({
+  label,
+  value,
+  onChange,
+  hint,
+  step = 1,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  hint?: string;
+  step?: number;
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <input
+        type="number"
+        step={step}
+        min={0}
+        value={value}
+        onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
+        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
+      />
+      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
+    </label>
+  );
+}
+
+export function DebtVsInvestingTool() {
+  const [debtBalance, setDebtBalance] = useState(12_000);
+  const [debtApr, setDebtApr] = useState(22);
+  const [monthlyPayment, setMonthlyPayment] = useState(300);
+  const [extraMonthly, setExtraMonthly] = useState(200);
+  const [expectedReturn, setExpectedReturn] = useState(7);
+  const [salary, setSalary] = useState(80_000);
+  const [contributionRate, setContributionRate] = useState(2);
+  const tracked = useRef(false);
+
+  const track = () => {
+    if (tracked.current) return;
+    tracked.current = true;
+    trackProductEvent("Tool Used", { tool: "debt-vs-investing" });
+  };
+
+  const r = useMemo(
+    () =>
+      debtVsInvesting({
+        debtBalance,
+        debtApr: debtApr / 100,
+        monthlyPayment,
+        extraMonthly,
+        expectedReturn: expectedReturn / 100,
+        salary,
+        employerMatchRate: 0.5,
+        employerMatchLimit: 0.06,
+        currentContributionRate: contributionRate / 100,
+      }),
+    [debtBalance, debtApr, monthlyPayment, extraMonthly, expectedReturn, salary, contributionRate],
+  );
+
+  const neverPaysOff = !Number.isFinite(r.monthsToPayoff);
+
+  const verdict = {
+    match: {
+      icon: Gift,
+      tone: "border-emerald-300/60 bg-emerald-50 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200",
+      title: `Take the free money first — you are leaving ${currency(r.matchLeftOnTable)} a year behind.`,
+      body: "Your employer matches 50 cents on the dollar up to 6% of salary. Contributing enough to capture the full match is an instant 50% return, guaranteed, before the money is even invested. Nothing else in personal finance competes — not even paying off a credit card. Do this first, then come back to the debt.",
+    },
+    debt: {
+      icon: AlertTriangle,
+      tone: "border-amber-300/60 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200",
+      title: `Pay the debt. ${pct(r.guaranteedReturn)} guaranteed beats ${pct(r.expectedReturn)} hoped for.`,
+      body: "Clearing this debt returns its interest rate with certainty. Investing might return more, and might not — and there is no rule saying the good years arrive when you need them. When the certain return is the higher one, it is not a close call.",
+    },
+    invest: {
+      icon: TrendingUp,
+      tone: "border-emerald-300/60 bg-emerald-50 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200",
+      title: `Investing has the edge — ${pct(r.expectedReturn)} expected against ${pct(r.guaranteedReturn)} guaranteed.`,
+      body: "The gap is wide enough to be worth the uncertainty. Keep paying the debt on schedule; it is cheap money. But do not confuse an expected return with a promised one — if a paid-off balance would help you sleep, that is a real return too, and it is not irrational to take it.",
+    },
+    close: {
+      icon: Scale,
+      tone: "border-border bg-secondary text-foreground",
+      title: "Too close to call — and a tie should go to the debt.",
+      body: `Investing is ahead by less than ${pct(INVEST_RISK_PREMIUM)}, which is not enough to pay you for the uncertainty. One of these returns is guaranteed and the other is a forecast. Splitting the extra between them is a perfectly reasonable answer here.`,
+    },
+  }[r.verdict];
+
+  const Icon = verdict.icon;
+
+  return (
+    <div className="grid gap-5">
+      <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
+        <div className="grid content-start gap-4" onChange={track}>
+          <Field label="Debt balance" value={debtBalance} onChange={setDebtBalance} step={500} />
+          <Field label="Interest rate (%)" value={debtApr} onChange={setDebtApr} step={0.5} />
+          <Field
+            label="Current monthly payment"
+            value={monthlyPayment}
+            onChange={setMonthlyPayment}
+            step={50}
+          />
+          <Field
+            label="Spare cash each month"
+            value={extraMonthly}
+            onChange={setExtraMonthly}
+            step={50}
+            hint="The money you are deciding what to do with."
+          />
+          <Field
+            label="Expected market return (%)"
+            value={expectedReturn}
+            onChange={setExpectedReturn}
+            step={0.5}
+            hint="A long-run guess, not a promise."
+          />
+          <Field label="Annual salary" value={salary} onChange={setSalary} step={1000} />
+          <Field
+            label="You contribute (% of salary)"
+            value={contributionRate}
+            onChange={setContributionRate}
+            step={1}
+            hint="Assumes a typical match: 50% up to 6% of salary."
+          />
+        </div>
+
+        <div className="grid content-start gap-4">
+          <div className={`flex gap-3 rounded-lg border p-4 ${verdict.tone}`}>
+            <Icon className="mt-0.5 size-4 shrink-0" />
+            <div className="text-sm">
+              <strong className="block">{verdict.title}</strong>{" "}
+              {verdict.body}
+            </div>
+          </div>
+
+          {neverPaysOff ? (
+            <div className="flex gap-3 rounded-lg border border-red-300/60 bg-red-50 p-4 text-red-900 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+              <div className="text-sm">
+                <strong className="block">This payment never clears the balance.</strong>{" "}
+                At {pct(debtApr / 100)} the interest alone is about{" "}
+                {currency((debtBalance * (debtApr / 100)) / 12)} a month, which is more than you are
+                paying. The balance grows no matter how long you keep going. This is not a
+                debt-versus-investing question any more — it is the only thing to fix.
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-lg bg-secondary p-3">
+                <p className="text-xs text-muted-foreground">Debt gone in</p>
+                <strong>
+                  {r.monthsToPayoff} month{r.monthsToPayoff === 1 ? "" : "s"}
+                </strong>
+              </div>
+              <div className="rounded-lg bg-secondary p-3">
+                <p className="text-xs text-muted-foreground">Interest if you add nothing</p>
+                <strong>{currency(r.interestIfMinimum)}</strong>
+              </div>
+              <div className="rounded-lg bg-secondary p-3">
+                <p className="text-xs text-muted-foreground">Interest saved by the extra</p>
+                <strong>{currency(r.interestSaved)}</strong>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-2 rounded-xl border border-border bg-card p-5 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          <strong className="text-foreground">The order that actually holds.</strong>{" "}
+          Capture the full employer match, because an instant 50% return beats everything. Then kill high-interest
+          debt, because its return is guaranteed and the market&rsquo;s is not. Then invest the rest.
+          Almost every &ldquo;debt or invest?&rdquo; argument is really an argument about steps two
+          and three, and it is settled by asking which return is <em>certain</em>.
+        </p>
+        <p>
+          <strong className="text-foreground">Why a tie goes to the debt.</strong> A 7% expected
+          return and a 7% interest rate are not the same thing. One is a forecast with a wide range
+          of outcomes; the other is a fact. We only call it for investing when the expected return
+          clears the debt rate by at least {pct(INVEST_RISK_PREMIUM)} — enough to be paid something
+          for taking the risk.
+        </p>
+        <p className="text-xs">
+          Deliberately produces no &ldquo;you will be $X richer&rdquo; figure: that number requires
+          predicting the market, and false precision is exactly what this site exists to avoid. It
+          ignores tax deductibility of mortgage interest, and assumes a 50%-up-to-6% match — check
+          your own plan. It also cannot price peace of mind, which is a real return for some people.
+          Educational estimate, not financial advice.
+        </p>
+      </div>
+    </div>
+  );
+}

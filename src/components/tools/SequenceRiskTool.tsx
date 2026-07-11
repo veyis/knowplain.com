@@ -179,7 +179,7 @@ export function SequenceRiskTool() {
               <div className="text-sm">
                 <strong className="block">
                   The unlucky retiree runs out in year {result.badFirst.depletedInYear}.
-                </strong>
+                </strong>{" "}
                 The lucky one, on exactly the same returns, does not. Nothing separates them but
                 timing — which is the one thing neither of them controls.
               </div>

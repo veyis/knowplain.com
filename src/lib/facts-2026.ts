@@ -294,6 +294,133 @@ export function ssBreakEvenAge(pia: number, fra: number, earlyAge: number, lateA
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Debt payoff vs investing
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Months to clear a balance at a given APR and fixed monthly payment.
+ *
+ * Returns Infinity when the payment does not even cover the monthly interest — the
+ * balance grows forever. Most payoff calculators divide balance by payment and quietly
+ * produce a number here, which is the single most misleading answer they can give
+ * someone drowning in a 24% card.
+ */
+export function monthsToPayoff(balance: number, apr: number, monthlyPayment: number): number {
+  if (balance <= 0) return 0;
+  if (monthlyPayment <= 0) return Infinity;
+
+  const monthlyRate = apr / 12;
+  if (monthlyRate <= 0) return Math.ceil(balance / monthlyPayment);
+  if (monthlyPayment <= balance * monthlyRate) return Infinity; // never pays off
+
+  // Standard amortisation: n = -ln(1 - r·B/P) / ln(1 + r)
+  const n = -Math.log(1 - (monthlyRate * balance) / monthlyPayment) / Math.log(1 + monthlyRate);
+  return Math.ceil(n);
+}
+
+/** Total interest paid clearing `balance` at `apr` with a fixed monthly payment. */
+export function totalInterestPaid(balance: number, apr: number, monthlyPayment: number): number {
+  const months = monthsToPayoff(balance, apr, monthlyPayment);
+  if (!Number.isFinite(months)) return Infinity;
+  return Math.max(0, Math.round(monthlyPayment * months - balance));
+}
+
+export type DebtVsInvestVerdict = "match" | "debt" | "invest" | "close";
+
+export type DebtVsInvestResult = {
+  verdict: DebtVsInvestVerdict;
+  /** Free employer money being left on the table each year. */
+  matchLeftOnTable: number;
+  /** Paying the debt earns this, guaranteed. */
+  guaranteedReturn: number;
+  /** Investing might earn this. Might. */
+  expectedReturn: number;
+  monthsToPayoff: number;
+  interestIfMinimum: number;
+  interestIfExtra: number;
+  interestSaved: number;
+};
+
+/**
+ * ponytail: the risk premium that has to exist before "invest instead" is sensible.
+ *
+ * Paying debt returns the APR with certainty. Investing returns a guess with variance,
+ * and a retiree who is wrong has no time to recover. So a dead heat should favour the
+ * debt — we require the expected return to beat the APR by this margin before saying
+ * "invest". A judgment call, stated out loud rather than buried.
+ */
+export const INVEST_RISK_PREMIUM = 0.02;
+
+/**
+ * Debt payoff vs investing, in the only order that is actually defensible:
+ *   1. Capture the full employer match. It is an instant, guaranteed 50-100% return —
+ *      nothing else in personal finance competes, and it beats paying down even a
+ *      credit card.
+ *   2. Kill high-interest debt. Its return is guaranteed; the market's is not.
+ *   3. Then invest the rest.
+ *
+ * Deliberately returns no "you will be $X richer" figure: that number requires
+ * predicting the market, and false precision is the thing this site exists to avoid.
+ */
+export function debtVsInvesting(opts: {
+  debtBalance: number;
+  debtApr: number;
+  monthlyPayment: number;
+  extraMonthly: number;
+  expectedReturn: number;
+  /** Annual salary — used only to size the employer match. */
+  salary: number;
+  /** e.g. 0.5 = employer matches 50% of what you put in. */
+  employerMatchRate: number;
+  /** Percent of salary the employer will match up to, e.g. 0.06. */
+  employerMatchLimit: number;
+  /** Percent of salary you currently contribute. */
+  currentContributionRate: number;
+}): DebtVsInvestResult {
+  const matchedPortion = Math.min(opts.currentContributionRate, opts.employerMatchLimit);
+  const fullMatch = opts.salary * opts.employerMatchLimit * opts.employerMatchRate;
+  const earnedMatch = opts.salary * matchedPortion * opts.employerMatchRate;
+  const matchLeftOnTable = Math.max(0, Math.round(fullMatch - earnedMatch));
+
+  const interestIfMinimum = totalInterestPaid(opts.debtBalance, opts.debtApr, opts.monthlyPayment);
+  const interestIfExtra = totalInterestPaid(
+    opts.debtBalance,
+    opts.debtApr,
+    opts.monthlyPayment + opts.extraMonthly,
+  );
+  const interestSaved =
+    Number.isFinite(interestIfMinimum) && Number.isFinite(interestIfExtra)
+      ? Math.max(0, interestIfMinimum - interestIfExtra)
+      : Infinity;
+
+  let verdict: DebtVsInvestVerdict;
+  if (matchLeftOnTable > 0) {
+    verdict = "match";
+  } else if (opts.debtApr >= opts.expectedReturn) {
+    verdict = "debt";
+  } else if (opts.expectedReturn - opts.debtApr > INVEST_RISK_PREMIUM) {
+    verdict = "invest";
+  } else {
+    verdict = "close";
+  }
+
+  return {
+    verdict,
+    matchLeftOnTable,
+    guaranteedReturn: opts.debtApr,
+    expectedReturn: opts.expectedReturn,
+    monthsToPayoff: monthsToPayoff(
+      opts.debtBalance,
+      opts.debtApr,
+      opts.monthlyPayment + opts.extraMonthly,
+    ),
+    interestIfMinimum,
+    interestIfExtra,
+    interestSaved,
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Roth conversions: the tax bill, and the two costs nobody prices in
 // ─────────────────────────────────────────────────────────────────────────────
 

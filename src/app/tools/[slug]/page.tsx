@@ -13,6 +13,7 @@ import { AcaBridgeTool } from "@/components/tools/AcaBridgeTool";
 import { CatchUpPlannerTool } from "@/components/tools/CatchUpPlannerTool";
 import { SequenceRiskTool } from "@/components/tools/SequenceRiskTool";
 import { RothConversionTool } from "@/components/tools/RothConversionTool";
+import { DebtVsInvestingTool } from "@/components/tools/DebtVsInvestingTool";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { site } from "@/lib/site";
 import { isToolSlug, toolPages } from "@/lib/tools";
@@ -63,6 +64,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {tool.kind === "social-security" && <SocialSecurityBreakEvenTool />}
       {tool.kind === "aca-bridge" && <AcaBridgeTool />}
       {tool.kind === "roth-conversion" && <RothConversionTool />}
+      {tool.kind === "debt-vs-investing" && <DebtVsInvestingTool />}
       {tool.kind === "sequence" && <SequenceRiskTool />}
       {tool.kind === "inflation" && <SimpleAssumptionTool />}
       {tool.kind === "catchup" && <CatchUpPlannerTool />}

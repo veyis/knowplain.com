@@ -16,6 +16,9 @@ import {
   federalIncomeTax,
   taxableIncome2026,
   rothConversionCost,
+  debtVsInvesting,
+  monthsToPayoff,
+  totalInterestPaid,
   irmaaTier1AnnualSurcharge,
   withdrawalPath,
   maxEmployeeDeferral2026,
@@ -360,4 +363,93 @@ test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () =
   });
   assert.equal(couple.crossesIrmaa, true);
   assert.equal(couple.irmaaAnnualCost, irmaaTier1AnnualSurcharge() * 2);
+});
+
+test("payoff maths: a payment below the interest NEVER clears the balance", () => {
+  // 0% APR is plain division.
+  assert.equal(monthsToPayoff(10_000, 0, 500), 20);
+  assert.equal(totalInterestPaid(10_000, 0, 500), 0);
+
+  // Interest makes it take longer than balance/payment.
+  assert.ok(monthsToPayoff(10_000, 0.24, 500) > 20);
+
+  // The case that matters: $10k at 24% accrues $200/mo. Paying $150 never clears it.
+  // Dividing balance by payment would cheerfully report 67 months.
+  assert.equal(monthsToPayoff(10_000, 0.24, 150), Infinity);
+  assert.equal(totalInterestPaid(10_000, 0.24, 150), Infinity);
+  assert.equal(monthsToPayoff(10_000, 0.24, 0), Infinity);
+
+  assert.equal(monthsToPayoff(0, 0.24, 100), 0); // nothing owed
+});
+
+test("debt vs investing: the employer match outranks everything", () => {
+  const base = {
+    debtBalance: 12_000,
+    debtApr: 0.22,
+    monthlyPayment: 300,
+    extraMonthly: 200,
+    expectedReturn: 0.07,
+    salary: 80_000,
+    employerMatchRate: 0.5, // 50 cents on the dollar
+    employerMatchLimit: 0.06, // up to 6% of salary
+    currentContributionRate: 0.02, // only contributing 2% — leaving money behind
+  };
+
+  const under = debtVsInvesting(base);
+  // Full match = 80,000 × 6% × 50% = 2,400. Earned = 80,000 × 2% × 50% = 800.
+  assert.equal(under.matchLeftOnTable, 1_600);
+  // Even against a 22% credit card, the match wins — it is an instant 50% return.
+  assert.equal(under.verdict, "match");
+
+  // Once the match is fully captured, the 22% card is the priority.
+  const matched = debtVsInvesting({ ...base, currentContributionRate: 0.06 });
+  assert.equal(matched.matchLeftOnTable, 0);
+  assert.equal(matched.verdict, "debt");
+
+  // Contributing beyond the limit does not create extra match.
+  assert.equal(debtVsInvesting({ ...base, currentContributionRate: 0.15 }).matchLeftOnTable, 0);
+});
+
+test("debt vs investing: a guaranteed return needs beating by a margin, not a nose", () => {
+  const base = {
+    debtBalance: 200_000,
+    monthlyPayment: 1_200,
+    extraMonthly: 300,
+    expectedReturn: 0.07,
+    salary: 80_000,
+    employerMatchRate: 0.5,
+    employerMatchLimit: 0.06,
+    currentContributionRate: 0.06, // match already captured
+  };
+
+  // A 3% mortgage against a 7% expected return: invest.
+  assert.equal(debtVsInvesting({ ...base, debtApr: 0.03 }).verdict, "invest");
+
+  // A 22% card beats any plausible market return: pay the debt.
+  assert.equal(debtVsInvesting({ ...base, debtApr: 0.22 }).verdict, "debt");
+
+  // 6.5% vs 7% — investing wins by half a point, which is NOT worth taking risk for
+  // when the alternative return is guaranteed. Too close to call, not "invest".
+  assert.equal(debtVsInvesting({ ...base, debtApr: 0.065 }).verdict, "close");
+
+  // A dead heat favours the debt, because only one of the two returns is certain.
+  assert.equal(debtVsInvesting({ ...base, debtApr: 0.07 }).verdict, "debt");
+});
+
+test("debt vs investing: extra payments save real interest", () => {
+  const r = debtVsInvesting({
+    debtBalance: 12_000,
+    debtApr: 0.22,
+    monthlyPayment: 300,
+    extraMonthly: 200,
+    expectedReturn: 0.07,
+    salary: 80_000,
+    employerMatchRate: 0.5,
+    employerMatchLimit: 0.06,
+    currentContributionRate: 0.06,
+  });
+  assert.ok(r.interestIfExtra < r.interestIfMinimum);
+  assert.ok(r.interestSaved > 0);
+  assert.equal(r.interestSaved, r.interestIfMinimum - r.interestIfExtra);
+  assert.ok(Number.isFinite(r.monthsToPayoff));
 });
