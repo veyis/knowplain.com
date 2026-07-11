@@ -10,17 +10,24 @@ export const metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, message } = await searchParams;
 
   return (
     <AppShell active="home">
       <div className="mx-auto mt-10 max-w-sm rounded-[14px] border border-line bg-card p-6 shadow-soft">
         <h1 className="mb-4 text-xl font-semibold">Sign in</h1>
         {error && (
-          <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600">
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
             {error}
+          </div>
+        )}
+        {/* Signing up with email confirmation on succeeds without a session. Without this the
+            user was bounced to the homepage still logged out and never told why. */}
+        {message && (
+          <div className="mb-4 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200">
+            {message}
           </div>
         )}
         <form className="flex flex-col gap-4">

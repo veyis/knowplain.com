@@ -10,9 +10,13 @@ export async function createThread(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  const title = formData.get('title') as string
-  const content = formData.get('content') as string
-  const pillar = formData.get('pillar') as string
+  const title = String(formData.get('title') ?? '').trim()
+  const content = String(formData.get('content') ?? '').trim()
+  const pillar = String(formData.get('pillar') ?? '').trim()
+
+  // Validate before writing anything. Without this a blank title and body sail straight
+  // into the database and show up as an empty thread on a public page.
+  if (!title || !content) throw new Error('A thread needs a title and a first post.')
 
   // 1. Insert thread
   const { data: thread, error: threadError } = await supabase
@@ -28,7 +32,13 @@ export async function createThread(formData: FormData) {
     .from('knowplain_forum_posts')
     .insert({ thread_id: thread.id, content, author_id: user.id })
 
-  if (postError) throw new Error(postError.message)
+  if (postError) {
+    // These are two writes, not one transaction. The thread is already committed, so a
+    // failure here would leave an empty thread sitting on a public page forever. Undo it
+    // rather than leave the forum littered with contentless posts.
+    await supabase.from('knowplain_forum_threads').delete().eq('id', thread.id)
+    throw new Error(postError.message)
+  }
 
   revalidatePath('/forum')
   redirect(`/forum/${thread.id}`)
@@ -40,8 +50,11 @@ export async function createPost(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  const thread_id = formData.get('thread_id') as string
-  const content = formData.get('content') as string
+  const thread_id = String(formData.get('thread_id') ?? '').trim()
+  const content = String(formData.get('content') ?? '').trim()
+
+  if (!thread_id) throw new Error('Missing thread.')
+  if (!content) throw new Error('A reply needs some content.')
 
   const { error } = await supabase
     .from('knowplain_forum_posts')

@@ -30,10 +30,21 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: result, error } = await supabase.auth.signUp(data)
 
   if (error) {
     redirect('/login?error=' + encodeURIComponent(error.message))
+  }
+
+  // When email confirmation is on (the Supabase default), signUp succeeds but returns NO
+  // session — the account is not usable until the link is clicked. Redirecting to "/" here
+  // dropped the user back on the homepage still logged out, with nothing telling them why.
+  // Say what actually happened instead.
+  if (!result.session) {
+    redirect(
+      '/login?message=' +
+        encodeURIComponent('Check your email for a confirmation link to finish signing up.'),
+    )
   }
 
   revalidatePath('/', 'layout')
