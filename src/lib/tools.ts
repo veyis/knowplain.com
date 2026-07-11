@@ -78,13 +78,24 @@ export const toolPages = {
   },
   "catch-up-contributions": {
     title: "Catch-Up Contribution Planner",
-    description: "Estimate the extra room available to older retirement savers.",
+    description:
+      "See how much extra you can save at 50+, whether you qualify for the 60-63 super catch-up, and whether the law now forces your catch-up to be Roth.",
     kind: "catchup",
     sources: [
       {
         title: "401(k) limit increases to $24,500 for 2026, IRA limit increases to $7,500",
         publisher: "Internal Revenue Service",
         url: "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500",
+      },
+      {
+        title: "Notice 2025-67: 2026 cost-of-living adjustments (Roth catch-up wage threshold)",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/pub/irs-drop/n-25-67.pdf",
+      },
+      {
+        title: "Final regulations: catch-up contributions (T.D. 10033)",
+        publisher: "Federal Register",
+        url: "https://www.federalregister.gov/documents/2025/09/16/2025-17865/catch-up-contributions",
       },
     ],
   },

@@ -29,8 +29,11 @@ export default async function WithdrawalSimulatorPage() {
       <Simulator user={user} />
 
       <p className="mt-8 rounded-xl border border-dashed border-line bg-card p-4 text-sm text-muted-foreground">
-        Educational tool only. Real market returns do not follow a flat straight line. 
-        For a more thorough DIY stress-test, we recommend <a href="https://www.boldin.com/" className="underline" target="_blank" rel="noopener noreferrer">Boldin</a>.
+        Educational tool only. Real market returns do not follow a flat straight line.
+        For a more thorough DIY stress-test, we recommend{" "}
+        <a href="https://www.boldin.com/" className="underline" target="_blank" rel="noopener noreferrer">
+          Boldin
+        </a>.
       </p>
     </AppShell>
   );

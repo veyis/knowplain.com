@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Save, AlertCircle } from "lucide-react";
+import { trackProductEvent } from "@/lib/analytics";
 import { saveSimulation } from "./actions";
 import type { User } from "@supabase/supabase-js";
 
@@ -15,6 +16,13 @@ export function Simulator({ user }: { user: User | null }) {
   const [simName, setSimName] = useState("");
   const [isPending, startTransition] = useTransition();
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+  const tracked = useRef(false);
+
+  const trackUsed = () => {
+    if (tracked.current) return;
+    tracked.current = true;
+    trackProductEvent("Tool Used", { tool: "withdrawal-simulator" });
+  };
 
   const calculate = () => {
     let currentBalance = balance;
@@ -56,8 +64,10 @@ export function Simulator({ user }: { user: User | null }) {
       const res = await saveSimulation(formData);
       if (res?.error) {
         setSaveStatus("error");
+        trackProductEvent("Simulation Save Failed");
       } else {
         setSaveStatus("success");
+        trackProductEvent("Simulation Saved");
         setSimName("");
         setTimeout(() => setSaveStatus("idle"), 3000);
       }
@@ -75,7 +85,10 @@ export function Simulator({ user }: { user: User | null }) {
           <input
             type="number"
             value={balance}
-            onChange={(e) => setBalance(Number(e.target.value))}
+            onChange={(e) => {
+              trackUsed();
+              setBalance(Number(e.target.value));
+            }}
             className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
           />
         </div>
@@ -84,7 +97,10 @@ export function Simulator({ user }: { user: User | null }) {
           <input
             type="number"
             value={withdrawal}
-            onChange={(e) => setWithdrawal(Number(e.target.value))}
+            onChange={(e) => {
+              trackUsed();
+              setWithdrawal(Number(e.target.value));
+            }}
             className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
           />
         </div>
@@ -94,7 +110,10 @@ export function Simulator({ user }: { user: User | null }) {
             type="number"
             value={growth}
             step="0.1"
-            onChange={(e) => setGrowth(Number(e.target.value))}
+            onChange={(e) => {
+              trackUsed();
+              setGrowth(Number(e.target.value));
+            }}
             className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
           />
         </div>
@@ -104,7 +123,10 @@ export function Simulator({ user }: { user: User | null }) {
             type="number"
             value={inflation}
             step="0.1"
-            onChange={(e) => setInflation(Number(e.target.value))}
+            onChange={(e) => {
+              trackUsed();
+              setInflation(Number(e.target.value));
+            }}
             className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
           />
         </div>

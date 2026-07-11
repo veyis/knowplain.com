@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { trackProductEvent } from "@/lib/analytics";
 import { currency, runRetirementCheckup } from "@/lib/checkup";
 import { ssBenefitFactor, ssBreakEvenAge } from "@/lib/facts-2026";
 
@@ -32,6 +33,7 @@ export function OnTrackTool() {
 
   return (
     <ToolFrame
+      analyticsName="am-i-on-track"
       inputs={[
         ["Age", age, setAge],
         ["Target retirement age", targetAge, setTargetAge],
@@ -63,6 +65,7 @@ export function RetirementAgeTradeoffTool() {
   return (
     <div className="grid gap-5">
       <ToolFrame
+        analyticsName="retirement-age-tradeoff"
         inputs={[
           ["Age", age, setAge],
           ["Current retirement savings", savings, setSavings],
@@ -124,6 +127,7 @@ export function SocialSecurityBreakEvenTool() {
 
   return (
     <ToolFrame
+      analyticsName="social-security-break-even"
       inputs={[
         ["Estimated monthly benefit at full retirement age", fraBenefit, setFraBenefit],
         ["Full retirement age", fra, setFra],
@@ -142,21 +146,24 @@ export function SocialSecurityBreakEvenTool() {
   );
 }
 
-export function SimpleAssumptionTool({ kind }: { kind: "sequence" | "inflation" | "catchup" }) {
-  const [value, setValue] = useState(kind === "catchup" ? 24500 : kind === "inflation" ? 78000 : 1000000);
-  const [rate, setRate] = useState(kind === "catchup" ? 8000 : kind === "inflation" ? 3 : 4);
+// Catch-up used to be a third `kind` here, driven by two unlabelled number boxes. It
+// could not see the user's age or wages, so it never showed the 60-63 super catch-up and
+// never warned about the mandatory-Roth rule — it would happily suggest a pre-tax catch-up
+// the law no longer permits. It now has its own tool: CatchUpPlannerTool.
+export function SimpleAssumptionTool({ kind }: { kind: "sequence" | "inflation" }) {
+  const [value, setValue] = useState(kind === "inflation" ? 78000 : 1000000);
+  const [rate, setRate] = useState(kind === "inflation" ? 3 : 4);
   const output =
     kind === "inflation"
       ? `${currency(value)} becomes about ${currency(value * Math.pow(1 + rate / 100, 10))} in 10 years at ${rate}% inflation.`
-      : kind === "catchup"
-        ? `A 50+ saver using a ${currency(rate)} catch-up on top of a ${currency(value)} deferral can target ${currency(value + rate)} before employer contributions.`
-        : `A ${rate}% first-year withdrawal from ${currency(value)} is ${currency(value * (rate / 100))}. Test lower withdrawals if markets fall early.`;
+      : `A ${rate}% first-year withdrawal from ${currency(value)} is ${currency(value * (rate / 100))}. Test lower withdrawals if markets fall early.`;
 
   return (
     <ToolFrame
+      analyticsName={kind === "inflation" ? "inflation-spending" : "sequence-risk"}
       inputs={[
-        [kind === "catchup" ? "Base annual deferral" : kind === "inflation" ? "Annual spending today" : "Portfolio balance", value, setValue],
-        [kind === "catchup" ? "Catch-up amount" : kind === "inflation" ? "Inflation rate" : "Withdrawal rate", rate, setRate],
+        [kind === "inflation" ? "Annual spending today" : "Portfolio balance", value, setValue],
+        [kind === "inflation" ? "Inflation rate" : "Withdrawal rate", rate, setRate],
       ]}
       result={<p className="text-lg font-semibold tracking-tight">{output}</p>}
     />
@@ -164,12 +171,22 @@ export function SimpleAssumptionTool({ kind }: { kind: "sequence" | "inflation" 
 }
 
 function ToolFrame({
+  analyticsName,
   inputs,
   result,
 }: {
+  analyticsName: string;
   inputs: [string, number, (value: number) => void][];
   result: React.ReactNode;
 }) {
+  const tracked = useRef(false);
+
+  const trackUsed = () => {
+    if (tracked.current) return;
+    tracked.current = true;
+    trackProductEvent("Tool Used", { tool: analyticsName });
+  };
+
   return (
     <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[320px_1fr]">
       <div className="grid gap-4">
@@ -179,7 +196,10 @@ function ToolFrame({
             <input
               type="number"
               value={value}
-              onChange={(e) => setValue(Number(e.target.value))}
+              onChange={(e) => {
+                trackUsed();
+                setValue(Number(e.target.value));
+              }}
               className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
             />
           </label>
@@ -198,4 +218,3 @@ function Metric({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-

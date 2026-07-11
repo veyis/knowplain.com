@@ -10,7 +10,8 @@ import {
   SocialSecurityBreakEvenTool,
 } from "@/components/tools/RetirementTools";
 import { AcaBridgeTool } from "@/components/tools/AcaBridgeTool";
-import { breadcrumbJsonLd, webApplicationJsonLd } from "@/lib/schema";
+import { CatchUpPlannerTool } from "@/components/tools/CatchUpPlannerTool";
+import { breadcrumbJsonLd } from "@/lib/schema";
 import { site } from "@/lib/site";
 import { isToolSlug, toolPages } from "@/lib/tools";
 
@@ -44,11 +45,6 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             { name: "Tools", url: `${site.url}/tools` },
             { name: tool.title, url },
           ]),
-          webApplicationJsonLd({
-            name: tool.title,
-            description: tool.description,
-            url,
-          }),
         ]}
       />
       <div className="mb-4 text-sm text-muted-foreground">
@@ -66,7 +62,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {tool.kind === "aca-bridge" && <AcaBridgeTool />}
       {tool.kind === "sequence" && <SimpleAssumptionTool kind="sequence" />}
       {tool.kind === "inflation" && <SimpleAssumptionTool kind="inflation" />}
-      {tool.kind === "catchup" && <SimpleAssumptionTool kind="catchup" />}
+      {tool.kind === "catchup" && <CatchUpPlannerTool />}
       <SourceList sources={tool.sources} />
       <p className="mt-6 max-w-[760px] text-sm leading-relaxed text-muted-foreground">
         These tools use simplified assumptions. Use them to frame better questions, then verify
