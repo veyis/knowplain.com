@@ -5,7 +5,45 @@ import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, videoObjectJsonLd } from "@/lib/schema";
 import { site } from "@/lib/site";
-import { getFallbackVideo, type KnowPlainVideo } from "@/lib/videos";
+import { getFallbackVideo, videoClips, type KnowPlainVideo } from "@/lib/videos";
+import { decisions, isDecisionSlug } from "@/lib/decisions";
+import { isToolSlug, toolPages } from "@/lib/tools";
+
+/**
+ * Turn a related href into something a human would click. The page used to print the raw
+ * path ("/tools/am-i-on-track") as the link text. Labels are read from the tool and
+ * decision registries rather than duplicated here, so a renamed tool renames itself.
+ */
+function resolveRelated(href: string): { label: string; description?: string } {
+  const toolSlug = href.replace(/^\/tools\//, "");
+  if (href.startsWith("/tools/") && isToolSlug(toolSlug)) {
+    return { label: toolPages[toolSlug].title, description: toolPages[toolSlug].description };
+  }
+
+  const decisionSlug = href.replace(/^\/decisions\//, "");
+  if (href.startsWith("/decisions/") && isDecisionSlug(decisionSlug)) {
+    return {
+      label: decisions[decisionSlug].title,
+      description: decisions[decisionSlug].description,
+    };
+  }
+
+  if (href === "/checkup") {
+    return {
+      label: "Retirement Checkup",
+      description: "A five-minute snapshot of where your plan actually stands.",
+    };
+  }
+
+  return { label: href };
+}
+
+/** Seconds -> "3:10", for a chapter whose original label we no longer have. */
+function formatOffset(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 export async function generateMetadata({
   params,
@@ -60,6 +98,7 @@ export default async function VideoPage({
   const embedUrl = isYoutubeId
     ? `https://www.youtube-nocookie.com/embed/${video.id}`
     : `${site.url}/watch/${video.id}`;
+  const clips = videoClips(video, `${site.url}/watch/${slug}`);
 
   return (
     <AppShell active="watch">
@@ -78,6 +117,7 @@ export default async function VideoPage({
             embedUrl,
             url: `${site.url}/watch/${slug}`,
             duration: video.duration,
+            clips,
           }),
         ]}
       />
@@ -109,17 +149,38 @@ export default async function VideoPage({
         <div className="mb-6 whitespace-pre-wrap text-sm text-muted-foreground">
           {video.description}
         </div>
-        {video.chapters?.length ? (
+        {clips.length ? (
           <section className="mb-8">
             <h2 className="mb-3 text-xl font-semibold">Chapters</h2>
             <div className="grid gap-2">
-              {video.chapters.map((chapter) => (
-                <div key={`${chapter.time}-${chapter.title}`} className="rounded-xl border border-border bg-card p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{chapter.time}</div>
-                  <strong>{chapter.title}</strong>
-                  <p className="mt-1 text-sm text-muted-foreground">{chapter.summary}</p>
-                </div>
-              ))}
+              {clips.map((clip, i) => {
+                const summary = video.chapters?.find((c) => c.title === clip.name)?.summary;
+                const body = (
+                  <>
+                    <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {video.chapters?.[i]?.time ?? formatOffset(clip.startOffset)}
+                    </div>
+                    <strong>{clip.name}</strong>
+                    {summary && <p className="mt-1 text-sm text-muted-foreground">{summary}</p>}
+                  </>
+                );
+                // Only a real YouTube video can be seeked; the fallback pages have nothing to jump to.
+                return isYoutubeId ? (
+                  <a
+                    key={clip.name}
+                    href={`https://www.youtube.com/watch?v=${video.id}&t=${clip.startOffset}s`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="rounded-xl border border-border bg-card p-3 transition-colors hover:border-foreground/20"
+                  >
+                    {body}
+                  </a>
+                ) : (
+                  <div key={clip.name} className="rounded-xl border border-border bg-card p-3">
+                    {body}
+                  </div>
+                );
+              })}
             </div>
           </section>
         ) : null}
@@ -137,11 +198,21 @@ export default async function VideoPage({
           <section className="mt-8">
             <h2 className="mb-3 text-xl font-semibold">Related next steps</h2>
             <div className="grid gap-2">
-              {video.related.map((href) => (
-                <Link key={href} href={href} className="rounded-lg border border-border bg-card px-3 py-2 text-sm hover:bg-accent">
-                  {href}
-                </Link>
-              ))}
+              {video.related.map((href) => {
+                const link = resolveRelated(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="grid gap-0.5 rounded-lg border border-border bg-card px-3 py-2 text-sm transition-colors hover:bg-accent"
+                  >
+                    <strong>{link.label}</strong>
+                    {link.description && (
+                      <span className="text-muted-foreground">{link.description}</span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         ) : null}

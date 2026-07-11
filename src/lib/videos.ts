@@ -10,6 +10,60 @@ export type KnowPlainVideo = {
   related?: string[];
 };
 
+/** "3:10" -> 190. Accepts "m:ss" or "h:mm:ss". Returns 0 for anything unparseable. */
+export function timeToSeconds(time: string): number {
+  const parts = time.split(":").map((p) => Number(p.trim()));
+  if (parts.some((n) => !Number.isFinite(n) || n < 0)) return 0;
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  if (parts.length === 1) return parts[0];
+  return 0;
+}
+
+/** ISO 8601 duration ("PT18M", "PT1H2M3S") -> seconds. Undefined if absent or unparseable. */
+export function isoDurationToSeconds(duration?: string): number | undefined {
+  if (!duration) return undefined;
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(duration);
+  if (!m || (!m[1] && !m[2] && !m[3])) return undefined;
+  return Number(m[1] || 0) * 3600 + Number(m[2] || 0) * 60 + Number(m[3] || 0);
+}
+
+export type VideoClip = { name: string; startOffset: number; endOffset?: number; url: string };
+
+/**
+ * Chapters -> Google "key moments" clips.
+ *
+ * Each clip needs a start, a name, and a URL that actually seeks to that point — Google
+ * will not show key moments for timestamps it cannot link to. Each chapter's end is the
+ * next chapter's start; the last one runs to the video's duration if we know it.
+ * Chapters that are out of order or run past the video are dropped rather than emitted
+ * as broken markup.
+ */
+export function videoClips(video: KnowPlainVideo, pageUrl: string): VideoClip[] {
+  if (!video.chapters?.length) return [];
+  const total = isoDurationToSeconds(video.duration);
+
+  // Build the valid sequence FIRST, then derive ends from it. Deriving ends from the raw
+  // list and filtering afterwards throws away good chapters whenever a bad one follows
+  // them — the end of a kept chapter must come from the next *kept* chapter, not the next
+  // one in the file.
+  const kept: { title: string; start: number }[] = [];
+  for (const chapter of video.chapters) {
+    const start = timeToSeconds(chapter.time);
+    const previous = kept[kept.length - 1]?.start;
+    if (previous !== undefined && start <= previous) continue; // doesn't advance
+    if (total !== undefined && start >= total) continue; // starts after the video ends
+    kept.push({ title: chapter.title, start });
+  }
+
+  return kept.map((chapter, i) => ({
+    name: chapter.title,
+    startOffset: chapter.start,
+    endOffset: kept[i + 1]?.start ?? total,
+    url: `${pageUrl}?t=${chapter.start}`,
+  }));
+}
+
 export const fallbackVideos: KnowPlainVideo[] = [
   {
     id: "retirement-playbook",

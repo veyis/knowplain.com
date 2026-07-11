@@ -96,6 +96,12 @@ export function profilePageJsonLd(input: {
   };
 }
 
+/**
+ * VideoObject is one of the few types here that still earns a live rich result, and
+ * `hasPart` Clips drive Google's "key moments". Google will not show a key moment it
+ * cannot link to, so every clip carries a URL that seeks to its timestamp.
+ * https://developers.google.com/search/docs/appearance/structured-data/video
+ */
 export function videoObjectJsonLd(input: {
   name: string;
   description: string;
@@ -104,6 +110,7 @@ export function videoObjectJsonLd(input: {
   embedUrl: string;
   url: string;
   duration?: string;
+  clips?: { name: string; startOffset: number; endOffset?: number; url: string }[];
 }) {
   return {
     "@context": "https://schema.org",
@@ -115,6 +122,17 @@ export function videoObjectJsonLd(input: {
     embedUrl: input.embedUrl,
     contentUrl: input.url,
     duration: input.duration,
+    ...(input.clips?.length
+      ? {
+          hasPart: input.clips.map((clip) => ({
+            "@type": "Clip",
+            name: clip.name,
+            startOffset: clip.startOffset,
+            ...(clip.endOffset !== undefined ? { endOffset: clip.endOffset } : {}),
+            url: clip.url,
+          })),
+        }
+      : {}),
     publisher: { "@type": "Organization", name: site.name, url: site.url },
   };
 }
