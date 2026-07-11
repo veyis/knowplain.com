@@ -45,6 +45,12 @@ export function DebtVsInvestingTool() {
   const [expectedReturn, setExpectedReturn] = useState(7);
   const [salary, setSalary] = useState(80_000);
   const [contributionRate, setContributionRate] = useState(2);
+  // Was hardcoded 50%/6%. Roughly a third of private-sector workers have no match at all,
+  // and the "take the free money" verdict OVERRIDES the correct answer — so for them the
+  // tool was telling them to chase money that does not exist instead of killing a 22% card.
+  // 0 is a legal value in both fields.
+  const [matchRate, setMatchRate] = useState(50);
+  const [matchLimit, setMatchLimit] = useState(6);
   const tracked = useRef(false);
 
   const track = () => {
@@ -62,21 +68,36 @@ export function DebtVsInvestingTool() {
         extraMonthly,
         expectedReturn: expectedReturn / 100,
         salary,
-        employerMatchRate: 0.5,
-        employerMatchLimit: 0.06,
+        employerMatchRate: matchRate / 100,
+        employerMatchLimit: matchLimit / 100,
         currentContributionRate: contributionRate / 100,
       }),
-    [debtBalance, debtApr, monthlyPayment, extraMonthly, expectedReturn, salary, contributionRate],
+    [
+      debtBalance,
+      debtApr,
+      monthlyPayment,
+      extraMonthly,
+      expectedReturn,
+      salary,
+      contributionRate,
+      matchRate,
+      matchLimit,
+    ],
   );
 
-  const neverPaysOff = !Number.isFinite(r.monthsToPayoff);
+  // Two different "never"s, and the old code only checked one. `monthsToPayoff` includes
+  // the extra payment, so a minimum that never clears the balance while the extra DOES
+  // slipped through as a normal result — and the stats grid printed "$0 interest".
+  const neverPaysOff = !Number.isFinite(r.monthsToPayoff); // even WITH the extra
+  const minimumNeverPaysOff = !Number.isFinite(r.interestIfMinimum); // without it
+  const extraIsTheDifference = minimumNeverPaysOff && !neverPaysOff;
 
   const verdict = {
     match: {
       icon: Gift,
       tone: "border-emerald-300/60 bg-emerald-50 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200",
       title: `Take the free money first — you are leaving ${currency(r.matchLeftOnTable)} a year behind.`,
-      body: "Your employer matches 50 cents on the dollar up to 6% of salary. Contributing enough to capture the full match is an instant 50% return, guaranteed, before the money is even invested. Nothing else in personal finance competes — not even paying off a credit card. Do this first, then come back to the debt.",
+      body: `Your employer matches ${matchRate} cents on the dollar up to ${matchLimit}% of salary. Contributing enough to capture the full match is an instant ${matchRate}% return, guaranteed, before the money is even invested. Nothing else in personal finance competes — not even paying off a credit card. Do this first, then come back to the debt.`,
     },
     debt: {
       icon: AlertTriangle,
@@ -132,7 +153,19 @@ export function DebtVsInvestingTool() {
             value={contributionRate}
             onChange={setContributionRate}
             step={1}
-            hint="Assumes a typical match: 50% up to 6% of salary."
+          />
+          <Field
+            label="Employer matches (cents on the dollar, %)"
+            value={matchRate}
+            onChange={setMatchRate}
+            step={5}
+            hint="Set to 0 if you have no employer match."
+          />
+          <Field
+            label="…up to this % of salary"
+            value={matchLimit}
+            onChange={setMatchLimit}
+            step={1}
           />
         </div>
 
@@ -157,22 +190,46 @@ export function DebtVsInvestingTool() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-lg bg-secondary p-3">
-                <p className="text-xs text-muted-foreground">Debt gone in</p>
-                <strong>
-                  {r.monthsToPayoff} month{r.monthsToPayoff === 1 ? "" : "s"}
-                </strong>
+            <>
+              {/* The single most motivating fact this tool can produce, and it used to be
+                  rendered as "$0". The minimum payment never clears the balance; the extra
+                  is the entire difference between never and a finite date. */}
+              {extraIsTheDifference && (
+                <div className="flex gap-3 rounded-lg border border-red-300/60 bg-red-50 p-4 text-red-900 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                  <div className="text-sm">
+                    <strong className="block">
+                      Your minimum payment alone never clears this debt.
+                    </strong>{" "}
+                    At {pct(debtApr / 100)}, interest is about{" "}
+                    {currency((debtBalance * (debtApr / 100)) / 12)} a month — more than the{" "}
+                    {currency(monthlyPayment)} you are paying, so the balance grows forever. The
+                    extra {currency(extraMonthly)} is not an optimisation. It is the difference
+                    between <em>never</em> and {r.monthsToPayoff} months.
+                  </div>
+                </div>
+              )}
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-lg bg-secondary p-3">
+                  <p className="text-xs text-muted-foreground">Debt gone in</p>
+                  <strong>
+                    {r.monthsToPayoff} month{r.monthsToPayoff === 1 ? "" : "s"}
+                  </strong>
+                </div>
+                <div className="rounded-lg bg-secondary p-3">
+                  <p className="text-xs text-muted-foreground">Interest if you add nothing</p>
+                  <strong>
+                    {minimumNeverPaysOff ? "Never repaid" : currency(r.interestIfMinimum)}
+                  </strong>
+                </div>
+                <div className="rounded-lg bg-secondary p-3">
+                  <p className="text-xs text-muted-foreground">Interest saved by the extra</p>
+                  <strong>
+                    {minimumNeverPaysOff ? "Unpayable → payable" : currency(r.interestSaved)}
+                  </strong>
+                </div>
               </div>
-              <div className="rounded-lg bg-secondary p-3">
-                <p className="text-xs text-muted-foreground">Interest if you add nothing</p>
-                <strong>{currency(r.interestIfMinimum)}</strong>
-              </div>
-              <div className="rounded-lg bg-secondary p-3">
-                <p className="text-xs text-muted-foreground">Interest saved by the extra</p>
-                <strong>{currency(r.interestSaved)}</strong>
-              </div>
-            </div>
+            </>
           )}
         </div>
       </div>

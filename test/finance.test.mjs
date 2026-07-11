@@ -32,7 +32,10 @@ import {
   acaRestoredEnhancedBenchmarkCost,
   acaSubsidyCliffMagi,
   acaSubsidyStatus,
+  SWR,
+  REAL_RETURN,
 } from "../src/lib/facts-2026.ts";
+import { currency } from "../src/lib/checkup.ts";
 
 const near = (a, b, eps = 0.01) =>
   assert.ok(Math.abs(a - b) < eps, `expected ${a} ≈ ${b} (±${eps})`);
@@ -349,11 +352,12 @@ test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () =
   // At 63 it shows up on the Part B premium at 65.
   const at63 = rothConversionCost({ ...base, age: 63 });
   assert.equal(at63.crossesIrmaa, true);
-  assert.equal(at63.irmaaAnnualCost, irmaaTier1AnnualSurcharge());
+  assert.equal(at63.irmaaAnnualCostPerPerson, irmaaTier1AnnualSurcharge());
   // (284.10 − 202.90 Part B) + 14.50 Part D = 95.70/mo ⇒ $1,148/yr.
   assert.equal(irmaaTier1AnnualSurcharge(), 1_148);
 
-  // A married couple pays it twice — both are on Medicare.
+  // Reported PER PERSON on Medicare. It used to be doubled for any MFJ filer, which
+  // overstated the cost by 2x whenever the spouse was under 65 and not yet enrolled.
   const couple = rothConversionCost({
     grossIncome: 210_000,
     conversionAmount: 20_000, // → $230k, over the $218k joint tier
@@ -363,7 +367,137 @@ test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () =
     householdSize: 2,
   });
   assert.equal(couple.crossesIrmaa, true);
-  assert.equal(couple.irmaaAnnualCost, irmaaTier1AnnualSurcharge() * 2);
+  assert.equal(couple.irmaaAnnualCostPerPerson, irmaaTier1AnnualSurcharge());
+});
+
+test("Roth conversion: someone ALREADY over the cliff is not told they are under it", () => {
+  // The regression that shipped: both flags were transition checks (!before && after), so
+  // a user already over the cliff got `pushesOverAcaCliff: false` — indistinguishable from
+  // someone safely under — and the UI rendered "this conversion keeps you under the ACA
+  // cliff". They were $17k over it.
+  const alreadyOver = rothConversionCost({
+    grossIncome: 80_000, // 400% FPL for a household of 1 is $62,600
+    conversionAmount: 10_000,
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(alreadyOver.overAcaCliffAfter, true, "must report where they LAND");
+  assert.equal(alreadyOver.pushesOverAcaCliff, false, "this conversion is not what did it");
+
+  // Same shape for IRMAA: $150k single is already past the $109k tier-1 threshold.
+  const alreadyOverIrmaa = rothConversionCost({
+    grossIncome: 150_000,
+    conversionAmount: 50_000, // → $200k, deep into tier 3
+    filing: "single",
+    age: 63,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(alreadyOverIrmaa.overIrmaaTier1After, true);
+  assert.equal(alreadyOverIrmaa.crossesIrmaa, false);
+  // No tier-1 cost is *caused* by the conversion — they were already paying it.
+  assert.equal(alreadyOverIrmaa.irmaaAnnualCostPerPerson, 0);
+
+  // And the genuinely-clear case still reads clear.
+  const clear = rothConversionCost({
+    grossIncome: 40_000,
+    conversionAmount: 10_000, // → $50k, under the $62,600 cliff
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(clear.overAcaCliffAfter, false);
+  assert.equal(clear.overIrmaaTier1After, false);
+});
+
+test("Social Security: a garbage FRA cannot produce a garbage benefit", () => {
+  // The break-even tool's FRA field was an unbounded <input type="number">. Clearing it
+  // gives Number("") === 0, and an unclamped fra=0 returned a factor of 5.96 — a 596%
+  // benefit — plus a break-even age of Infinity rendered as the string "Infinity".
+  assert.equal(ssBenefitFactor(0, 62), ssBenefitFactor(65, 62), "fra=0 clamps to the 65 floor");
+  assert.equal(ssBenefitFactor(99, 70), ssBenefitFactor(67, 70), "fra=99 clamps to the 67 ceiling");
+  assert.ok(ssBenefitFactor(0, 62) < 1, "claiming early can never exceed the full benefit");
+
+  // The real table still holds after clamping.
+  assert.ok(Math.abs(ssBenefitFactor(67, 62) - 0.7) < 1e-9);
+  assert.ok(Math.abs(ssBenefitFactor(67, 70) - 1.24) < 1e-9);
+});
+
+test("debt: a payment that never clears the balance reports Infinity, not zero", () => {
+  // $10k at 24% accrues $200/mo in interest. A $150 payment never touches the principal.
+  // `monthsToPayoff` got this right; `currency()` then coerced Infinity to "$0" and the
+  // reader was shown "Interest if you add nothing: $0" on an unpayable debt.
+  const r = debtVsInvesting({
+    debtBalance: 10_000,
+    debtApr: 0.24,
+    monthlyPayment: 150,
+    extraMonthly: 200,
+    expectedReturn: 0.07,
+    salary: 80_000,
+    employerMatchRate: 0,
+    employerMatchLimit: 0,
+    currentContributionRate: 0,
+  });
+  assert.equal(r.interestIfMinimum, Infinity, "minimum alone never clears it");
+  assert.ok(Number.isFinite(r.interestIfExtra), "with the extra, it does clear");
+  assert.ok(Number.isFinite(r.monthsToPayoff));
+  assert.equal(currency(r.interestIfMinimum), "—", "must never render as $0");
+
+  // With no employer match on offer, the verdict must not be "take the free money".
+  assert.equal(r.matchLeftOnTable, 0);
+  assert.equal(r.verdict, "debt", "24% guaranteed beats 7% hoped for");
+});
+
+test("sequence risk: when BOTH orders run dry, the tool must not say order is irrelevant", () => {
+  // Both deplete ⇒ both end at $0 ⇒ shortfall === 0, which the UI read as "no difference".
+  // The difference is real and it is measured in YEARS of solvency, not ending balance.
+  const r = sequenceRiskComparison({
+    balance: 1_000_000,
+    withdrawalRate: 0.1,
+    badReturn: -0.03,
+    goodReturn: 0.08,
+    inflation: 0.03,
+  });
+  assert.equal(r.badFirst.endingBalance, 0);
+  assert.equal(r.goodFirst.endingBalance, 0);
+  assert.equal(r.shortfall, 0, "identical (zero) endings — this is why the old headline lied");
+  assert.ok(r.badFirst.depletedInYear !== null && r.goodFirst.depletedInYear !== null);
+  assert.ok(
+    r.goodFirst.depletedInYear > r.badFirst.depletedInYear,
+    "the lucky order still buys real years of solvency",
+  );
+
+  // The zero-withdrawal case is the ONLY one where order genuinely does not matter.
+  const noWithdrawals = sequenceRiskComparison({
+    balance: 1_000_000,
+    withdrawalRate: 0,
+    badReturn: -0.03,
+    goodReturn: 0.08,
+    inflation: 0.03,
+  });
+  assert.equal(noWithdrawals.shortfall, 0);
+  assert.equal(noWithdrawals.badFirst.endingBalance, noWithdrawals.goodFirst.endingBalance);
+});
+
+test("checkup: projection and target are denominated in the SAME dollars", () => {
+  // The unit bug. The target comes from TODAY'S spending, so it is a today's-dollars
+  // target; the projection therefore has to grow at a REAL rate. Growing it nominally and
+  // comparing against a real target overstated readiness by ~1.5x on the default inputs.
+  //
+  // The invariant: with zero real growth and zero contributions, a portfolio that exactly
+  // equals the target today must still exactly equal it at retirement. Any inflation
+  // leaking into one side and not the other breaks this.
+  const annualGap = 46_000;
+  const target = portfolioTarget(annualGap, SWR.morningstar2026);
+  assert.equal(futureValue(target, 0, 17, 0), target, "no real growth ⇒ no real change");
+
+  // And the shipped assumptions must be real, not nominal — a 6% *real* return would be an
+  // aggressive top of range, which is exactly why the band was lowered.
+  assert.ok(REAL_RETURN.conservative < REAL_RETURN.optimistic);
+  assert.ok(REAL_RETURN.optimistic <= 0.05, "a real return above 5% is not a planning assumption");
 });
 
 test("payoff maths: a payment below the interest NEVER clears the balance", () => {

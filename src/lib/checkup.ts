@@ -1,5 +1,5 @@
 // Explicit .ts extension so `node --test` can import this module directly (see test/checkup.test.mjs).
-import { SWR, futureValue, portfolioTarget } from "./facts-2026.ts";
+import { REAL_RETURN, SWR, futureValue, portfolioTarget } from "./facts-2026.ts";
 
 export type CheckupInput = {
   age: number;
@@ -38,23 +38,46 @@ export type CheckupResult = {
 
 const clamp = (value: number, min = 0, max = 100) => Math.min(max, Math.max(min, value));
 
+/**
+ * Format dollars. Non-finite values render as "—", never as "$0".
+ *
+ * This used to coerce to 0, which turned the debt tool's most important answer into its
+ * most dangerous one: a payment too small to cover the interest gives `Infinity` months
+ * and `Infinity` interest — correctly — and the reader was shown "Interest if you add
+ * nothing: $0". An unpayable debt looked free. If a figure has no finite dollar value,
+ * say so and let the caller explain why.
+ */
 export function currency(value: number) {
+  if (!Number.isFinite(value)) return "—";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
-  }).format(Number.isFinite(value) ? value : 0);
+  }).format(value);
 }
 
 export function runRetirementCheckup(input: CheckupInput): CheckupResult {
   const yearsToRetirement = Math.max(0, input.targetRetirementAge - input.age);
   const guaranteedIncome = Math.max(0, input.socialSecurityAnnual + input.pensionAnnual);
   const annualGap = Math.max(0, input.annualSpending + input.debtPaymentsAnnual - guaranteedIncome);
+  // Both sides of this comparison are in TODAY'S dollars. `annualGap` comes from the
+  // user's current spending, so the target below is a today's-dollars target — which means
+  // the projection has to grow at a REAL rate, not a nominal one. See REAL_RETURN.
   const projectedSavingsLow = Math.round(
-    futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.03),
+    futureValue(
+      input.retirementSavings,
+      input.annualContribution,
+      yearsToRetirement,
+      REAL_RETURN.conservative,
+    ),
   );
   const projectedSavingsHigh = Math.round(
-    futureValue(input.retirementSavings, input.annualContribution, yearsToRetirement, 0.06),
+    futureValue(
+      input.retirementSavings,
+      input.annualContribution,
+      yearsToRetirement,
+      REAL_RETURN.optimistic,
+    ),
   );
   // Target range is bracketed by the two credible, cited withdrawal-rate anchors —
   // never an invented band. A higher rate needs a smaller portfolio, so Bengen's

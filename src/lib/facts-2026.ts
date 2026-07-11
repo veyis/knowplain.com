@@ -298,6 +298,28 @@ export function inheritedIraAnnualRmdRequired(
   return ownerDiedOnOrAfterRequiredBeginningDate && !eligibleDesignatedBeneficiary;
 }
 
+/**
+ * Return assumptions for "are you on track" projections — REAL, i.e. after inflation.
+ *
+ * Real, not nominal, and this is not a preference. The SWR anchors below are defined in
+ * real terms, and the portfolio target is computed from the user's spending TODAY. So the
+ * savings projection must also be in today's dollars, or the two sides of the comparison
+ * are denominated in different currencies.
+ *
+ * That is exactly what used to happen: the checkup grew savings at a nominal-looking 3-6%
+ * and compared the result against a today's-dollars target. On its own default inputs it
+ * reported 101% coverage where the honest figure was ~67% — it told people they were on
+ * track when they were a third short.
+ *
+ * Holding the annual contribution flat in today's dollars implies the saver raises it with
+ * inflation every year. The UI must say so: someone who never increases their contribution
+ * will land below this range.
+ *
+ * Band: ~2% real is a bond-heavy glidepath; ~5% real is a historically strong balanced
+ * portfolio. Forward-looking house estimates for 60/40 cluster in between.
+ */
+export const REAL_RETURN = { conservative: 0.02, optimistic: 0.05 } as const;
+
 // ── Safe withdrawal rate benchmarks ──────────────────────────────────────────
 // Morningstar "State of Retirement Income" 2026 (fixed real spending, 30yr, 90% success);
 // Bengen SAFEMAX; classic 4% rule. https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026
@@ -348,7 +370,12 @@ export const FPL_2025 = { onePerson: 15_650, perAdditionalPerson: 5_500 } as con
  *  - Delayed: +2/3 of 1% per month (8%/yr) past FRA, up to age 70.
  *    (FRA 67, claim 70 ⇒ 1.24; FRA 66, claim 70 ⇒ 1.32)
  */
-export function ssBenefitFactor(fra: number, claimAge: number): number {
+export function ssBenefitFactor(fraInput: number, claimAge: number): number {
+  // Clamp the FRA too, not just the claim age. Statutory FRA has only ever run from 65
+  // (born 1937 or earlier) to 67 (born 1960 or later) — anything outside that is a bad
+  // input, and an empty number field gives Number("") === 0. Unclamped, fra=0 produced a
+  // 596% benefit factor and a break-even age of Infinity in the break-even tool.
+  const fra = Math.max(65, Math.min(67, fraInput));
   const age = Math.max(SOCIAL_SECURITY_2026.earliestClaimAge, Math.min(SOCIAL_SECURITY_2026.maxDelayAge, claimAge));
   if (age === fra) return 1;
   if (age > fra) {
@@ -622,13 +649,35 @@ export type ConversionCost = {
   /** Tax as a share of the amount converted — the number that actually matters. */
   effectiveRate: number;
   magiAfter: number;
-  /** Pre-65 only: the conversion pushes MAGI over 400% FPL and kills the whole credit. */
+
+  // ── WHERE YOU LAND (level) ────────────────────────────────────────────────
+  // These say where the household actually ENDS UP. The UI must state these, never the
+  // transition flags below: someone already over the cliff who is told "this keeps you
+  // under the cliff" has been told a flat lie, and it hides the one insight that matters
+  // to them — once the credit is already gone, converting MORE is comparatively cheap.
+  /** Pre-65 only: MAGI is over 400% FPL after converting, from whatever starting point. */
+  overAcaCliffAfter: boolean;
+  /** 63+ only: MAGI is over IRMAA tier 1 after converting. */
+  overIrmaaTier1After: boolean;
+
+  // ── WHAT THIS CONVERSION CAUSED (transition) ─────────────────────────────
+  // True only when the conversion is what pushed them over — i.e. when the cost is
+  // avoidable by converting less. Use these to price the marginal cost, not to describe
+  // the user's situation.
+  /** The conversion is what pushed MAGI over the cliff and killed the whole credit. */
   pushesOverAcaCliff: boolean;
+  /** The conversion is what crossed IRMAA tier 1. */
+  crossesIrmaa: boolean;
+
   /** How much MAGI room was left before the cliff (negative if already over). */
   acaHeadroomBefore: number;
-  /** 63+ only: crosses IRMAA tier 1, which lands on the Medicare premium 2 years later. */
-  crossesIrmaa: boolean;
-  irmaaAnnualCost: number;
+  /**
+   * IRMAA caused by THIS conversion, PER PERSON on Medicare. Zero when they were already
+   * over tier 1 (converting more adds no tier-1 cost — though it may reach a tier we do
+   * not model). Per-person because we do not know the spouse's age: an MFJ filer whose
+   * spouse is under 65 pays this once, not twice.
+   */
+  irmaaAnnualCostPerPerson: number;
 };
 
 /**
@@ -662,22 +711,24 @@ export function rothConversionCost(opts: {
 
   // The cliff only bites while you are bridging to Medicare.
   const preMedicare = age < MEDICARE_2026.eligibilityAge;
-  const pushesOverAcaCliff = preMedicare && !acaBefore.overCliff && acaAfter.overCliff;
+  const overAcaCliffAfter = preMedicare && acaAfter.overCliff;
+  const pushesOverAcaCliff = overAcaCliffAfter && !acaBefore.overCliff;
 
   // IRMAA uses income from two years prior, so it starts mattering at 63.
   const irmaaRelevant = age >= MEDICARE_2026.eligibilityAge - MEDICARE_2026.irmaaLookbackYears;
-  const crossesIrmaa =
-    irmaaRelevant && !crossesIrmaaTier1(grossIncome, filing) && crossesIrmaaTier1(magiAfter, filing);
-  const peopleOnMedicare = filing === "mfj" ? 2 : 1;
+  const overIrmaaTier1After = irmaaRelevant && crossesIrmaaTier1(magiAfter, filing);
+  const crossesIrmaa = overIrmaaTier1After && !crossesIrmaaTier1(grossIncome, filing);
 
   return {
     federalTax,
     effectiveRate: conversionAmount > 0 ? federalTax / conversionAmount : 0,
     magiAfter,
+    overAcaCliffAfter,
+    overIrmaaTier1After,
     pushesOverAcaCliff,
-    acaHeadroomBefore: acaBefore.headroomToCliff,
     crossesIrmaa,
-    irmaaAnnualCost: crossesIrmaa ? irmaaTier1AnnualSurcharge() * peopleOnMedicare : 0,
+    acaHeadroomBefore: acaBefore.headroomToCliff,
+    irmaaAnnualCostPerPerson: crossesIrmaa ? irmaaTier1AnnualSurcharge() : 0,
   };
 }
 

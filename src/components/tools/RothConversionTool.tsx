@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, Check } from "lucide-react";
+import { AlertTriangle, Check, Info } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
 import { currency } from "@/lib/checkup";
 import { MEDICARE_2026, acaSubsidyCliffMagi, rothConversionCost } from "@/lib/facts-2026";
@@ -38,7 +38,10 @@ export function RothConversionTool() {
 
   const cliffMagi = acaSubsidyCliffMagi(householdSize);
   const preMedicare = age < MEDICARE_2026.eligibilityAge;
-  const hiddenCost = cost.pushesOverAcaCliff || cost.crossesIrmaa;
+  // Gate the all-clear on where they LAND, not on what this conversion changed. Someone
+  // already over the cliff used to see "this keeps you under the cliff" — false, and it
+  // buried the one thing they needed to hear (see the already-over panel below).
+  const allClear = !cost.overAcaCliffAfter && !cost.overIrmaaTier1After;
 
   const field =
     "rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground";
@@ -151,6 +154,26 @@ export function RothConversionTool() {
             </div>
           )}
 
+          {/* Already over before converting. The credit is gone either way, so the marginal
+              cost of converting is LOWER, not higher — the opposite of what the old
+              transition-only logic implied by falling through to the all-clear. */}
+          {cost.overAcaCliffAfter && !cost.pushesOverAcaCliff && (
+            <div className="flex gap-3 rounded-lg border border-slate-300/60 bg-slate-50 p-4 text-slate-900 dark:border-slate-700/50 dark:bg-slate-900/40 dark:text-slate-200">
+              <Info className="mt-0.5 size-4 shrink-0" />
+              <div className="text-sm">
+                <strong className="block">
+                  You are already over the ACA cliff — before converting anything.
+                </strong>{" "}
+                At {currency(grossIncome)} you are past the {currency(cliffMagi)} cliff for a
+                household of {householdSize}, so your premium tax credit is already $0. Converting
+                does not cost you a subsidy you no longer have. Counter-intuitively, this makes the
+                conversion <em>cheaper</em> at the margin than it would be for someone sitting just
+                under the line — the tax bill is the whole cost. If you can get back under the cliff
+                by other means, that is worth far more than the conversion decision itself.
+              </div>
+            </div>
+          )}
+
           {cost.crossesIrmaa && (
             <div className="flex gap-3 rounded-lg border border-amber-300/60 bg-amber-50 p-4 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
               <AlertTriangle className="mt-0.5 size-4 shrink-0" />
@@ -160,14 +183,35 @@ export function RothConversionTool() {
                 </strong>{" "}
                 Medicare looks back two years at your income, so a conversion at {age} lands on your
                 premium at {age + MEDICARE_2026.irmaaLookbackYears}. Crossing the first IRMAA tier
-                costs about {currency(cost.irmaaAnnualCost)} for that year
-                {filing === "mfj" ? ", for the two of you" : ""}. Higher incomes hit higher tiers,
-                which cost considerably more.
+                costs about {currency(cost.irmaaAnnualCostPerPerson)} for that year,{" "}
+                <em>per person on Medicare</em> — double it if your spouse is enrolled too. Higher
+                incomes hit higher tiers, which cost considerably more.
               </div>
             </div>
           )}
 
-          {!hiddenCost && conversion > 0 && (
+          {cost.overIrmaaTier1After && !cost.crossesIrmaa && (
+            <div className="flex gap-3 rounded-lg border border-amber-300/60 bg-amber-50 p-4 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+              <div className="text-sm">
+                <strong className="block">
+                  Your income is already above the first IRMAA tier.
+                </strong>{" "}
+                At {currency(cost.magiAfter)} you are over the{" "}
+                {currency(
+                  filing === "mfj"
+                    ? MEDICARE_2026.irmaaFirstTierJoint
+                    : MEDICARE_2026.irmaaFirstTierSingle,
+                )}{" "}
+                threshold, so a Medicare surcharge already applies at age{" "}
+                {age + MEDICARE_2026.irmaaLookbackYears}. This tool models the first tier only —
+                converting further can reach higher tiers, which cost considerably more than the
+                figure above.
+              </div>
+            </div>
+          )}
+
+          {allClear && conversion > 0 && (
             <div className="flex gap-3 rounded-lg border border-emerald-300/60 bg-emerald-50 p-4 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200">
               <Check className="mt-0.5 size-4 shrink-0" />
               <div className="text-sm">
