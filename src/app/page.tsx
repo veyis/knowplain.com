@@ -122,9 +122,9 @@ export default function HomePage() {
           <Badge variant="secondary" className="w-fit gap-1.5 font-normal">
             <FileText className="size-3" /> Explainer
           </Badge>
-          <strong className="tracking-tight">Retirement isn’t a date — it’s math</strong>
+          <strong className="tracking-tight">How to plan for retirement</strong>
           <p className="text-sm text-muted-foreground">
-            Plain model for “enough” and why the calendar is the wrong target.
+            The four questions that decide it — and why the date is an output, not an input.
           </p>
         </Link>
         <Link

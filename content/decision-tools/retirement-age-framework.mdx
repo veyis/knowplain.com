@@ -1,67 +1,178 @@
 ---
 title: "How to choose a retirement age"
-description: "Age is a lever among savings rate, spending, and Social Security timing."
-plainAnswer: "Run three ages (early / target / late) and compare the funding gap."
-updated: "2026-07-09"
+description: "What actually changes at 55, 59½, 62, 63, 65, 67 and 75 — the ACA bridge cost of going early, and what an extra working year is really worth."
+plainAnswer: "Choose a retirement age by working out what changes at each one: penalty-free access at 55 or 59½, the earliest Social Security claim at 62, Medicare's income lookback starting at 63, Medicare itself at 65, full retirement age at 67, and required withdrawals at 73 or 75. Then price the health-insurance bridge, because before 65 you buy your own."
+updated: "2026-07-11"
 published: "2026-07-09"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
 contentType: "decision"
 riskLevel: "medium"
+relatedTools:
+  - href: /tools/retirement-age-tradeoff
+    label: "Compare retiring at different ages"
+  - href: /tools/aca-bridge
+    label: "Price the health-insurance bridge to 65"
+  - href: /tools/am-i-on-track
+    label: "Am I on track?"
+faqs:
+  - q: "What is the earliest age I can retire without a penalty?"
+    a: "It depends on the account. From a workplace 401(k) or 403(b), the rule of 55 lets you take penalty-free withdrawals if you separate from service during or after the year you turn 55 — but only from that employer's plan. From an IRA, the age is 59½ with no equivalent rule. Rolling the 401(k) into an IRA destroys the rule of 55."
+  - q: "How much does working one more year actually help?"
+    a: "More than it looks, because it moves several levers in the same direction at once: another year of contributions, another year of compounding, one fewer year of withdrawals, a shorter retirement to fund, and possibly a higher Social Security benefit. It is the single most powerful lever most people have — and the one with the highest personal cost."
+  - q: "Does retiring before 65 change the math?"
+    a: "Substantially, because Medicare starts at {{medicare.eligibilityAge}} and you buy your own health cover until then. Since the enhanced ACA subsidies expired at the end of 2025, income one dollar over {{aca.cliffPercent}} of the federal poverty line forfeits the entire premium tax credit — and an unsubsidised benchmark plan for a 60-year-old runs about {{aca.benchmarkSilver}} a year."
+  - q: "Why does age 63 matter?"
+    a: "Because Medicare's income-related surcharge looks back {{medicare.irmaaLookback}} years. The tax return you file for the year you turn 63 sets your Part B and Part D premiums at 65. A large withdrawal or Roth conversion at 63 is a decision about your Medicare premium, whether you realise it or not."
+  - q: "Should I retire at 62 to claim Social Security?"
+    a: "Claiming at {{ss.earliestClaim}} and retiring at {{ss.earliestClaim}} are separate decisions, and conflating them is expensive. Claiming at 62 with a full retirement age of {{ss.fra}} cuts the benefit by 30% for life. You can retire at 62 and still delay the claim — spending from the portfolio in between is often the better trade, because it buys a bigger inflation-adjusted floor."
+  - q: "What if I cannot keep working?"
+    a: "Plan for it. A large share of people leave work earlier than they intended, because of health, redundancy or caring for a relative. A plan whose only safety valve is 'work two more years' is a plan that depends on a decision that may not be yours. Test your numbers at an age one or two years earlier than your target."
 sources:
-  - title: "Early or Late Retirement?"
+  - title: "Topic no. 558, Additional tax on early distributions from retirement plans other than IRAs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/taxtopics/tc558"
+    accessed: "2026-07-11"
+    note: "The rule of 55 ('distributions made to you after you separated from service with your employer after attainment of age 55') and that governmental 457(b) distributions are generally not subject to the 10% additional tax at all."
+  - title: "Retirement topics — Exceptions to tax on early distributions"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions"
+    accessed: "2026-07-11"
+    note: "The 59½ exception applies to both plans and IRAs; the separation-from-service exception applies to qualified plans but NOT to IRAs; age 50 for qualified public-safety employees."
+  - title: "Starting Your Retirement Benefits Early"
     publisher: "Social Security Administration"
     url: "https://www.ssa.gov/benefits/retirement/planner/agereduction.html"
     accessed: "2026-07-11"
     note: "Claiming at 62 with a full retirement age of 67 permanently reduces the benefit by 30%."
-faqs:
-  - q: "How much does working one more year actually help?"
-    a: "More than it looks. An extra year adds contributions, removes a drawdown year, gives the portfolio another year to compound, and can raise your Social Security base. The levers compound in the same direction."
-  - q: "Does retiring before 65 change the math?"
-    a: "Substantially, because you must bridge health coverage to Medicare yourself. For 2026 that is a larger cost than most people plan for. See our guide to health care before Medicare."
+  - title: "Delayed Retirement Credits"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/retirement/planner/delayret.html"
+    accessed: "2026-07-11"
+    note: "Benefits increase by about 8% a year for each year claiming is delayed past full retirement age, up to age {{ss.maxDelayAge}}."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "Medicare eligibility at {{medicare.eligibilityAge}}, the IRMAA first-tier thresholds, and the {{medicare.irmaaLookback}}-year lookback."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "The enhanced credits expired 2025-12-31 and the {{aca.cliffPercent}}-of-FPL cliff returned — the cost of retiring before 65."
+  - title: "Notice 2025-67 — 2026 retirement plan cost-of-living adjustments"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/n-25-67.pdf"
+    accessed: "2026-07-11"
+    note: "The age-50 catch-up ({{401k.catchUp50}}) and the ages 60-63 super catch-up ({{401k.superCatchUp}}) in the age table."
+  - title: "Retirement plan and IRA required minimum distributions FAQs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs"
+    accessed: "2026-07-11"
+    note: "RMDs begin at {{rmd.ageBorn1951to1959}} or {{rmd.ageBorn1960OrLater}} depending on birth year."
 related:
   - href: /topics/decision-tools
     label: "Back to hub → Decision tools"
   - href: /topics/retirement/retirement-isnt-a-date
-    label: "Retirement isn’t a date"
-  - href: /topics/retirement/how-much-is-enough
-    label: "How much is enough?"
-  - href: /tools
-    label: "Compare ages → Roadmap Pack"
+    label: "How to plan for retirement"
+  - href: /topics/retirement/aca-subsidy-cliff
+    label: "The ACA subsidy cliff is back for 2026"
+  - href: /topics/decision-tools/withdrawal-plan
+    label: "A plain withdrawal plan"
 ---
 
-"What age should I retire?" is the wrong first question. Age is just one **lever** you can pull, and the plain way to choose it is to model a few and compare. This is a spoke of the [Decision tools hub](/topics/decision-tools), and it builds on the idea that [retirement is math, not a date](/topics/retirement/retirement-isnt-a-date).
+"What age should I retire?" is not really a question about age. It is a question about money, health coverage, tax, and what you want your days to look like — and the age is the number those things produce. That is the argument in [how to plan for retirement](/topics/retirement/retirement-isnt-a-date), and this spoke of the [Decision tools hub](/topics/decision-tools) turns it into something you can actually choose with.
 
-## Age is one lever of four
+Because you do still have to pick a year. And the American retirement system has hard edges at specific ages, which means some years are genuinely better than the ones on either side of them.
 
-Whether the money works depends on four levers, and age is only one:
+## What changes at each age
 
-1. **Spend less** in retirement.
-2. **Save more** before it.
-3. **Work longer** (more saving, fewer withdrawal years).
-4. **Delay Social Security** to raise guaranteed income.
+| Age | What unlocks (or bites) |
+| --- | --- |
+| **50** | Catch-up contributions begin: an extra <Fact id="401k.catchUp50" /> into a 401(k) on top of the regular limit |
+| **55** | **Rule of 55** — penalty-free withdrawals from the 401(k) of the employer you just left, if you separate during or after the year you turn 55. Age 50 for qualified public-safety employees |
+| **59½** | Penalty-free withdrawals from **everything**, IRAs included. The 10% early-distribution tax is gone |
+| **60–63** | The super catch-up: <Fact id="401k.superCatchUp" /> *instead of* the standard catch-up, not on top of it |
+| **62** | Earliest Social Security claim. With a full retirement age of <Fact id="ss.fra" />, claiming here cuts the benefit **30% for life** |
+| **63** | Medicare starts watching. IRMAA looks back <Fact id="medicare.irmaaLookback" /> years, so this year's income sets your premium at 65 |
+| **65** | **Medicare.** The year the health-insurance problem ends |
+| **67** | Full retirement age (born 1960 or later). The Social Security earnings test disappears |
+| **70** | Maximum Social Security. Delayed credits stop accruing — there is no reason to wait past this |
+| **73 / 75** | Required minimum distributions begin: <Fact id="rmd.ageBorn1951to1959" /> if born 1951–1959, <Fact id="rmd.ageBorn1960OrLater" /> if born 1960 or later |
 
-Fixate on the birthday and you ignore three of the four things you actually control.
+Two rows in that table are routinely misread, so they get their own sections below: 55 and 63.
 
-## Run three scenarios
+### The rule of 55 has a trap in it
 
-Instead of guessing one number, model **three ages** — early, target, and late — and compare the funding gap each leaves (the gap idea is covered in [how much is enough](/topics/retirement/how-much-is-enough)):
+The rule of 55 lets you take money out of a workplace plan without the 10% early-distribution penalty if you separate from service **during or after the calendar year you turn 55**. It is the main reason a 55-year-old can retire at all without an elaborate workaround.
 
-- **Early:** biggest gap, most reliant on spending cuts or part-time income.
+But it is narrower than people think:
+
+- It applies only to the plan of the employer **you separated from**. Not your old employer's plan from three jobs ago, and not your spouse's.
+- It does **not apply to IRAs at all**. IRS Topic 558 is specifically about "retirement plans other than IRAs" for exactly this reason.
+- Which means: **rolling your 401(k) into an IRA when you leave destroys it.** This is the trap. The rollover is the standard advice, the paperwork is easy, and doing it at 55 can lock the money up for four and a half years.
+
+One bonus most people never hear: distributions from a **governmental 457(b)** plan are generally not subject to the 10% additional tax at any age after you separate. Public-sector employees with a 457(b) have an early-access route that private-sector savers do not.
+
+### Age 63 is a decision you make without noticing
+
+Medicare's income-related monthly adjustment amount — IRMAA — is set from the tax return you filed **<Fact id="medicare.irmaaLookback" /> years earlier**. So the income you report in the year you turn 63 determines your Part B and Part D premiums at 65.
+
+Cross the first tier — <Fact id="medicare.irmaaTier1Single" /> single, <Fact id="medicare.irmaaTier1Joint" /> joint — and you pay roughly <Fact id="medicare.irmaaTier1Cost" /> extra for the year, per person on Medicare, and it is a cliff rather than a ramp. Sell a rental property at 63, take a big severance, or do an unplanned [Roth conversion](/topics/retirement/roth-conversion-ladder), and the bill lands two years later when you have forgotten why.
+
+## The real cost of going before 65: the health-insurance bridge
+
+This is the number that moves retirement ages, and most people discover it late.
+
+Medicare starts at <Fact id="medicare.eligibilityAge" />. Retire at 60 and you are buying your own health insurance for five years. As a national reference point, an unsubsidised benchmark silver plan for a 60-year-old costs about <Fact id="aca.benchmarkSilver" /> a year — and premiums rise steeply with age, so the last years before Medicare are the most expensive ones.
+
+The subsidy that used to soften this got much harsher. The enhanced premium tax credits **expired on 31 December 2025**, restoring the cliff: household MAGI one dollar over <Fact id="aca.cliffPercent" /> of the federal poverty line — <Fact id="aca.cliffSingle" /> for one person, <Fact id="aca.cliffCouple" /> for a couple — forfeits the **entire** premium tax credit. Not tapered. Zero.
+
+The consequence for choosing an age is specific and unintuitive: **before 65, your retirement income is not just an income decision, it is a health-insurance decision.** Every dollar you withdraw from a traditional account, every capital gain you realise, every conversion, raises the MAGI that the cliff is measured against. A retiree who wants to fill their 12% tax bracket and a retiree who wants to stay under the cliff are being pulled in opposite directions.
+
+Below the cliff there is still help — the income-based cap on the benchmark premium survived, it simply became narrower and steeper — and below 100% of the poverty line the subsidy vanishes again, so it is possible to squeeze your income too far. Price your own bridge with the [ACA bridge tool](/tools/aca-bridge), and read [the ACA subsidy cliff is back for 2026](/topics/retirement/aca-subsidy-cliff) and [health care before Medicare](/topics/retirement/health-care-before-medicare).
+
+## Why one more year is worth so much — and why that argument is dangerous
+
+An extra working year does four things at once, and they all push the same way:
+
+1. You **add** a year of contributions — up to <Fact id="401k.catchUp50" /> of catch-up on top of the regular limit if you are 50+, or <Fact id="401k.superCatchUp" /> at 60–63. See the [catch-up planner](/tools/catch-up-contributions) and [catch-up contributions in 2026](/topics/retirement/catch-up-contributions-2026).
+2. You **do not withdraw** for a year — so the portfolio compounds on a bigger base instead of a shrinking one.
+3. Your retirement is **one year shorter**, so the same pot has to cover fewer years.
+4. You may raise your **Social Security** benefit, both by replacing a weak year in your top 35 and by delaying the claim.
+
+That is why "just work one more year" closes gaps that saving more cannot. It is also why the advice is dangerous when it becomes the *only* plan. The lever works by compounding several small effects — but it is spending the scarcest thing you have, and it assumes a decision that may not be yours to make. People leave work early because of their own health, a parent's health, or a company reorganisation, far more often than they expect to.
+
+So use the lever, but do not lean the whole plan on it. Test your numbers at an age one or two years **earlier** than your target with the [retirement age tradeoff tool](/tools/retirement-age-tradeoff). If the plan only works at 67 and fails at 65, it is not a plan — it is a hope with a spreadsheet.
+
+## Run three ages, not one
+
+Instead of guessing a single number, model **three** — early, target, and late — and compare the funding gap each one leaves ([how much is enough](/topics/retirement/how-much-is-enough) covers the gap arithmetic):
+
+- **Early:** the biggest gap, the longest ACA bridge, the most dependence on flexibility and part-time income.
 - **Target:** your base case.
-- **Late:** smaller gap, more compounding, higher Social Security.
+- **Late:** the smallest gap, more compounding, a higher Social Security floor, and fewer years to enjoy it.
 
-Seeing the three side by side turns an anxious guess into a comparison you can act on.
+Seeing the three side by side turns an anxious guess into a comparison. Run them through [Am I on track?](/tools/am-i-on-track) or the [Retirement Checkup](/checkup).
 
-## Social Security timing interacts with age
+## The half of this that is not arithmetic
 
-Claiming age is a lever of its own. Benefits are reduced if you claim before full retirement age and *increased* for each year you wait — up to about **8% per year** in delayed retirement credits until age 70, per the [Social Security Administration](https://www.ssa.gov/benefits/retirement/planner/delayret.html). Because that higher benefit is guaranteed and inflation-adjusted, delaying is one of the cleanest ways to blunt [sequence-of-returns risk](/topics/retirement/sequence-of-returns).
+The financial half of the decision is the easy half. The rest of it is not, and pretending otherwise is how people end up with a well-funded retirement they do not want.
+
+**Health is asymmetric.** The years right after you stop working are the ones in which you are most likely to be well enough to use them. An extra year of work is a year of money, taken from the specific part of your life when money is most usable. That trade may still be worth it. It is not free, and no calculator will show you the cost.
+
+**Caring responsibilities usually decide it, not you.** A parent needing care, or a spouse's illness, ends careers on a timetable no one chose. If that is foreseeable in your family, plan the age around it rather than around the market.
+
+**Some people should not retire, and that is fine.** Work supplies structure, status and a large part of most people's social contact. If you have no idea what you would do on the first Monday, the honest answer may be to keep working — or to shift to [part-time work](/topics/retirement/part-time-retirement), which happens to be excellent for the portfolio too.
+
+The point of getting the numbers right is not to obey them. It is to know what the trade actually is, so the non-financial half is a choice rather than an accident.
 
 ## Key takeaways
 
-- Age is one of four levers: spend, save, work longer, delay Social Security.
-- Model three ages and compare the funding gap.
-- Delaying Social Security (up to ~8%/yr to age 70) raises a guaranteed floor.
+- The system has hard edges: 55 (rule of 55), 59½ (everything), 62 (earliest claim), 63 (Medicare's lookback begins), 65 (Medicare), <Fact id="ss.fra" /> (full retirement age), 70 (maximum benefit), <Fact id="rmd.ageBorn1951to1959" />/<Fact id="rmd.ageBorn1960OrLater" /> (RMDs).
+- **Rolling a 401(k) to an IRA at 55 destroys the rule of 55.** It does not apply to IRAs.
+- Before <Fact id="medicare.eligibilityAge" />, your withdrawal decisions and your health-premium decisions are the same decision. The ACA cliff is back for 2026.
+- One more working year moves four levers at once — but a plan that only works if you *can* work one more year is fragile.
+- Model three ages, and stress-test the early one. Then decide the non-financial half deliberately.
 
-Educational only — not financial advice. Compare retirement ages with the [Roadmap Pack](/tools).
+Educational only — not financial or tax advice.

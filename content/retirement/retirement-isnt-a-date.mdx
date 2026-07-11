@@ -1,68 +1,162 @@
 ---
-title: "Retirement isn’t a date — it’s math"
-description: "A plain model for “enough,” withdrawal rates, and why the calendar date is the wrong target."
-plainAnswer: "Treat retirement as a funding problem. The date is an output, not an input."
+title: "How to plan for retirement: the four questions that decide it"
+description: "Retirement is a spending-and-assets problem, not a birthday. The four questions that actually decide it — and where each one gets answered."
+plainAnswer: "Planning for retirement means answering four questions in order: what will you spend, what guaranteed income do you already have, how do you cover health care before Medicare, and in what order do you withdraw and what does that cost in tax. The date falls out of the answers."
 published: "2026-07-09"
-updated: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
-contentType: "decision"
+contentType: "explainer"
 riskLevel: "medium"
 relatedTools:
   - href: /checkup
-    label: "Run Retirement Checkup"
+    label: "Run the Retirement Checkup"
+  - href: /tools/am-i-on-track
+    label: "Am I on track?"
 faqs:
-  - q: "Should I pick a retirement date first?"
-    a: "Use a target date as a planning input, but do not treat it as fixed until the spending gap, healthcare bridge, Social Security timing, and withdrawal risk are clear."
-  - q: "What changes the date the most?"
-    a: "The biggest levers are annual spending, guaranteed income, savings rate, retirement age, health coverage before Medicare, and flexibility to work part-time or cut spending temporarily."
+  - q: "Where do I start if I have never planned for retirement?"
+    a: "Start with the number you spend in a year, not the number you have saved. Everything else in the plan is computed from it: the portfolio you need, the income gap Social Security leaves, the tax you will pay, and how long the money lasts. A savings balance on its own tells you nothing."
+  - q: "How much do I need to retire?"
+    a: "It depends almost entirely on what you spend, and the credible research disagrees about the withdrawal rate you should divide by. Morningstar's forward-looking figure is {{swr.morningstar}}; Bengen's revised historical worst case is {{swr.bengen}}. Those answer different questions and must not be averaged. We work through the arithmetic separately."
+  - q: "Is Social Security enough on its own?"
+    a: "For most households, no. The average retired worker benefit is about {{ss.averageBenefit}} a month, and even the maximum at full retirement age is {{ss.maxBenefitAtFra}} — and you only get that with a full career at the taxable maximum. Social Security is designed as a floor, not a full replacement."
+  - q: "What age can I actually afford to retire?"
+    a: "The age is an output, not an input. It is the year your projected assets, plus your guaranteed income, plus whatever health coverage costs you before Medicare, together fund your spending for the rest of your life. Change the spending and the age moves."
+  - q: "What is the biggest mistake people make?"
+    a: "Planning around retirement age 65 because Medicare starts there, without pricing the years before it. Retiring at 60 means buying your own health insurance for five years, and since the enhanced ACA subsidies expired at the end of 2025, one dollar of income over the {{aca.cliffPercent}}-of-poverty-line cliff forfeits the entire premium tax credit."
+  - q: "When am I forced to take money out?"
+    a: "Required minimum distributions begin at {{rmd.ageBorn1951to1959}} if you were born between 1951 and 1959, and {{rmd.ageBorn1960OrLater}} if you were born in 1960 or later. Most articles quote a flat 73. For most people reading this it is 75, which buys two more years in which you, not the IRS, choose your taxable income."
+  - q: "Do I need a financial adviser to do this?"
+    a: "Not for the first three questions — spending, guaranteed income, and the health-care bridge are arithmetic and rules you can read. The fourth, the withdrawal and tax order, is where a mistake of one dollar can cost five figures and cannot be undone. That is the part genuinely worth paying for."
 sources:
+  - title: "2026 Social Security Changes (COLA fact sheet)"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/news/en/cola/factsheets/2026.html"
+    accessed: "2026-07-11"
+    note: "The average retired-worker benefit ({{ss.averageBenefit}}/month) and the maximum at full retirement age ({{ss.maxBenefitAtFra}}/month) used in the guaranteed-income section."
   - title: "Starting Your Retirement Benefits Early"
     publisher: "Social Security Administration"
     url: "https://www.ssa.gov/benefits/retirement/planner/agereduction.html"
     accessed: "2026-07-11"
-    note: "Used for claiming age and delayed benefit framing."
-  - title: "Health coverage for retirees"
-    publisher: "HealthCare.gov"
-    url: "https://www.healthcare.gov/retirees/"
+    note: "Claiming at 62 with a full retirement age of 67 permanently reduces the benefit by 30%; delaying past FRA adds about 8% a year to 70."
+  - title: "Social Security Fairness Act of 2023 (Public Law 118-273)"
+    publisher: "U.S. Congress"
+    url: "https://www.congress.gov/bill/118th-congress/house-bill/82"
     accessed: "2026-07-11"
-    note: "Used for pre-65 health coverage bridge considerations."
+    note: "Repealed the Windfall Elimination Provision and the Government Pension Offset, retroactive to January 2024 — the public-sector claiming maths changed completely."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "Medicare eligibility at {{medicare.eligibilityAge}}, the standard Part B premium, and the IRMAA first-tier thresholds behind the two-year lookback."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "The enhanced premium tax credits expired 2025-12-31, restoring the {{aca.cliffPercent}}-of-FPL subsidy cliff for plan-year 2026."
+  - title: "Retirement plan and IRA required minimum distributions FAQs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs"
+    accessed: "2026-07-11"
+    note: "RMDs begin at {{rmd.ageBorn1951to1959}} or {{rmd.ageBorn1960OrLater}} depending on birth year."
+  - title: "What's a Safe Retirement Withdrawal Rate in 2026?"
+    publisher: "Morningstar, State of Retirement Income (2025 edition)"
+    url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026"
+    accessed: "2026-07-11"
+    note: "The {{swr.morningstar}} forward-looking starting rate, cited only to show that credible sources disagree on the rate."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
   - href: /topics/retirement/how-much-is-enough
     label: "How much is enough?"
-  - href: /topics/retirement/sequence-of-returns
-    label: "Sequence of returns risk"
-  - href: /tools
-    label: "Run your numbers → Roadmap Pack"
+  - href: /topics/decision-tools/withdrawal-plan
+    label: "A plain withdrawal plan"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
 ---
 
-Most people pick a birthday and call it a plan. The plainer view — the idea behind everything in the [Retirement hub](/topics/retirement) — is that retirement is a **funding problem**. The date is what falls out of the math, not the thing you choose first.
+Most people begin with a birthday. They pick an age, usually 65 because that is when Medicare starts, and then spend years hoping the money works out.
 
-## Why the date is the wrong input
+That is backwards. Retirement is a **spending-and-assets problem**, not a date. It happens when what you have — savings, plus guaranteed income, minus what health care costs you before Medicare — can fund what you spend, for as long as you live. The age is what falls out of that. It is an output, not an input.
 
-A date answers "when do I want to stop?" It says nothing about whether the money lasts. Two people who retire at the same age can have completely different outcomes depending on how much they spend, how much they saved, and what markets do in their first decade. Start from the date and you're guessing. Start from the math and the date reveals itself.
+This page is the map. It does not answer any of the four questions below; it tells you what they are, why each one matters, and where the answer lives. If you know nothing yet, read this first and then follow the links. This is the front door to the [Retirement hub](/topics/retirement).
 
-## The plain model: spending → rate → portfolio
+## The four questions
 
-Reverse the problem into three steps:
+Everything that decides a retirement is downstream of four things. In this order, because each one needs the one before it.
 
-1. **Spending.** Write down annual spending in today's dollars — the number you actually live on, minus any pension or Social Security you'll receive. The Social Security Administration's [retirement planner](https://www.ssa.gov/benefits/retirement/planner/) estimates your benefit.
-2. **Withdrawal rate.** Pick a planning rate. A common starting heuristic is 4% a year, from William Bengen's 1994 research and the later Trinity study — useful as a first pass, not a promise. See [the 4% rule in 2026](/topics/retirement/4-percent-rule-2026).
-3. **Portfolio.** Divide the spending gap by the rate. At 4%, that's the same as multiplying spending by 25. Details in [how much is enough](/topics/retirement/how-much-is-enough).
+| The question | What it decides | Where to answer it |
+| --- | --- | --- |
+| 1. What will you actually spend? | The size of everything else | [How much is enough](/topics/retirement/how-much-is-enough) · [Spending planner](/tools/inflation-spending) |
+| 2. What guaranteed income do you already have? | How much the portfolio has to cover | [Social Security timing](/topics/retirement/social-security-timing) · [Break-even tool](/tools/social-security-break-even) |
+| 3. How do you get to Medicare? | Whether retiring before 65 is affordable | [Health care before Medicare](/topics/retirement/health-care-before-medicare) · [ACA bridge](/tools/aca-bridge) |
+| 4. In what order do you withdraw, and what does it cost? | How much of it you keep | [A plain withdrawal plan](/topics/decision-tools/withdrawal-plan) · [RMD planner](/tools/rmd-planner) |
 
-Now the "right age" is simply the year your projected portfolio meets that target — and the gap tells you which lever to pull.
+Notice what is missing: "how much have I saved?" That is not a question, it is a fact. It only becomes meaningful once question 1 tells you what the money has to do.
 
-## Then stress-test it
+## Question 1: What will you actually spend?
 
-A single average return hides the risk that matters most: **sequence of returns**. A bad decade early in retirement, while you're withdrawing, does far more damage than the same decade later. Build in a cash buffer and flexible spending rather than trying to predict crashes — see [sequence of returns risk](/topics/retirement/sequence-of-returns).
+Not your salary. Not a percentage of it. The number you live on in a year, in today's dollars.
+
+Everything downstream is a multiple of this figure. If you spend $60,000 a year, the portfolio you need is some multiple of $60,000, the gap Social Security leaves is measured against $60,000, and the tax you pay is driven by how you fund $60,000. Get it wrong by 20% and every other number in your plan is wrong by 20%. Nothing else in retirement planning has that kind of leverage, and nothing else is as easy to check — the answer is sitting in twelve months of bank statements.
+
+Two things make it harder than it looks. First, retirement spending is not flat: it tends to be higher in the early, healthy years, dip in the middle, and rise again at the end when care costs arrive. Second, **your personal inflation rate is not CPI**. Health care has historically run hotter than general prices, and it is a bigger share of a retiree's budget than a worker's — so a single blended inflation number quietly understates what you will need in year 20. Our [spending planner](/tools/inflation-spending) exists to make that divergence visible, and [inflation and retirement](/topics/retirement/inflation-and-retirement) explains why.
+
+Once you have the spending number, the next step is turning it into a portfolio target — and that is where the honest disagreement begins. Divide by 4% and you get 25× spending. But the credible research does not agree on the divisor: Morningstar's forward-looking figure is <Fact id="swr.morningstar" />, while Bengen's revised historical worst case is <Fact id="swr.bengen" />. They are not two estimates of the same thing to be split down the middle — they answer different questions, with different portfolios. [How much is enough](/topics/retirement/how-much-is-enough) does the arithmetic; [the 4% rule in 2026](/topics/retirement/4-percent-rule-2026) explains why the two numbers disagree.
+
+## Question 2: What guaranteed income do you already have?
+
+Your portfolio does not have to fund your whole life. It has to fund the **gap** — what is left after income that arrives whether markets rise or fall.
+
+For most households that means Social Security, and possibly a pension. Both are worth more than they look, because both are guaranteed: a dollar of lifetime, inflation-adjusted income is doing a job no portfolio dollar can do, and it removes that dollar from the reach of a bad market. But be realistic about the size. The average retired-worker benefit is about <Fact id="ss.averageBenefit" /> a month, and even the maximum at full retirement age is <Fact id="ss.maxBenefitAtFra" /> — and that maximum requires a full career of earnings at the taxable ceiling. Social Security was built as a floor, not a replacement.
+
+When you claim changes the floor permanently. Claim at <Fact id="ss.earliestClaim" />, the earliest possible age, and a benefit based on a full retirement age of <Fact id="ss.fra" /> is reduced by 30% for life. Wait past full retirement age and it grows by roughly 8% a year until <Fact id="ss.maxDelayAge" />. That is the single largest lever most people have, and it is free — see [when to take Social Security](/topics/retirement/social-security-timing) and run it through the [break-even tool](/tools/social-security-break-even).
+
+One thing almost every guide still gets wrong: if you spent part of your career in public-sector work with a non-covered pension, the old rules that cut your benefit — the Windfall Elimination Provision and the Government Pension Offset — **were repealed** by the Social Security Fairness Act, retroactive to January 2024. If you last checked your claiming maths before that, check it again; it changed. And if your income is a private pension, assume it is *not* inflation-adjusted, because private-sector COLAs are rare. [Pension lump sum vs annuity](/topics/retirement/pension-vs-401k) covers that trade.
+
+## Question 3: How do you get to Medicare?
+
+Medicare starts at <Fact id="medicare.eligibilityAge" />. If you stop working before that, you buy your own health insurance until you get there, and this is the single most underpriced line in early-retirement plans.
+
+It got harder this year. The enhanced premium tax credits expired on 31 December 2025, which brought back the **subsidy cliff**: household income one dollar above <Fact id="aca.cliffPercent" /> of the federal poverty line forfeits the *entire* premium tax credit. Not a taper — zero. For a single person that line is <Fact id="aca.cliffSingle" />; for a couple, <Fact id="aca.cliffCouple" />. An unsubsidised benchmark silver plan for a 60-year-old runs around <Fact id="aca.benchmarkSilver" /> a year, so crossing that line by a dollar is a five-figure event.
+
+The cruel part is what counts as income. Not just wages — a Roth conversion, a traditional IRA withdrawal, a capital gain, and a pension all raise the MAGI the cliff is measured against. So in the years before 65, the way you fund your spending and the price of your health insurance are the same decision. Two people with identical portfolios can pay wildly different premiums depending on which account they drew from.
+
+Below the cliff there is still help — an income-based cap on the benchmark premium survived, it just got narrower and harsher. And below 100% of the poverty line the subsidy disappears again, so it is possible to crush your income too far. Read [health care before Medicare](/topics/retirement/health-care-before-medicare) and [the ACA subsidy cliff is back](/topics/retirement/aca-subsidy-cliff), then see where your income lands with the [ACA bridge tool](/tools/aca-bridge).
+
+## Question 4: In what order do you withdraw, and what does it cost?
+
+You have three kinds of money — taxable, tax-deferred, and Roth — and they are taxed completely differently on the way out. Which one you spend first, in which year, decides how much of your own money you keep.
+
+The textbook order is taxable, then tax-deferred, then Roth. It is a reasonable default and it is frequently wrong, because it ignores the calendar. Between the day you stop working and the day Social Security and required distributions start, you are the only person deciding what your taxable income is. That window is where the tax planning happens: filling a low bracket deliberately, realising gains at the 0% long-term rate, or moving money to Roth — see [the Roth conversion ladder](/topics/retirement/roth-conversion-ladder). Skip the window and it closes for good.
+
+It closes because of RMDs. Required minimum distributions begin at <Fact id="rmd.ageBorn1951to1959" /> for people born 1951–1959, and <Fact id="rmd.ageBorn1960OrLater" /> for anyone born in 1960 or later — most people reading this. Almost every article quotes a flat 73. If you were born after 1959, you have two extra years of runway that nobody told you about. But at the end of it, the IRS starts choosing your income for you: a large pre-tax balance produces a forced withdrawal that lands on top of Social Security, drags more of the benefit into tax, and can lift your Medicare premiums permanently. The [RMD planner](/tools/rmd-planner) shows what yours will look like.
+
+There is one more timing trap worth knowing before you plan anything: Medicare's income-related surcharge, IRMAA, looks back <Fact id="medicare.irmaaLookback" /> years. The tax return you file at 63 sets your premium at 65. So the pre-Medicare years are not free of Medicare consequences — they are exactly when Medicare is watching. [A plain withdrawal plan](/topics/decision-tools/withdrawal-plan) puts the whole order together.
+
+## The thing that decides whether it works: flexibility
+
+The four questions size the plan. One thing decides whether it survives contact with reality, and it is not the accuracy of your return assumption.
+
+It is **sequence risk** — the order returns arrive in. Two retirees with identical average returns over thirty years can end in completely different places if one of them meets the bad decade first, because selling into a downturn turns a paper loss into a permanent one. It is the reason a plan can be arithmetically correct and still fail. Our [sequence-risk stress test](/tools/sequence-risk) shows the same returns in two orders; [sequence of returns risk](/topics/retirement/sequence-of-returns) explains it.
+
+The defence is not a better forecast. It is the ability to spend less for a year or two after a bad one, to hold a cash buffer so you are not forced to sell, and — for some people — to earn a modest amount early on ([part-time work](/topics/retirement/part-time-retirement)). A retiree who can flex is worth more than a retiree with a better spreadsheet. That is the whole finding, and it is more useful than any withdrawal rate.
+
+## Where to start this week
+
+1. Total last year's spending. That is question 1, and it takes an evening.
+2. Get your benefit estimate from [ssa.gov](https://www.ssa.gov/benefits/retirement/planner/). That is question 2.
+3. If you might stop before <Fact id="medicare.eligibilityAge" />, price the bridge with the [ACA bridge tool](/tools/aca-bridge). That is question 3.
+4. Then run the [Retirement Checkup](/checkup) or [Am I on track?](/tools/am-i-on-track) to see the gap — and which lever closes it.
 
 ## Key takeaways
 
-- The date is an **output** of the math, not an input.
-- Model spending first, then back into the portfolio you need.
-- 4% / 25× is a planning heuristic — stress-test it for bad early years.
+- Retirement is a spending-and-assets problem. The **date is an output**, not an input.
+- Spending is the number everything else is computed from. Start there, not with your balance.
+- Guaranteed income shrinks the job the portfolio has to do. Social Security is a floor — the average benefit is about <Fact id="ss.averageBenefit" /> a month.
+- Retiring before <Fact id="medicare.eligibilityAge" /> means buying health cover yourself, and the ACA cliff is back for 2026.
+- RMDs start at <Fact id="rmd.ageBorn1951to1959" /> or <Fact id="rmd.ageBorn1960OrLater" /> depending on your birth year — not a flat 73.
+- Flexibility beats precision. Being able to adjust matters more than picking the exactly right withdrawal rate.
 
-Educational only — not financial advice. Run your own numbers with the [Roadmap Pack](/tools), then talk to a qualified professional for decisions that affect your life.
+Educational only — not financial or tax advice.
