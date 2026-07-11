@@ -14,9 +14,14 @@ import { SequenceRiskTool } from "@/components/tools/SequenceRiskTool";
 import { RothConversionTool } from "@/components/tools/RothConversionTool";
 import { DebtVsInvestingTool } from "@/components/tools/DebtVsInvestingTool";
 import { SpendingPlannerTool } from "@/components/tools/SpendingPlannerTool";
-import { breadcrumbJsonLd } from "@/lib/schema";
-import { site } from "@/lib/site";
+import { editorialPeople } from "@/lib/editorial";
+import { breadcrumbJsonLd, toolPageJsonLd } from "@/lib/schema";
+import { pageMeta, site } from "@/lib/site";
 import { isToolSlug, toolPages } from "@/lib/tools";
+
+/** The calculators read every 2026 figure from facts-2026.ts, whose constants carry this date. */
+const TOOLS_LAST_REVIEWED = "2026-07-11";
+const reviewer = editorialPeople["retirement-review-board"];
 
 export function generateStaticParams() {
   return Object.keys(toolPages).map((slug) => ({ slug }));
@@ -26,11 +31,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (!isToolSlug(slug)) return {};
   const tool = toolPages[slug];
-  return {
-    title: tool.title,
-    description: tool.description,
-    alternates: { canonical: `/tools/${slug}` },
-  };
+  // Was title/description/canonical only, skipping openGraph and twitter entirely — so the
+  // most shareable pages on the site inherited the ROOT og:url (the homepage) and a Twitter
+  // card titled "Know Plain". pageMeta builds all three correctly.
+  return pageMeta(`/tools/${slug}`, tool.title, tool.description);
 }
 
 export default async function ToolPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -43,6 +47,22 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
     <AppShell active="tools">
       <JsonLd
         data={[
+          // No SoftwareApplication — that rich result needs offers.price AND aggregateRating,
+          // and inventing ratings for a free calculator is a spam violation (see schema.ts).
+          // But a YMYL page that hands someone a retirement number should still say who stands
+          // behind it and when it was last reviewed. That is free and it is the part that counts.
+          toolPageJsonLd({
+            title: tool.title,
+            description: tool.description,
+            url,
+            dateModified: TOOLS_LAST_REVIEWED,
+            lastReviewed: TOOLS_LAST_REVIEWED,
+            reviewer: {
+              name: reviewer.name,
+              url: `${site.url}/reviewers/${reviewer.slug}`,
+              type: reviewer.type,
+            },
+          }),
           breadcrumbJsonLd([
             { name: "Home", url: site.url },
             { name: "Tools", url: `${site.url}/tools` },

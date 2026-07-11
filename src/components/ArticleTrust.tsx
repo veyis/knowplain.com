@@ -11,7 +11,8 @@ export function ArticleTrust({
   riskLevel,
 }: {
   author: EditorialPerson;
-  reviewer: EditorialPerson;
+  /** Absent when nobody qualified has actually reviewed this page — say nothing rather than claim it. */
+  reviewer?: EditorialPerson;
   published?: string;
   updated: string;
   reviewed?: string;
@@ -36,17 +37,19 @@ export function ArticleTrust({
             {author.name}
           </Link>
         </span>
-        <span>
-          Reviewed by{" "}
-          <Link href={`/reviewers/${reviewer.slug}`} className="font-medium text-foreground hover:underline">
-            {reviewer.name}
-          </Link>
-        </span>
+        {reviewer && (
+          <span>
+            Reviewed by{" "}
+            <Link href={`/reviewers/${reviewer.slug}`} className="font-medium text-foreground hover:underline">
+              {reviewer.name}
+            </Link>
+          </span>
+        )}
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
         {published && <span>Published {published}</span>}
         <span>Updated {updated}</span>
-        {reviewed && <span>Reviewed {reviewed}</span>}
+        {reviewer && reviewed && <span>Reviewed {reviewed}</span>}
       </div>
     </div>
   );

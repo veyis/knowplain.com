@@ -1,9 +1,9 @@
 ---
 title: "Social Security timing, known plain"
-description: "When to take Social Security, why 62 is usually a mistake, and the breakeven math of waiting until 70."
-plainAnswer: "Every year you delay claiming Social Security past your full retirement age (up to age 70), your benefit increases by a guaranteed 8%. For healthy individuals with longevity in their family history, delaying to 70 is often the best financial decision."
+description: "When to claim Social Security: the real break-even ages, why delaying usually wins, and the survivor, tax, and ACA traps most guides skip."
+plainAnswer: "Claiming at 62 permanently cuts your benefit to 70% of full; waiting to 70 raises it to 124%. Break-even against age 70 lands near 80. Because the average 62-year-old lives past that, delaying usually wins — but health, cash flow, and survivor benefits can override it."
 published: "2026-07-09"
-updated: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
@@ -11,42 +11,306 @@ contentType: "decision"
 riskLevel: "high"
 relatedTools:
   - href: /tools/social-security-break-even
-    label: "Compare claiming ages"
+    label: "Compare claiming ages on your own numbers"
+  - href: /tools/aca-bridge
+    label: "Check what claiming does to an ACA subsidy"
 faqs:
-  - q: "Is delaying Social Security always best?"
-    a: "No. Delaying can raise the monthly benefit, but health, cash flow, spouse and survivor needs, taxes, and employment realities can change the decision."
-  - q: "What happens if I claim at 62?"
-    a: "SSA says retirement benefits can start at 62, but claiming before full retirement age permanently reduces the monthly benefit."
+  - q: "What is the break-even age for Social Security?"
+    a: "Claiming at 62 versus waiting to 70, cumulative benefits cross over at about age 80 and a half. Against full retirement age, claiming at 62 breaks even near 78 and a half. Waiting from full retirement age to 70 breaks even around 82 and a half. These ignore inflation adjustments, taxes, and survivor benefits."
+  - q: "Is Social Security actuarially neutral?"
+    a: "Not any more. The reduction and credit formulas were set using 1983-era mortality. People now live longer, so the break-even ages sit below average life expectancy at 62. On the system's own numbers, a person of average health who delays collects more in total than one who claims early."
+  - q: "How much does claiming at 62 reduce my benefit?"
+    a: "If your full retirement age is 67, claiming at 62 pays exactly 70% of your full benefit — a 30% cut, permanently. SSA reduces the benefit by 5/9 of 1% per month for the first 36 early months, then 5/12 of 1% for each month beyond that."
+  - q: "Does working while collecting Social Security reduce my benefit?"
+    a: "Temporarily, if you are under full retirement age and earn above the annual limit. But the withheld money is not lost — SSA recomputes and raises your benefit at full retirement age to give it back. Only earned income counts; IRA withdrawals, pensions, and capital gains do not."
+  - q: "Is Social Security tax-free now?"
+    a: "No. The 2025 senior deduction is a deduction against income, not an exemption for benefits. The combined-income thresholds that make benefits taxable have not been indexed since the 1980s and 1990s and were not changed. Many retirees still pay tax on up to 85% of their benefits."
+  - q: "How does my claiming age affect my spouse's survivor benefit?"
+    a: "Permanently. When one spouse dies, the survivor keeps the larger of the two benefits — so the higher earner's claiming age sets the floor under the survivor's income for life. A higher earner who claims at 62 locks their widow or widower into a reduced benefit that can run for decades."
+  - q: "Were WEP and GPO really repealed?"
+    a: "Yes. The Social Security Fairness Act was signed on January 5, 2025 and eliminated the Windfall Elimination Provision and the Government Pension Offset, retroactive to January 2024. Public-sector retirees with non-covered pensions, and their spouses, now get their full benefit."
+  - q: "Can I claim on an ex-spouse's record?"
+    a: "If the marriage lasted at least 10 years, you are currently unmarried, and you are 62 or older, yes. It does not reduce your ex-spouse's benefit, they are never notified, and you do not need their permission or cooperation."
 sources:
-  - title: "Starting Your Retirement Benefits Early"
+  - title: "Benefits Planner: Retirement Age and Benefit Reduction"
     publisher: "Social Security Administration"
     url: "https://www.ssa.gov/benefits/retirement/planner/agereduction.html"
     accessed: "2026-07-11"
-    note: "Used for early claiming reductions and age-70 delayed benefit framing."
-  - title: "Social Security Retirement Estimator"
+    note: "Early-claiming reduction: 5/9 of 1% per month for the first 36 months, then 5/12 of 1%. Source for the 70%-at-62 figure with FRA 67."
+  - title: "Benefits Planner: Delayed Retirement Credits"
     publisher: "Social Security Administration"
-    url: "https://www.ssa.gov/benefits/retirement/estimator.html"
+    url: "https://www.ssa.gov/benefits/retirement/planner/delayret.html"
     accessed: "2026-07-11"
-    note: "Recommended for personalized benefit estimates."
+    note: "Delayed retirement credits of 2/3 of 1% per month (8%/yr) past FRA, stopping at age 70. Source for the 124%-at-70 figure."
+  - title: "See your Full Retirement Age (FRA)"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/retirement/full-retirement-age"
+    accessed: "2026-07-11"
+    note: "FRA runs between 66 and 67 by birth year; 67 for anyone born in 1960 or later."
+  - title: "Benefits Planner: Receiving Benefits While Working"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/retirement/planner/whileworking.html"
+    accessed: "2026-07-11"
+    note: "Earnings test thresholds, the $1-for-$2 and $1-for-$3 withholding rules, and the recomputation that returns withheld benefits at FRA."
+  - title: "Benefits for Spouses"
+    publisher: "Social Security Administration, Office of the Chief Actuary"
+    url: "https://www.ssa.gov/oact/quickcalc/spouse.html"
+    accessed: "2026-07-11"
+    note: "Spousal benefit is 50% of the worker's PIA at the spouse's FRA, falling to as little as 32.5% if claimed at 62."
+  - title: "What you could get from Survivor benefits"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/survivors/survivorchartred.html"
+    accessed: "2026-07-11"
+    note: "Survivor benefits start at 71.5% at age 60 and reach 100% at the survivor's FRA."
+  - title: "Can someone get Social Security benefits on their former spouse's record?"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/faqs/en/questions/KA-02035.html"
+    accessed: "2026-07-11"
+    note: "The 10-year marriage rule for divorced-spouse benefits, and that claiming does not reduce the ex-spouse's benefit."
+  - title: "Social Security Fairness Act: WEP and GPO update"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/retirement/social-security-fairness-act.html"
+    accessed: "2026-07-11"
+    note: "WEP and GPO repealed; December 2023 was the last month they applied, so relief is retroactive to January 2024."
+  - title: "2026 Social Security Changes (COLA fact sheet)"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/news/en/cola/factsheets/2026.html"
+    accessed: "2026-07-11"
+    note: "2026 COLA, earnings-test exempt amounts, maximum benefit at FRA, and maximum taxable earnings."
+  - title: "Benefits Planner: Income Taxes and Your Social Security Benefit"
+    publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/retirement/planner/taxes.html"
+    accessed: "2026-07-11"
+    note: "Combined-income thresholds above which benefits become taxable."
+  - title: "Topic no. 423, Social Security and equivalent Railroad Retirement benefits"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/taxtopics/tc423"
+    accessed: "2026-07-11"
+    note: "Base amounts and the 50%/85% inclusion tiers for taxing benefits."
+  - title: "One Big Beautiful Bill Act — tax deductions for seniors"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors"
+    accessed: "2026-07-11"
+    note: "The senior deduction is a deduction, not an exemption of benefits; it sunsets after 2028."
+  - title: "Actuarial Life Table (2023 period life table, 2026 Trustees Report)"
+    publisher: "Social Security Administration, Office of the Chief Actuary"
+    url: "https://www.ssa.gov/oact/STATS/table4c6.html"
+    accessed: "2026-07-11"
+    note: "Remaining life expectancy at exact age 62: 20.29 years for men, 23.08 years for women."
+  - title: "What's included as income"
+    publisher: "HealthCare.gov"
+    url: "https://www.healthcare.gov/income-and-household-information/income/"
+    accessed: "2026-07-11"
+    note: "ACA MAGI counts Social Security in full — 'include both taxable and non-taxable Social Security income'."
 related:
-  - href: "/watch/social-security-rules"
-    label: "Related video → Social Security rules to know"
+  - href: /topics/retirement
+    label: "Back to hub → Retirement"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
+  - href: /topics/decision-tools/withdrawal-plan
+    label: "Building a withdrawal plan"
 ---
 
-Deciding when to take Social Security is one of the most consequential decisions you will make in retirement. 
+When to claim Social Security is the largest irreversible financial decision most retirees make. It is not a bet on the market and it cannot be undone a decade later. This spoke sits under the [Retirement hub](/topics/retirement).
 
-You can start claiming as early as 62, or you can delay all the way to age 70. The system is designed to be actuarially neutral—meaning if you live to an average life expectancy, you will receive roughly the same total amount regardless of when you claim.
+The mechanics are simple enough to state in a paragraph. You can start as early as <Fact id="ss.earliestClaim" /> or as late as <Fact id="ss.maxDelayAge" />. Claim before your full retirement age (FRA) and your monthly benefit is cut, permanently. Claim after it and the benefit grows, permanently. Everything else on this page is about which of those to choose and what the standard advice gets wrong.
 
-## The cost of claiming early
+## Your full retirement age depends on your birth year
 
-If you claim at 62, your monthly benefit is permanently reduced by up to 30% compared to what you would receive at your Full Retirement Age (FRA, which is 67 for anyone born after 1960). 
+FRA is the age at which you receive 100% of your Primary Insurance Amount (PIA) — the benefit your earnings record actually entitles you to. It is not 65, and it is not the same for everyone.
 
-If you live into your 80s or 90s, claiming at 62 will result in a massive loss of lifetime benefits.
+| Birth year | Full retirement age |
+| --- | --- |
+| 1943–1954 | 66 |
+| 1955 | 66 and 2 months |
+| 1956 | 66 and 4 months |
+| 1957 | 66 and 6 months |
+| 1958 | 66 and 8 months |
+| 1959 | 66 and 10 months |
+| **1960 or later** | **<Fact id="ss.fra" />** |
 
-## The power of delaying
+Note the boundary carefully: FRA is <Fact id="ss.fra" /> for anyone born **in 1960 or later**, not "after 1960". Someone born in 1960 has an FRA of <Fact id="ss.fra" />, and plenty of published guidance gets that off by one year.
 
-Every year you delay claiming between your FRA and age 70, your benefit increases by a guaranteed 8% per year (plus inflation adjustments). This is an incredibly powerful, risk-free return that is impossible to replicate in the bond market.
+## What each claiming age actually pays
 
-## The Spousal factor
+SSA reduces an early benefit by 5/9 of 1% for each of the first 36 months before FRA, then 5/12 of 1% for every month beyond that. Delaying past FRA adds 2/3 of 1% per month — 8% a year — until the credits stop at <Fact id="ss.maxDelayAge" />.
 
-If you are married, the higher-earning spouse's claiming age determines the survivor benefit. If the higher earner claims early, they permanently handicap the benefit their widow(er) will receive for the rest of their life. For this reason, the higher earner should almost always try to delay to 70 if possible.
+For someone with an FRA of <Fact id="ss.fra" />, that arithmetic produces exact numbers, not approximate ones. Claiming at <Fact id="ss.earliestClaim" /> pays **exactly 70%** of PIA — a 30% cut, not "up to 30%". Claiming at <Fact id="ss.maxDelayAge" /> pays **124%**.
+
+The table below uses an illustrative PIA of **$2,000 a month**. It is a round example figure, not a published statistic — swap in your own PIA from your SSA statement. Cumulative totals are in nominal dollars before any inflation adjustment, which is the same simplification every break-even chart makes.
+
+| Claim age | % of PIA | Monthly benefit | Total by 78 | Total by 82 | Total by 85 | Total by 90 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 62 | 70% | $1,400 | $268,800 | $336,000 | $386,400 | $470,400 |
+| 67 (FRA) | 100% | $2,000 | $264,000 | $360,000 | $432,000 | $552,000 |
+| 70 | 124% | $2,480 | $238,080 | $357,120 | $446,400 | $595,200 |
+
+Read the rows across. The early claimer leads at 78 and is beaten by everyone by 85. By 90 the person who waited to 70 is ahead of the person who claimed at 62 by roughly $125,000 — on the same earnings record.
+
+For reference, the average retired worker gets <Fact id="ss.averageBenefit" /> a month in 2026, and the maximum for someone claiming at FRA is <Fact id="ss.maxBenefitAtFra" />.
+
+## The break-even maths, shown
+
+The break-even age is where the cumulative lines cross. It is worth deriving rather than asserting, because the derivation is one line.
+
+The early claimer builds a head start: by collecting sooner, they bank a fixed pile of dollars before the later claimer receives anything. The later claimer then closes that gap at a fixed rate — the monthly difference between the two benefits. Break-even is simply the head start divided by the monthly gap.
+
+Take 62 versus 70 on the $2,000 PIA. The head start is $1,400 × 96 months = **$134,400**. The monthly gap once both are collecting is $2,480 − $1,400 = **$1,080**. So it takes $134,400 ÷ $1,080 ≈ **124 months** — about 10.4 years past 70. That is age **80.4**.
+
+Running the same calculation on the three pairings that matter:
+
+| Comparison | Break-even age |
+| --- | --- |
+| 62 vs FRA (67) | ~78.7 |
+| FRA (67) vs 70 | ~82.5 |
+| 62 vs 70 | ~80.4 |
+
+These are the figures our [break-even tool](/tools/social-security-break-even) produces, and it uses the same benefit factors above.
+
+### The actuarial-neutrality claim is false
+
+You will read, constantly, that Social Security is "actuarially neutral" — that if you live an average lifespan you collect roughly the same total no matter when you claim. That was approximately true when the formulas were calibrated, using mortality data from the early 1980s. It is not true now, and the system's own actuaries publish the numbers that disprove it.
+
+SSA's 2023 period life table — the one used in the 2026 Trustees Report — gives remaining life expectancy at exact age 62 as **20.29 years for men** and **23.08 years for women**. That is an expected age at death of roughly **82 for men and 85 for women**, conditional on having reached 62.
+
+Now compare that to the break-even for 62 versus 70: **80.4**. Both figures sit above it. The average man clears it by about 2 years and the average woman by nearly 5. Mortality improved for four decades; the reduction and credit percentages did not move. Neutrality quietly stopped holding, and it has not held for a long time.
+
+So the honest statement is not "it's a wash". It is: **for a person of average health, delaying collects more in total.** Not by a fortune, but reliably.
+
+## What break-even leaves out — and which way each one tilts
+
+Break-even arithmetic is a simplification. Four things it ignores, and the direction each pushes:
+
+- **COLA compounding.** The annual cost-of-living adjustment is a percentage, so it applies to a bigger base if your benefit is bigger. The 2026 COLA is <Fact id="ss.cola" />. Applied to $2,480 instead of $1,400, the same percentage delivers more dollars, and that difference itself compounds for the rest of your life. **Tilts toward delaying.** Break-even understates the case for waiting.
+- **Survivor benefits.** A delayed benefit does not die with you if you are married (see below). **Tilts toward delaying**, sometimes decisively.
+- **Taxes.** A larger benefit can push more of itself into the taxable range, and can lift income into a higher bracket. **Tilts toward claiming earlier**, though usually mildly.
+- **Investment return on early dollars.** If you claim at 62 and genuinely invest the money rather than spend it, the head start earns something. **Tilts toward claiming earlier.** In practice most early claimers spend the money, which is often exactly why they claimed.
+
+The first two are larger than the last two for most married households. That is why the true case for delaying is stronger than the plain break-even chart suggests, not weaker.
+
+## Why break-even is the wrong frame anyway
+
+Here is the part that most articles, including the ones ranking above this one, never say.
+
+Break-even analysis silently assumes you know when you will die. You do not. And it frames Social Security as an investment to be maximised, which it is not.
+
+**Social Security is longevity insurance.** It is an inflation-adjusted income that cannot run out, cannot be outlived, and does not care what the market did. The risk it covers is not dying early — dying early is not a financial problem, because your spending stops too. The risk is **living a very long time and running out of money at 92**, which has no remedy.
+
+Claiming at 62 to "beat the system" maximises your position in the scenario where you die young, the one in which you least need the money. Delaying maximises it in the scenario that can actually ruin you. Insurance is not supposed to pay off on average; it is supposed to pay off when the bad case happens.
+
+That reframing, not the break-even chart, is why delaying is usually right for a healthy person with the means to wait.
+
+## Married couples: two decisions, not one
+
+For a couple, claiming is not one choice made twice. Two separate mechanics apply, and confusing them is the most expensive mistake on this page.
+
+### Spousal benefits
+
+A spouse can receive up to **50% of the higher earner's PIA**, if that exceeds their own retirement benefit. You get one or the other, not both.
+
+Two details matter. First, the 50% is measured against the higher earner's **PIA** — their benefit at their FRA — and does not increase if the higher earner delays past FRA. Delayed retirement credits do not raise a spousal benefit. Second, the 50% is only available if the spouse claims at **their own** FRA. Claiming a spousal benefit at 62 cuts it to as little as **32.5%** of the worker's PIA.
+
+### Survivor benefits — the strongest argument for delaying
+
+This is a different mechanic entirely, and it is where the real money is.
+
+When one spouse dies, the survivor does not keep both benefits. They keep the **larger** of the two. The smaller one stops.
+
+Which means the higher earner's claiming age permanently sets the floor under the survivor's income — potentially for decades of widowhood. A higher earner who claims at 62 does not just cut their own benefit by 30%; they cut the survivor's benefit by 30% too, for as long as the survivor lives. A higher earner who delays to 70 leaves behind a benefit worth 124% of PIA, with every COLA since compounded onto it.
+
+Survivor benefits can begin as early as 60, at 71.5% of the deceased's benefit, rising to 100% at the survivor's FRA.
+
+The practical rule that falls out of this: **the higher earner should delay if at all possible.** The lower earner has much more freedom to claim early, because their benefit is likely to disappear at the first death anyway. A common and sensible pattern is the lower earner claiming early to provide household cash flow, precisely so the higher earner can hold out to 70.
+
+### Divorced? You may still have a claim
+
+If your marriage lasted **at least 10 years**, you are currently unmarried, and you are 62 or older, you can claim on your ex-spouse's record.
+
+It does not reduce their benefit. They are not notified. You do not need their cooperation or consent, and if they have remarried it makes no difference. A surprising number of people who qualify never find out.
+
+## Still working? The earnings test, and the myth about it
+
+If you claim before FRA and keep working, SSA withholds benefits above an earnings limit.
+
+| Situation | 2026 limit | Withholding |
+| --- | --- | --- |
+| Under FRA all year | <Fact id="ss.earningsTestUnderFra" /> | $1 withheld per $2 over |
+| Reaching FRA this year | <Fact id="ss.earningsTestFraYear" /> | $1 withheld per $3 over |
+| At or past FRA | No limit | Nothing withheld |
+
+Three things people get wrong, in order of how much money they cost:
+
+1. **The withheld benefits are not lost.** This is the big one. At FRA, SSA recomputes your benefit upward to credit back the months in which benefits were withheld. The earnings test is a deferral, not a penalty. People turn down work, or claim later out of confusion, because they believe the money is confiscated. It is not.
+2. **Only earned income counts.** Wages and self-employment income. IRA and 401(k) withdrawals, pensions, annuity payments, interest, dividends, capital gains, and rental income do **not** count toward the earnings test. A retiree living on portfolio withdrawals is not affected at all.
+3. **It vanishes at FRA.** From the month you reach FRA there is no limit whatsoever, no matter what you earn.
+
+## "No tax on Social Security" is not true
+
+Benefits are taxed based on **combined income** — your adjusted gross income, plus tax-exempt interest, plus half of your benefits.
+
+- Above <Fact id="ss.taxThresholdSingle" /> (single) or <Fact id="ss.taxThresholdJoint" /> (joint), up to 50% of benefits becomes taxable.
+- Above $34,000 (single) or $44,000 (joint), up to 85% becomes taxable.
+
+Those four thresholds have **never been indexed for inflation**. They were set in 1983 and 1993 and have not moved since. Every year, inflation drags more retirees across them. This is a deliberate design, and it is why a rule that once hit only high-income retirees now hits ordinary ones.
+
+The 2025 senior deduction did **not** change any of this. It is worth <Fact id="tax.seniorDeduction" /> per person aged 65 or older (<Fact id="tax.seniorDeductionCouple" /> for a couple where both qualify), it phases out at higher incomes, and it sunsets after <Fact id="tax.seniorDeductionLastYear" />. It is a **deduction against your income**, not an exemption of your benefits. The thresholds above are untouched, the taxable share of your benefits is calculated exactly as before, and the deduction is temporary.
+
+It reduces tax for many retirees. It does not make Social Security tax-free. Any source telling you otherwise is wrong.
+
+## WEP and GPO are gone
+
+If you have a pension from work not covered by Social Security — many teachers, firefighters, police officers, and federal employees under CSRS — your claiming maths changed completely, and most published guidance has not caught up.
+
+The **Social Security Fairness Act** was signed on **January 5, 2025**. It repealed both:
+
+- The **Windfall Elimination Provision (WEP)**, which cut the Social Security retirement benefit of someone who also drew a non-covered pension.
+- The **Government Pension Offset (GPO)**, which cut — often to zero — the *spousal and survivor* benefits of someone with a non-covered pension.
+
+December 2023 was the last month either applied, so the relief runs retroactive to **January 2024**, and SSA has paid the back money.
+
+GPO's repeal is the underrated half. It routinely wiped out spousal and survivor benefits entirely, which meant a public-sector spouse got nothing from their partner's record. Those benefits now exist. If you or your spouse have a non-covered pension and you last ran the numbers before 2025, run them again — the answer has changed, and it changed in your favour.
+
+## The trap before 65: Social Security and your ACA subsidy
+
+This one is genuinely under-covered, and it can cost more than the claiming decision itself.
+
+If you retire before <Fact id="medicare.eligibilityAge" /> and buy marketplace health insurance, your premium tax credit depends on ACA MAGI — and **ACA MAGI counts your Social Security benefit in full**, including the portion that is not taxable. HealthCare.gov is explicit: include both taxable and non-taxable Social Security income, the full amount.
+
+So a benefit that is 15% taxable for income-tax purposes is **100% countable** against the ACA cliff.
+
+For 2026, income one dollar above <Fact id="aca.cliffPercent" /> of the federal poverty level forfeits the **entire** premium tax credit — roughly <Fact id="aca.cliffSingle" /> for a single person and <Fact id="aca.cliffCouple" /> for a couple. Claiming Social Security at 62 can be the thing that pushes a household over that line, and the lost subsidy can dwarf the benefit received.
+
+Claiming early to bridge to Medicare is often precisely the wrong move: the benefit you claim is the income that destroys the subsidy you need. Model it first with the [ACA bridge tool](/tools/aca-bridge), and read [health care before Medicare](/topics/retirement/health-care-before-medicare).
+
+## COLA: the reason the bigger base keeps mattering
+
+The 2026 COLA is <Fact id="ss.cola" />, applied to whatever benefit you have.
+
+Because it is a percentage, the same adjustment produces more dollars on a larger benefit — and next year's percentage applies to that larger result. The gap between a 70%-of-PIA benefit and a 124%-of-PIA one does not stay fixed over a 25-year retirement. It widens every year, in absolute terms.
+
+The break-even table above ignores this, which means the ages it produces are, if anything, **too late**. The real crossover for a delayed claim arrives slightly sooner than the nominal arithmetic suggests.
+
+## When claiming early is genuinely the right call
+
+Delaying is not a moral position, and this page is not an argument for waiting no matter what. Claim early when:
+
+- **Your health is poor, or your family history is short.** Longevity insurance is worth less when longevity is unlikely. This is the clearest case, and it is a perfectly rational one.
+- **You have no other income and cannot keep working.** A benefit you need at 62 beats a larger one you cannot survive until. Draining a portfolio to zero in order to wait for a bigger cheque can be worse than claiming — and forced portfolio selling in a downturn compounds the damage.
+- **You are the lower earner in a couple.** Claiming early to fund the household while the higher earner delays to 70 is frequently the optimal joint strategy, because the survivor benefit is set by the higher earner regardless.
+- **You need to stop working and the alternative is high-interest debt.** Borrowing at 22% to avoid claiming at 62 is a losing trade.
+
+What is *not* a good reason: fear that the program will disappear before you get yours. That fear drives an enormous number of early claims, and it converts a vague political worry into a certain, permanent, lifelong 30% benefit cut.
+
+## Key takeaways
+
+- With an FRA of <Fact id="ss.fra" />, claiming at <Fact id="ss.earliestClaim" /> pays exactly 70% of your full benefit and claiming at <Fact id="ss.maxDelayAge" /> pays 124%. Both are permanent.
+- Break-even for 62 versus 70 is about **80.4** — below the life expectancy of an average 62-year-old man (~82) and well below an average woman's (~85). The system is **not** actuarially neutral any more.
+- Treat Social Security as longevity insurance, not an investment. It should pay off in the scenario that can ruin you: living a long time.
+- **The higher earner should usually delay** — their claiming age permanently sets the survivor benefit, which may be paid for decades.
+- Withheld earnings-test benefits are **recredited** at FRA, not lost — and only earned income counts.
+- "No tax on Social Security" is false: the senior deduction is a temporary deduction, and the unindexed combined-income thresholds were not changed.
+- If you retire before 65, Social Security counts **in full** toward ACA MAGI and can cost you your entire premium tax credit.
+
+Run your own numbers with the [break-even tool](/tools/social-security-break-even), and check where you stand overall with the [Retirement Checkup](/checkup).
+
+Educational only — not financial or tax advice.

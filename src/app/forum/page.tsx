@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/site";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
@@ -17,10 +18,11 @@ type ThreadList = {
   knowplain_forum_likes?: { count: number }[] | null;
 };
 
-export const metadata: Metadata = {
-  title: "Forum",
-  description: "Community Q&A for retirement and money psychology.",
-};
+export const metadata: Metadata = pageMeta(
+  "/forum",
+  "Forum",
+  "Community Q&A for retirement and money psychology.",
+);
 
 const pillarColors: Record<string, string> = {
   "retirement": "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",

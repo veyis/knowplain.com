@@ -6,9 +6,16 @@ import { JsonLd } from "@/components/JsonLd";
 import { SearchForm } from "@/components/SearchForm";
 import { Badge } from "@/components/ui/badge";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/schema";
-import { pillars } from "@/lib/site";
+import { pageMeta, pillars } from "@/lib/site";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+// The site's highest-authority URL was spending its title tag on a tagline. Nobody searches
+// for an unknown brand name — target the head term instead. The root template appends
+// "· Know Plain", so the brand is still there.
+export const metadata: Metadata = pageMeta(
+  "/",
+  "Retirement Planning, Known Plain",
+  "Clear, sourced answers on retirement: how much is enough, when to claim Social Security, and what the 2026 rules actually changed. Free calculators, primary sources, no jargon.",
+);
 
 const pillarIcon = {
   retirement: Landmark,

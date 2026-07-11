@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { isSeededQuestionSlug, seededQuestions } from "@/lib/forum-seeds";
-import { site } from "@/lib/site";
+import { site, pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return Object.keys(seededQuestions).map((slug) => ({ slug }));
@@ -15,11 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (!isSeededQuestionSlug(slug)) return {};
   const question = seededQuestions[slug];
-  return {
-    title: question.title,
-    description: question.summary,
-    alternates: { canonical: `/forum/questions/${slug}` },
-  };
+  return pageMeta(`/forum/questions/${slug}`, question.title, question.summary);
 }
 
 export default async function SeededQuestionPage({ params }: { params: Promise<{ slug: string }> }) {

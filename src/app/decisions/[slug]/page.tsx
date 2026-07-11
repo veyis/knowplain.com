@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { decisions, isDecisionSlug } from "@/lib/decisions";
-import { site } from "@/lib/site";
+import { site, pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return Object.keys(decisions).map((slug) => ({ slug }));
@@ -16,11 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (!isDecisionSlug(slug)) return {};
   const decision = decisions[slug];
-  return {
-    title: decision.title,
-    description: decision.description,
-    alternates: { canonical: `/decisions/${slug}` },
-  };
+  return pageMeta(`/decisions/${slug}`, decision.title, decision.description);
 }
 
 export default async function DecisionPage({ params }: { params: Promise<{ slug: string }> }) {

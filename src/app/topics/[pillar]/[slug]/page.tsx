@@ -9,9 +9,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
 import { mdxComponents } from "@/components/mdx-components";
 import { articles, getArticle, isPillarId } from "@/lib/content";
-import { defaultArticleAuthor, defaultArticleReviewer, getEditorialPerson, getReviewer } from "@/lib/editorial";
+import { defaultArticleAuthor, getEditorialPerson, getReviewer } from "@/lib/editorial";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/schema";
-import { pillars, site } from "@/lib/site";
+import { pageMeta, pillars, site } from "@/lib/site";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ pillar: a.pillar, slug: a.slug }));
@@ -26,17 +26,18 @@ export async function generateMetadata({
   const article = getArticle(pillar, slug);
   if (!article) return {};
   const path = `/topics/${pillar}/${slug}`;
+  // Each article generates its own OG card (see opengraph-image.tsx alongside this file).
+  // Both the meta tags and the Article schema pointed at the generic site card instead.
+  const image = `${site.url}${path}/opengraph-image`;
+  const base = pageMeta(path, article.title, article.description, image);
   return {
-    title: article.title,
-    description: article.description,
-    alternates: { canonical: path },
+    ...base,
     openGraph: {
+      ...base.openGraph,
       type: "article",
-      siteName: site.name,
-      title: article.title,
-      description: article.description,
-      url: `${site.url}${path}`,
-      publishedTime: article.updated,
+      // Was `article.updated` for BOTH — so every article claimed it was first published on
+      // the day it was last touched. `published` is right here and the page already reads it.
+      publishedTime: article.published ?? article.updated,
       modifiedTime: article.updated,
     },
   };
@@ -54,7 +55,9 @@ export default async function ArticlePage({
   const p = pillars[pillar];
   const url = `${site.url}/topics/${pillar}/${slug}`;
   const author = getEditorialPerson(article.author || defaultArticleAuthor);
-  const reviewer = getReviewer(article.reviewer || defaultArticleReviewer);
+  // Pass the pillar: the retirement review board does not review money-psychology articles,
+  // and this used to claim it did on all nine of them.
+  const reviewer = getReviewer(article.reviewer, pillar);
   const published = article.published || article.updated;
   const reviewed = article.reviewed || article.updated;
   const relatedTool = article.relatedTools?.[0];
@@ -63,15 +66,24 @@ export default async function ArticlePage({
       title: article.title,
       description: article.description,
       url,
-      image: `${site.url}/opengraph-image`,
+      image: `${url}/opengraph-image`,
       datePublished: published,
       dateModified: article.updated,
+      // Emitted on the WebPage node now, where schema.org actually defines it. The date was
+      // already rendered to readers and simply never reached the markup.
+      lastReviewed: reviewed,
       author: {
         name: author.name,
         url: `${site.url}/authors/${author.slug}`,
-        type: author.slug === "know-plain-editorial" ? "Organization" : "Person",
+        type: author.type,
       },
-      reviewer: { name: reviewer.name, url: `${site.url}/reviewers/${reviewer.slug}` },
+      reviewer: reviewer
+        ? {
+            name: reviewer.name,
+            url: `${site.url}/reviewers/${reviewer.slug}`,
+            type: reviewer.type,
+          }
+        : undefined,
     }),
     breadcrumbJsonLd([
       { name: "Home", url: site.url },

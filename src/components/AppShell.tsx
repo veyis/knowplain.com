@@ -81,6 +81,11 @@ export async function AppShell({
             <Link href="/sources" className="transition-colors hover:text-foreground">
               2026 numbers
             </Link>
+            {/* Was a true orphan: zero inbound links sitewide, and it is the page the
+                Organization schema now points `publishingPrinciples` at. */}
+            <Link href="/methodology" className="transition-colors hover:text-foreground">
+              Methodology
+            </Link>
             <Link href="/disclosure" className="transition-colors hover:text-foreground">
               Disclosure
             </Link>
