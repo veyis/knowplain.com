@@ -8,17 +8,27 @@ import { withContentCollections } from "@content-collections/next";
 // Google Fonts entries are for the preserved legacy static pages under public/.
 const isDev = process.env.NODE_ENV !== 'production';
 
+// Vercel Analytics + Speed Insights: script served from va.vercel-scripts.com, beacons
+// posted to vitals.vercel-insights.com. Without these the CSP silently drops both.
+const VERCEL_ANALYTICS = "https://va.vercel-scripts.com";
+const VERCEL_VITALS = "https://vitals.vercel-insights.com";
+
 const csp = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'self'",
   "form-action 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${VERCEL_ANALYTICS}${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data:",
+  "img-src 'self' data: https://i.ytimg.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "connect-src 'self'",
+  `connect-src 'self' ${VERCEL_ANALYTICS} ${VERCEL_VITALS}`,
+  // /watch/[slug] embeds YouTube. Without frame-src the iframe falls back to
+  // default-src 'self' and is BLOCKED — invisible today only because the fallback
+  // videos use non-YouTube ids, but it would break every page once sync:youtube runs.
+  // youtube-nocookie is the privacy-preserving host and sets no ad cookies on load.
+  "frame-src https://www.youtube-nocookie.com https://www.youtube.com",
   "upgrade-insecure-requests",
 ].join("; ");
 

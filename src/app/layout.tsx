@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
+import { AppAnalytics } from "@/components/AppAnalytics";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -66,6 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
         </ThemeProvider>
+        {/* Cookieless analytics and vitals only; AppAnalytics suppresses loading/sending
+            when Global Privacy Control is enabled. CSP hosts are allow-listed in next.config.ts. */}
+        <AppAnalytics />
       </body>
     </html>
   );

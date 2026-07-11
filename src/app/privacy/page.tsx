@@ -13,9 +13,11 @@ export default function PrivacyPage() {
       <article className="max-w-[680px]">
         <h1 className="mb-4 text-[1.75rem] font-semibold tracking-tight">Privacy</h1>
         <p className="leading-relaxed">
-          We collect minimal analytics needed to improve the site. We do not sell personal data.
-          When Supabase Auth is enabled, account data is stored in your Supabase project under your
-          control.
+          We collect minimal, cookieless analytics needed to improve the site. We do not sell
+          personal data, and we do not send calculator inputs such as balances, income, debt, or
+          email addresses to analytics. If your browser sends Global Privacy Control, we suppress
+          analytics and performance beacons. When Supabase Auth is enabled, account data is stored
+          in your Supabase project under your control.
         </p>
       </article>
     </AppShell>

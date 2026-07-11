@@ -54,7 +54,12 @@ export default async function VideoPage({
   
   if (!video) notFound();
   const isYoutubeId = /^[a-zA-Z0-9_-]{11}$/.test(video.id);
-  const embedUrl = isYoutubeId ? `https://www.youtube.com/embed/${video.id}` : `${site.url}/watch/${video.id}`;
+  // youtube-nocookie: same player, but YouTube sets no tracking cookies until the user
+  // actually presses play. Keeps a plain page view out of "sharing" territory (see the
+  // privacy section of the strategy guide) at zero cost.
+  const embedUrl = isYoutubeId
+    ? `https://www.youtube-nocookie.com/embed/${video.id}`
+    : `${site.url}/watch/${video.id}`;
 
   return (
     <AppShell active="watch">
