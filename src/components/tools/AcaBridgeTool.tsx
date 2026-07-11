@@ -3,15 +3,35 @@
 import { useMemo, useRef, useState } from "react";
 import { trackProductEvent } from "@/lib/analytics";
 import { currency } from "@/lib/checkup";
-import { ACA_2026, acaLostEnhancedCreditReference, acaSubsidyStatus } from "@/lib/facts-2026";
+import {
+  ACA_2026,
+  acaLostEnhancedCreditReference,
+  acaSubsidyStatus,
+  benchmarkPremiumForAdults,
+} from "@/lib/facts-2026";
 
 export function AcaBridgeTool() {
   const [age, setAge] = useState(60);
   const [retirementAge, setRetirementAge] = useState(60);
   const [household, setHousehold] = useState(1);
   const [magi, setMagi] = useState(65000);
+  // Who is actually ON the plan, and how old. Household size drives the FPL denominator
+  // (it counts dependants); the PREMIUM is rated per adult, by age. The tool used to
+  // conflate them and price everyone as a single 60-year-old — so a couple saw one
+  // person's premium and the cliff looked half as expensive as it is.
+  const [spouseCovered, setSpouseCovered] = useState(false);
+  const [spouseAge, setSpouseAge] = useState(60);
   const tracked = useRef(false);
-  const status = useMemo(() => acaSubsidyStatus(magi, household), [magi, household]);
+
+  const adultAges = useMemo(
+    () => (spouseCovered ? [age, spouseAge] : [age]),
+    [age, spouseCovered, spouseAge],
+  );
+  const status = useMemo(
+    () => acaSubsidyStatus(magi, household, adultAges),
+    [magi, household, adultAges],
+  );
+  const fullPremium = useMemo(() => benchmarkPremiumForAdults(adultAges), [adultAges]);
   const bridgeStartAge = Math.max(age, retirementAge);
   const bridgeYears = Math.max(0, 65 - bridgeStartAge);
 
@@ -39,12 +59,12 @@ export function AcaBridgeTool() {
 
   const cliffScenario =
     state === "over"
-      ? `Current law: at this MAGI, the benchmark silver reference cost is the full ${currency(status.currentLawBenchmarkCost)} national average for a 60-year-old.`
-      : `Current law: at this MAGI, you are still under the 400% FPL cliff by ${currency(status.headroomToCliff)}.`;
+      ? `Current law: no premium tax credit at all. You pay the full benchmark silver premium — about ${currency(status.currentLawBenchmarkCost)} for ${spouseCovered ? "the two of you" : "you"} at ${spouseCovered ? `ages ${age} and ${spouseAge}` : `age ${age}`}.`
+      : `Current law: you are under the cliff by ${currency(status.headroomToCliff)} of MAGI, so a credit still applies — you pay about ${currency(status.currentLawBenchmarkCost)} of the ${currency(fullPremium)} benchmark premium.`;
   const restoredScenario =
     status.restoredEnhancedBenchmarkSavings > 0
       ? `Restored-enhanced-credit scenario: the benchmark silver reference cost would be about ${currency(status.restoredEnhancedBenchmarkCost)}, a ${currency(status.restoredEnhancedBenchmarkSavings)} difference from current law.`
-      : `Restored-enhanced-credit scenario: above-cliff relief matters most once MAGI crosses 400% FPL; this scenario shows no additional above-cliff savings.`;
+      : `Restored-enhanced-credit scenario: at this income the expired credits would have made little difference.`;
 
   return (
     <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[340px_1fr]">
@@ -90,6 +110,34 @@ export function AcaBridgeTool() {
             className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
           />
         </label>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={spouseCovered}
+            onChange={(e) => {
+              trackUsed();
+              setSpouseCovered(e.target.checked);
+            }}
+            className="size-4 rounded border-border"
+          />
+          A spouse/partner also needs marketplace coverage
+        </label>
+        {spouseCovered && (
+          <label className="grid gap-1.5 text-sm font-medium">
+            Their age
+            <input
+              type="number"
+              min={18}
+              max={64}
+              value={spouseAge}
+              onChange={(e) => {
+                trackUsed();
+                setSpouseAge(Math.min(64, Math.max(18, Number(e.target.value))));
+              }}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
+            />
+          </label>
+        )}
         <label className="grid gap-1.5 text-sm font-medium">
           Projected annual ACA MAGI
           <input
@@ -118,6 +166,7 @@ export function AcaBridgeTool() {
           <Metric label="Pre-Medicare bridge" value={bridgeYears ? `${bridgeYears} years` : "None"} />
           <Metric label="Your income vs. poverty level" value={`${Math.round(status.fplPercent)}% of FPL`} />
           <Metric label="400% cliff for your household" value={currency(status.cliffMagi)} />
+          <Metric label="Full benchmark premium (no credit)" value={`${currency(fullPremium)}/yr`} />
           <Metric
             label={status.overCliff ? "Over the cliff by" : "MAGI room before the cliff"}
             value={currency(Math.abs(status.headroomToCliff))}
@@ -139,13 +188,21 @@ export function AcaBridgeTool() {
                 : "You are under the cliff, so protecting MAGI headroom can protect the credit. Roth conversions and capital gains can use that headroom quickly."}
         </p>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          Verified {ACA_2026.lastVerified}. KFF reference: a 60-year-old at{" "}
+          Verified {ACA_2026.lastVerified}.{" "}
+          <strong className="text-foreground">Legislation is live:</strong> an extension of the
+          enhanced credits was moving in Congress and could change this, possibly retroactively.
+          Do not do anything drastic to duck the cliff on the strength of this tool alone — and do
+          not assume rescue either.
+          {" "}Premiums start from the national-average benchmark silver plan for a 60-year-old (
+          {currency(ACA_2026.averageAge60AnnualPremium.benchmarkSilver)};{" "}
+          {currency(ACA_2026.averageAge60AnnualPremium.lowestCostBronze)} for the cheapest bronze)
+          and are rescaled to your age with the federal standard age curve (45 CFR 147.102), then
+          summed per adult. KFF reference: a 60-year-old at{" "}
           {currency(ACA_2026.restoredEnhancedCreditReference.annualIncome)} pays{" "}
-          {currency(acaLostEnhancedCreditReference())} more per year after enhanced credits expired.
-          National average 60-year-old annual premiums:{" "}
-          {currency(ACA_2026.averageAge60AnnualPremium.lowestCostBronze)} bronze and{" "}
-          {currency(ACA_2026.averageAge60AnnualPremium.benchmarkSilver)} benchmark silver. Local
-          premiums vary by county and state. Educational estimate only.
+          {currency(acaLostEnhancedCreditReference())} more a year now the enhanced credits have
+          expired. These are national averages, not quotes — actual premiums vary a lot by county,
+          and the poverty guidelines here are for the 48 contiguous states (Alaska and Hawaii are
+          higher). Get a real number from HealthCare.gov. Educational estimate only.
         </p>
       </div>
     </div>

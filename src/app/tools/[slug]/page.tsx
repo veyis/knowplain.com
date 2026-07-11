@@ -14,6 +14,7 @@ import { SequenceRiskTool } from "@/components/tools/SequenceRiskTool";
 import { RothConversionTool } from "@/components/tools/RothConversionTool";
 import { DebtVsInvestingTool } from "@/components/tools/DebtVsInvestingTool";
 import { SpendingPlannerTool } from "@/components/tools/SpendingPlannerTool";
+import { RmdPlannerTool } from "@/components/tools/RmdPlannerTool";
 import { editorialPeople } from "@/lib/editorial";
 import { breadcrumbJsonLd, toolPageJsonLd } from "@/lib/schema";
 import { pageMeta, site } from "@/lib/site";
@@ -88,6 +89,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {tool.kind === "sequence" && <SequenceRiskTool />}
       {tool.kind === "inflation" && <SpendingPlannerTool />}
       {tool.kind === "catchup" && <CatchUpPlannerTool />}
+      {tool.kind === "rmd" && <RmdPlannerTool />}
       <SourceList sources={tool.sources} />
       <p className="mt-6 max-w-[760px] text-sm leading-relaxed text-muted-foreground">
         These tools use simplified assumptions. Use them to frame better questions, then verify

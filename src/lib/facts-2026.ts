@@ -290,6 +290,97 @@ export function rmdStartAge(birthYear: number): number {
 }
 
 /**
+ * IRS Uniform Lifetime Table (Table III) — Pub 590-B, Appendix B.
+ *
+ * The divisor for an owner whose spouse is NOT both the sole beneficiary and more than 10
+ * years younger. Those owners use the Joint Life table, which produces a SMALLER RMD; we do
+ * not model it, and the tool says so rather than quietly overstating their distribution.
+ *
+ * Extracted from the primary IRS PDF, not a secondary summary.
+ */
+export const UNIFORM_LIFETIME_TABLE: Record<number, number> = {
+  72: 27.4, 73: 26.5, 74: 25.5, 75: 24.6, 76: 23.7, 77: 22.9, 78: 22.0, 79: 21.1,
+  80: 20.2, 81: 19.4, 82: 18.5, 83: 17.7, 84: 16.8, 85: 16.0, 86: 15.2, 87: 14.4,
+  88: 13.7, 89: 12.9, 90: 12.2, 91: 11.5, 92: 10.8, 93: 10.1, 94: 9.5, 95: 8.9,
+  96: 8.4, 97: 7.8, 98: 7.3, 99: 6.8, 100: 6.4, 101: 6.0, 102: 5.6, 103: 5.2,
+  104: 4.9, 105: 4.6, 106: 4.3, 107: 4.1, 108: 3.9, 109: 3.7, 110: 3.5, 111: 3.4,
+  112: 3.3, 113: 3.1, 114: 3.0, 115: 2.9, 116: 2.8, 117: 2.7, 118: 2.5, 119: 2.3,
+  120: 2.0,
+};
+
+/** Uniform Lifetime divisor for an age, clamped to the published 72-120 range. */
+export function rmdDivisor(age: number): number {
+  const a = Math.max(72, Math.min(120, Math.floor(age)));
+  return UNIFORM_LIFETIME_TABLE[a];
+}
+
+/**
+ * The RMD for a given age: prior-year-end balance / Uniform Lifetime divisor.
+ *
+ * Zero before the owner's start age — which is 73 or 75 depending on BIRTH YEAR. Defaulting
+ * that to 73 is the mistake nearly every RMD calculator on the internet makes, and it is
+ * wrong for everyone born in 1960 or later.
+ */
+export function requiredMinimumDistribution(
+  priorYearEndBalance: number,
+  age: number,
+  birthYear: number,
+): number {
+  if (age < rmdStartAge(birthYear)) return 0;
+  return Math.round(Math.max(0, priorYearEndBalance) / rmdDivisor(age));
+}
+
+export type RmdYear = {
+  age: number;
+  year: number;
+  startingBalance: number;
+  rmd: number;
+  /** RMD as a share of the balance. It climbs every year — that is the whole problem. */
+  percentOfBalance: number;
+  endingBalance: number;
+};
+
+/**
+ * Project RMDs forward.
+ *
+ * The point a single-year RMD figure cannot make: the divisor shrinks every year, so the
+ * forced withdrawal grows as a PERCENTAGE of the account — from ~3.8% at 73 to over 8% by
+ * 90 — even while the balance compounds. That is what drags Social Security into taxable
+ * income and lifts Medicare IRMAA, and it is the argument for converting to Roth in the
+ * low-income years before it starts.
+ */
+export function projectRmds(opts: {
+  currentBalance: number;
+  currentAge: number;
+  birthYear: number;
+  annualReturn: number;
+  throughAge?: number;
+}): RmdYear[] {
+  const through = Math.min(opts.throughAge ?? 95, 120);
+  const start = rmdStartAge(opts.birthYear);
+  const rows: RmdYear[] = [];
+  let balance = Math.max(0, opts.currentBalance);
+  const firstAge = Math.floor(opts.currentAge);
+
+  for (let age = firstAge; age <= through; age += 1) {
+    const startingBalance = balance;
+    const rmd = age >= start ? Math.round(startingBalance / rmdDivisor(age)) : 0;
+    // Distribution first, then growth on what remains — the same ordering withdrawalPath
+    // uses. Two tools on this site must not disagree about when the money leaves.
+    balance = Math.max(0, startingBalance - rmd) * (1 + opts.annualReturn);
+    rows.push({
+      age,
+      year: 2026 + (age - firstAge),
+      startingBalance: Math.round(startingBalance),
+      rmd,
+      percentOfBalance: startingBalance > 0 ? rmd / startingBalance : 0,
+      endingBalance: Math.round(balance),
+    });
+  }
+  return rows;
+}
+
+/**
  * Non-eligible designated beneficiaries generally must empty an inherited account
  * by year 10. If the owner died on or after their required beginning date, the final
  * regs also require annual RMDs in years 1-9. Eligible designated beneficiaries
@@ -399,14 +490,16 @@ export function acaApplicablePercentage(fplPct: number): number | null {
  * 400% FPL. That is the same "no help, no harm below the line" error we just removed from
  * the prose, sitting in the calculator that the prose links to.
  */
-export function acaCurrentLawBenchmarkCost(magi: number, householdSize: number): number {
+export function acaCurrentLawBenchmarkCost(
+  magi: number,
+  householdSize: number,
+  benchmark: number = ACA_2026.averageAge60AnnualPremium.benchmarkSilver,
+): number {
   const pct = fplPercent(magi, householdSize);
   const applicable = acaApplicablePercentage(pct);
   // Over the cliff: no credit, you pay the whole premium.
-  if (applicable === null) return ACA_2026.averageAge60AnnualPremium.benchmarkSilver;
-  return Math.round(
-    Math.min(ACA_2026.averageAge60AnnualPremium.benchmarkSilver, Math.max(0, magi * applicable)),
-  );
+  if (applicable === null) return benchmark;
+  return Math.round(Math.min(benchmark, Math.max(0, magi * applicable)));
 }
 
 /** The top applicable percentage (the flat 300-400% band). This rate prices the cliff edge. */
@@ -431,6 +524,61 @@ export const ACA_APTC_REPAYMENT_CAP_REPEALED = true;
 
 /** Medicaid expansion threshold: statutory 133% FPL plus the 5-point income disregard. */
 export const MEDICAID_EXPANSION_FPL_PERCENT = 138;
+
+/**
+ * Federal default standard age curve (45 CFR 147.102). The 3:1 age-rating ratio in law:
+ * a 64-year-old may be charged exactly 3x a 21-year-old for the same plan, and every age
+ * in between has a fixed multiplier. Most states use this curve unadopted.
+ *
+ * Source: CMS CCIIO, "Final Guidance Regarding Age Curves and State Reporting" (2016-12-16),
+ * Appendix I. Extracted from the primary PDF, not a secondary summary.
+ *
+ * Why this is here: the ACA bridge tool priced EVERY user at the national-average premium
+ * for a 60-year-old, regardless of the age and household they typed in. A 45-year-old saw a
+ * 60-year-old's premium (~1.9x too high) and — far worse — a couple saw a SINGLE person's
+ * premium, halving the cost of the cliff for the demographic most likely to fall off it.
+ */
+export const AGE_CURVE_FACTOR: Record<number, number> = {
+  21: 1.0, 22: 1.0, 23: 1.0, 24: 1.0, 25: 1.004, 26: 1.024, 27: 1.048, 28: 1.087,
+  29: 1.119, 30: 1.135, 31: 1.159, 32: 1.183, 33: 1.198, 34: 1.214, 35: 1.222,
+  36: 1.23, 37: 1.238, 38: 1.246, 39: 1.262, 40: 1.278, 41: 1.302, 42: 1.325,
+  43: 1.357, 44: 1.397, 45: 1.444, 46: 1.5, 47: 1.563, 48: 1.635, 49: 1.706,
+  50: 1.786, 51: 1.865, 52: 1.952, 53: 2.04, 54: 2.135, 55: 2.23, 56: 2.333,
+  57: 2.437, 58: 2.548, 59: 2.603, 60: 2.714, 61: 2.81, 62: 2.873, 63: 2.952,
+  64: 3.0,
+};
+
+/** The age our published benchmark premium is quoted for (ACA_2026.averageAge60AnnualPremium). */
+export const BENCHMARK_PREMIUM_AGE = 60;
+
+/** Age-rating factor, clamped to the curve's 21–64 range. */
+export function ageCurveFactor(age: number): number {
+  const a = Math.max(21, Math.min(64, Math.floor(age)));
+  return AGE_CURVE_FACTOR[a];
+}
+
+/**
+ * Benchmark silver premium for ONE adult of a given age, rescaled from our published
+ * age-60 national average using the federal age curve.
+ *
+ * Still a national average, not a quote — county and state variation is large and this
+ * cannot substitute for a real marketplace lookup. But it is at least the right shape:
+ * premiums rise steeply with age, and the tool now says so instead of flattening everyone
+ * onto a 60-year-old.
+ */
+export function benchmarkPremiumForAge(age: number): number {
+  const scale = ageCurveFactor(age) / ageCurveFactor(BENCHMARK_PREMIUM_AGE);
+  return Math.round(ACA_2026.averageAge60AnnualPremium.benchmarkSilver * scale);
+}
+
+/**
+ * Benchmark premium for the ADULTS on the plan (per-member rating, as the ACA requires).
+ * Children are rated far lower and are not modelled here — the tool asks only for adults,
+ * and says so.
+ */
+export function benchmarkPremiumForAdults(ages: number[]): number {
+  return ages.reduce((total, age) => total + benchmarkPremiumForAge(age), 0);
+}
 
 // Federal Poverty Level. 2026 marketplace subsidies are computed against the
 // PRIOR year's guidelines, so 2026 coverage uses the 2025 HHS FPL (48 contiguous
@@ -1115,11 +1263,13 @@ export function acaEnhancedApplicablePercentage(fplPct: number): number {
 }
 
 /** What the benchmark plan WOULD cost if the enhanced credits were restored. */
-export function acaEnhancedBenchmarkCost(magi: number, householdSize: number): number {
+export function acaEnhancedBenchmarkCost(
+  magi: number,
+  householdSize: number,
+  benchmark: number = ACA_2026.averageAge60AnnualPremium.benchmarkSilver,
+): number {
   const pct = acaEnhancedApplicablePercentage(fplPercent(magi, householdSize));
-  return Math.round(
-    Math.min(ACA_2026.averageAge60AnnualPremium.benchmarkSilver, Math.max(0, magi * pct)),
-  );
+  return Math.round(Math.min(benchmark, Math.max(0, magi * pct)));
 }
 
 export type AcaSubsidyStatus = {
@@ -1142,16 +1292,26 @@ export type AcaSubsidyStatus = {
  * over 400% FPL now means $0 credit — so the actionable number is the MAGI
  * headroom to the cliff. ⚠️ Legislation is active; re-verify current statute.
  */
-export function acaSubsidyStatus(magi: number, householdSize: number): AcaSubsidyStatus {
+export function acaSubsidyStatus(
+  magi: number,
+  householdSize: number,
+  /**
+   * Ages of the ADULTS who need marketplace coverage. Defaults to a single 60-year-old,
+   * which is what the published benchmark is quoted for — and what the tool used to assume
+   * for everyone, including couples, halving their exposure to the cliff.
+   */
+  adultAges: number[] = [BENCHMARK_PREMIUM_AGE],
+): AcaSubsidyStatus {
   const cliffMagi = acaSubsidyCliffMagi(householdSize);
   const pct = fplPercent(magi, householdSize);
+  const benchmark = benchmarkPremiumForAdults(adultAges);
   // Both sides of this comparison now use the schedule that ACTUALLY applied to each.
   // Current law = the reverted table (2.10%–9.96%). Enhanced = the expired ARPA sliding
   // scale (0%–8.5%), NOT a flat 8.5% — pricing the enhanced scenario at its top-of-schedule
   // cap made it look dearer than current law for lower incomes, so the lost credit floored
   // at $0 for the households the expiration hit hardest.
-  const currentLawBenchmarkCost = acaCurrentLawBenchmarkCost(magi, householdSize);
-  const restoredEnhancedBenchmarkCost = acaEnhancedBenchmarkCost(magi, householdSize);
+  const currentLawBenchmarkCost = acaCurrentLawBenchmarkCost(magi, householdSize, benchmark);
+  const restoredEnhancedBenchmarkCost = acaEnhancedBenchmarkCost(magi, householdSize, benchmark);
   return {
     fplPercent: pct,
     cliffMagi,

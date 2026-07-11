@@ -162,6 +162,29 @@ export const toolPages = {
       },
     ],
   },
+  "rmd-planner": {
+    title: "RMD Calculator: When the IRS Starts Choosing Your Income",
+    description:
+      "Your required minimum distributions start at 73 or 75 depending on your birth year — most calculators assume 73. See what yours will be, and how it grows.",
+    kind: "rmd",
+    sources: [
+      {
+        title: "Publication 590-B, Appendix B — Uniform Lifetime Table (Table III)",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/pub/irs-pdf/p590b.pdf",
+      },
+      {
+        title: "Retirement plan and IRA required minimum distributions FAQs",
+        publisher: "Internal Revenue Service",
+        url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs",
+      },
+      {
+        title: "2026 Medicare Parts A & B Premiums and Deductibles (IRMAA tiers)",
+        publisher: "Centers for Medicare & Medicaid Services",
+        url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles",
+      },
+    ],
+  },
 } as const;
 
 export type ToolSlug = keyof typeof toolPages;

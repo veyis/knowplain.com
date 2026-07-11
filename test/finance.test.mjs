@@ -24,6 +24,9 @@ import {
   withdrawalPath,
   maxEmployeeDeferral2026,
   rmdStartAge,
+  rmdDivisor,
+  requiredMinimumDistribution,
+  projectRmds,
   portfolioTarget,
   futureValue,
   federalPovertyLevel,
@@ -34,6 +37,9 @@ import {
   acaSubsidyStatus,
   acaApplicablePercentage,
   acaEnhancedApplicablePercentage,
+  ageCurveFactor,
+  benchmarkPremiumForAge,
+  benchmarkPremiumForAdults,
   SWR,
   REAL_RETURN,
 } from "../src/lib/facts-2026.ts";
@@ -120,6 +126,41 @@ test("inherited IRA annual RMD enforcement after final regs", () => {
   assert.equal(inheritedIraAnnualRmdRequired(true, true), false);
 });
 
+test("RMDs: the start age depends on BIRTH YEAR, and the forced share keeps climbing", () => {
+  // IRS Uniform Lifetime Table (Pub 590-B, Appendix B), extracted from the primary PDF.
+  assert.equal(rmdDivisor(73), 26.5);
+  assert.equal(rmdDivisor(75), 24.6);
+  assert.equal(rmdDivisor(85), 16.0);
+  assert.equal(rmdDivisor(120), 2.0);
+  assert.equal(rmdDivisor(60), rmdDivisor(72), "clamped to the table's floor");
+  assert.equal(rmdDivisor(130), rmdDivisor(120), "clamped to the table's ceiling");
+
+  // The thing nearly every RMD calculator online gets wrong: it defaults to 73 for everyone.
+  // Someone born in 1962 has NO RMD at 73 — they get two more years of controlling their own
+  // taxable income, which is the entire window a Roth conversion plan is built in.
+  assert.equal(requiredMinimumDistribution(900_000, 73, 1962), 0, "born 1960+: nothing yet at 73");
+  assert.equal(requiredMinimumDistribution(900_000, 75, 1962), Math.round(900_000 / 24.6));
+  assert.ok(requiredMinimumDistribution(900_000, 73, 1955) > 0, "born 1951-1959: starts at 73");
+
+  // The forced withdrawal grows as a SHARE of the account, not just in dollars — that is what
+  // drags Social Security into tax and lifts IRMAA, and it is why the tool projects forward.
+  const rows = projectRmds({
+    currentBalance: 900_000,
+    currentAge: 64,
+    birthYear: 1962,
+    annualReturn: 0.05,
+  });
+  const first = rows.find((r) => r.rmd > 0);
+  const at85 = rows.find((r) => r.age === 85);
+  assert.equal(first.age, 75, "first RMD lands at the birth-year start age");
+  assert.ok(at85.percentOfBalance > first.percentOfBalance, "the forced share rises with age");
+  assert.ok(first.percentOfBalance > 0.04 && first.percentOfBalance < 0.042); // 1/24.6
+  assert.ok(at85.percentOfBalance > 0.06); // 1/16.0
+
+  // No RMD before the start age at all.
+  assert.ok(rows.filter((r) => r.age < 75).every((r) => r.rmd === 0));
+});
+
 test("portfolio target from the 4% rule", () => {
   assert.equal(portfolioTarget(40_000, 0.04), 1_000_000);
   assert.equal(portfolioTarget(40_000, 0), Infinity);
@@ -136,6 +177,39 @@ test("ACA Federal Poverty Level (2025 guidelines, 48 states)", () => {
   assert.equal(federalPovertyLevel(2), 21_150);
   assert.equal(federalPovertyLevel(4), 32_150);
   near(fplPercent(31_300, 1), 200); // exactly 2× FPL
+});
+
+test("ACA premiums are rated per adult and by age, not flattened onto one 60-year-old", () => {
+  // Federal default standard age curve, 45 CFR 147.102 — extracted from the CMS appendix.
+  // Statutory 3:1 band: a 64-year-old pays exactly 3x a 21-year-old.
+  assert.equal(ageCurveFactor(21), 1.0);
+  assert.equal(ageCurveFactor(64), 3.0);
+  assert.equal(ageCurveFactor(60), 2.714);
+  assert.equal(ageCurveFactor(15), ageCurveFactor(21), "clamped below 21");
+  assert.equal(ageCurveFactor(80), ageCurveFactor(64), "clamped above 64");
+
+  // Our published benchmark is quoted at age 60, so that age must round-trip exactly.
+  assert.equal(benchmarkPremiumForAge(60), 15_914);
+  assert.ok(benchmarkPremiumForAge(45) < benchmarkPremiumForAge(60), "premiums rise with age");
+  assert.ok(benchmarkPremiumForAge(64) > benchmarkPremiumForAge(60));
+
+  // The regression. The tool priced EVERY user as a single 60-year-old, so a couple saw one
+  // person's premium — halving the cost of the cliff for the demographic most likely to hit it.
+  const couple = acaSubsidyStatus(90_000, 2, [62, 62]); // over the $84,600 cliff
+  assert.equal(couple.overCliff, true);
+  assert.equal(couple.currentLawBenchmarkCost, benchmarkPremiumForAdults([62, 62]));
+  assert.ok(
+    couple.currentLawBenchmarkCost > 2 * 15_914 * 0.9,
+    "two adults must cost roughly twice one, not the same",
+  );
+
+  // And a younger single filer is no longer quoted a 60-year-old's premium.
+  const young = acaSubsidyStatus(70_000, 1, [45]);
+  assert.ok(young.currentLawBenchmarkCost < 15_914);
+
+  // Default (no ages supplied) preserves the old single-60-year-old behaviour for callers
+  // like rothConversionCost, which only care about the cliff flags.
+  assert.equal(acaSubsidyStatus(70_000, 1).currentLawBenchmarkCost, 15_914);
 });
 
 test("ACA 2026 subsidy cliff (400% FPL) — enhanced subsidies expired", () => {
