@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { BeforeSend as AnalyticsBeforeSend } from "@vercel/analytics/next";
@@ -19,13 +19,19 @@ const suppressVitalsForGpc = (event: { type: "vital"; url: string; route?: strin
   return globalPrivacyControlEnabled() ? null : event;
 };
 
+// GPC is fixed for the life of the page, so there is nothing to subscribe to.
+// useSyncExternalStore (rather than setState in an effect) reads it without a cascading
+// render, and the server snapshot keeps SSR and hydration agreed: render nothing on the
+// server, then decide on the client once navigator is actually available.
+const neverChanges = () => () => {};
+const isEnabledOnClient = () => !globalPrivacyControlEnabled();
+const isEnabledOnServer = () => false;
+
 export function AppAnalytics() {
-  const [enabled, setEnabled] = useState(false);
+  const enabled = useSyncExternalStore(neverChanges, isEnabledOnClient, isEnabledOnServer);
 
-  useEffect(() => {
-    setEnabled(!globalPrivacyControlEnabled());
-  }, []);
-
+  // Belt and braces: this gate stops the script loading at all under GPC, and the
+  // beforeSend handlers above stop any payload leaving even if it somehow does.
   if (!enabled) return null;
 
   return (
