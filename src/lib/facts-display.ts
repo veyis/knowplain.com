@@ -13,6 +13,7 @@ import {
   ACA_2026,
   ACA_APPLICABLE_PERCENTAGE_2026,
   ACA_TOP_APPLICABLE_PERCENTAGE,
+  CHARITABLE_2026,
   CONTRIBUTION_2026,
   FPL_2025,
   MEDICAID_EXPANSION_FPL_PERCENT,
@@ -87,6 +88,8 @@ export const FACTS = {
   "tax.seniorDeduction": usd(SENIOR_DEDUCTION.perPerson65Plus),
   "tax.seniorDeductionCouple": usd(SENIOR_DEDUCTION.perPerson65Plus * 2),
   "tax.seniorDeductionLastYear": String(SENIOR_DEDUCTION.lastYear),
+  "charitable.nonItemizerSingle": usd(CHARITABLE_2026.nonItemizerCashDeduction.single),
+  "charitable.nonItemizerMfj": usd(CHARITABLE_2026.nonItemizerCashDeduction.mfj),
 
   // ── Social Security (SSA 2026) ───────────────────────────────────────────
   "ss.cola": pct(SOCIAL_SECURITY_2026.cola),

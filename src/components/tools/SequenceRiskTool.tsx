@@ -84,7 +84,7 @@ export function SequenceRiskTool() {
   return (
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
-        <div className="grid content-start gap-4" onChange={track}>
+        <div className="calculator-inputs grid content-start gap-4" onChange={track}>
           <ToolField label="Starting portfolio"
             min={0}
             max={50000000} value={balance} onChange={setBalance} step={10_000} />

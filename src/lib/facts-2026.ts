@@ -45,6 +45,20 @@ export const FACT_SOURCES = {
     url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
     verified: "2026-07-11",
   },
+  charitable: {
+    title: "Topic No. 506 — Charitable contributions",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/taxtopics/tc506",
+    verified: "2026-07-14",
+    note: "Beginning in tax year 2026, eligible cash contributions may be deductible without itemizing, up to the published filing-status limit.",
+  },
+  saversMatch: {
+    title: "Notice 2024-65 — Saver’s Match guidance and request for comments",
+    publisher: "Internal Revenue Service",
+    url: "https://www.irs.gov/irb/2024-39_IRB",
+    verified: "2026-07-14",
+    note: "The Saver’s Match provision is effective for taxable years beginning after December 31, 2026.",
+  },
   seniorDeduction: {
     title: "One Big Beautiful Bill Act — deductions for seniors",
     publisher: "Internal Revenue Service",
@@ -304,7 +318,12 @@ export function crossesIrmaaTier1(magi: number, filing: "single" | "mfj"): boole
 
 // ── RMDs (SECURE 2.0) ────────────────────────────────────────────────────────
 // Source: IRS RMD FAQs — https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs
-export const RMD = { ageBorn1951to1959: 73, ageBorn1960OrLater: 75 } as const;
+export const RMD = {
+  ageBornBeforeJuly1949: 70.5,
+  ageBornJuly1949To1950: 72,
+  ageBorn1951to1959: 73,
+  ageBorn1960OrLater: 75,
+} as const;
 export const INHERITED_IRA_RMD = {
   finalRegsEffective: "2025-01-01",
   emptyByYear: 10,
@@ -314,9 +333,12 @@ export const INHERITED_IRA_RMD = {
   timelyCorrectedPenalty: 0.1,
 } as const;
 
-/** RMD start age by birth year (73 for 1951–1959, 75 for 1960+). */
-export function rmdStartAge(birthYear: number): number {
-  return birthYear >= 1960 ? RMD.ageBorn1960OrLater : RMD.ageBorn1951to1959;
+/** Applicable RMD age by cohort. `birthMonth` is 1-based and resolves the July 1949 cutoff. */
+export function rmdStartAge(birthYear: number, birthMonth = 7): number {
+  if (birthYear < 1949 || (birthYear === 1949 && birthMonth < 7)) return RMD.ageBornBeforeJuly1949;
+  if (birthYear <= 1950) return RMD.ageBornJuly1949To1950;
+  if (birthYear <= 1959) return RMD.ageBorn1951to1959;
+  return RMD.ageBorn1960OrLater;
 }
 
 /**
@@ -355,8 +377,9 @@ export function requiredMinimumDistribution(
   priorYearEndBalance: number,
   age: number,
   birthYear: number,
+  birthMonth = 7,
 ): number {
-  if (age < rmdStartAge(birthYear)) return 0;
+  if (age < rmdStartAge(birthYear, birthMonth)) return 0;
   return Math.round(Math.max(0, priorYearEndBalance) / rmdDivisor(age));
 }
 
@@ -383,11 +406,12 @@ export function projectRmds(opts: {
   currentBalance: number;
   currentAge: number;
   birthYear: number;
+  birthMonth?: number;
   annualReturn: number;
   throughAge?: number;
 }): RmdYear[] {
   const through = Math.min(opts.throughAge ?? 95, 120);
-  const start = rmdStartAge(opts.birthYear);
+  const start = rmdStartAge(opts.birthYear, opts.birthMonth);
   const rows: RmdYear[] = [];
   let balance = Math.max(0, opts.currentBalance);
   const firstAge = Math.floor(opts.currentAge);
@@ -663,6 +687,22 @@ export function ssBreakEvenAge(pia: number, fra: number, earlyAge: number, lateA
   const headStartDollars = early * (lateAge - earlyAge) * 12; // collected before late claim starts
   const monthsAfterLate = headStartDollars / monthlyGap;
   return lateAge + monthsAfterLate / 12;
+}
+
+/**
+ * Simplified widow(er) benefit at survivor FRA when the deceased worker had already claimed.
+ * Early claims are subject to the widow(er)'s limit: the larger of 82.5% of PIA or the
+ * worker's reduced benefit. Delayed retirement credits carry through to the survivor.
+ */
+export function survivorBenefitAtFra(
+  workerPia: number,
+  workerFra: number,
+  workerClaimAge: number,
+): number {
+  const pia = Math.max(0, workerPia);
+  const claimAge = Math.max(62, Math.min(70, workerClaimAge));
+  const claimedBenefit = pia * ssBenefitFactor(workerFra, claimAge);
+  return Math.round(claimAge < workerFra ? Math.max(pia * 0.825, claimedBenefit) : claimedBenefit);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,18 +1,17 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Save, AlertCircle } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
 import { withdrawalPath } from "@/lib/facts-2026";
 import { saveSimulation } from "./actions";
 import type { User } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/client";
+import { ToolField } from "@/components/tools/ToolField";
 
 const YEARS = 30;
-const clamp = (n: number, lo: number, hi: number) =>
-  Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : lo;
-
-export function Simulator({ user }: { user: User | null }) {
+export function Simulator() {
   const [balance, setBalance] = useState(1000000);
   const [withdrawal, setWithdrawal] = useState(40000);
   const [growth, setGrowth] = useState(6);
@@ -22,6 +21,26 @@ export function Simulator({ user }: { user: User | null }) {
   const [isPending, startTransition] = useTransition();
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
   const tracked = useRef(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const configured = Boolean(
+      process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    );
+    if (!configured) return;
+    const supabase = createClient();
+    let active = true;
+    void supabase.auth.getUser().then(({ data }) => {
+      if (active) setUser(data.user);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setUser(session?.user ?? null);
+    });
+    return () => {
+      active = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const trackUsed = () => {
     if (tracked.current) return;
@@ -82,69 +101,14 @@ export function Simulator({ user }: { user: User | null }) {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
-      {/* Inputs (Glassmorphism) */}
-      <div className="grid gap-5 rounded-[20px] border border-white/20 bg-white/40 p-6 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-black/40">
+    <div className="grid min-w-0 gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <fieldset className="calculator-inputs grid min-w-0 gap-5 rounded-xl border border-border bg-card p-6 shadow-xs">
+        <legend className="sr-only">Withdrawal simulation inputs</legend>
         <h2 className="text-xl font-bold tracking-tight">Parameters</h2>
-        
-        <div>
-          <label className="mb-1.5 block text-sm font-medium">Starting Balance ($)</label>
-          <input
-            type="number"
-            min={0}
-            max={50_000_000}
-            value={balance}
-            onChange={(e) => {
-              trackUsed();
-              setBalance(clamp(Number(e.target.value), 0, 50_000_000));
-            }}
-            className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium">Annual Withdrawal ($)</label>
-          <input
-            type="number"
-            min={0}
-            max={5_000_000}
-            value={withdrawal}
-            onChange={(e) => {
-              trackUsed();
-              setWithdrawal(clamp(Number(e.target.value), 0, 5_000_000));
-            }}
-            className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium">Expected Growth (%)</label>
-          <input
-            type="number"
-            min={-20}
-            max={20}
-            value={growth}
-            step="0.1"
-            onChange={(e) => {
-              trackUsed();
-              setGrowth(clamp(Number(e.target.value), -20, 20));
-            }}
-            className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-medium">Expected Inflation (%)</label>
-          <input
-            type="number"
-            min={0}
-            max={20}
-            value={inflation}
-            step="0.1"
-            onChange={(e) => {
-              trackUsed();
-              setInflation(clamp(Number(e.target.value), 0, 20));
-            }}
-            className="w-full rounded-xl border border-line bg-white/60 px-4 py-2.5 text-sm transition-all focus:border-ink focus:ring-2 focus:ring-ink/20 focus:outline-hidden dark:bg-black/60"
-          />
-        </div>
+        <ToolField label="Starting balance ($)" value={balance} min={0} max={50_000_000} onChange={(value) => { trackUsed(); setBalance(value); }} />
+        <ToolField label="Annual withdrawal ($)" value={withdrawal} min={0} max={5_000_000} onChange={(value) => { trackUsed(); setWithdrawal(value); }} />
+        <ToolField label="Expected growth (%)" value={growth} min={-20} max={20} step={0.1} onChange={(value) => { trackUsed(); setGrowth(value); }} />
+        <ToolField label="Expected inflation (%)" value={inflation} min={0} max={20} step={0.1} onChange={(value) => { trackUsed(); setInflation(value); }} />
 
         <div className="mt-4 border-t border-line pt-5">
           {user ? (
@@ -175,7 +139,7 @@ export function Simulator({ user }: { user: User | null }) {
             </div>
           )}
         </div>
-      </div>
+      </fieldset>
 
       {/* Chart Output */}
       <div className="flex flex-col rounded-[20px] border border-line bg-surface p-6 shadow-xs">
@@ -229,7 +193,7 @@ export function Simulator({ user }: { user: User | null }) {
                 strokeWidth={3}
                 fillOpacity={1} 
                 fill="url(#colorBalance)" 
-                animationDuration={1000}
+                isAnimationActive={false}
               />
             </AreaChart>
           </ResponsiveContainer>

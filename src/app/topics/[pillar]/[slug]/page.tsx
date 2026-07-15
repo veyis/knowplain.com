@@ -7,6 +7,7 @@ import { FAQBlock } from "@/components/FAQBlock";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { mdxComponents } from "@/components/mdx-components";
 import { articles, getArticle, isPillarId } from "@/lib/content";
 import { defaultArticleAuthor, getEditorialPerson, getReviewer } from "@/lib/editorial";
@@ -98,9 +99,7 @@ export default async function ArticlePage({
     <AppShell active={pillar}>
       <JsonLd data={jsonLd} />
       <article className="max-w-[680px]">
-        <div className="mb-4 text-sm text-muted-foreground">
-          <Link href={p.path}>Topics</Link> › {p.title} › Explainer
-        </div>
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: p.title, href: p.path }, { label: article.title }]} />
         <h1 className="mb-3 text-[clamp(1.6rem,3vw,2rem)] font-semibold leading-tight tracking-tight">
           {article.title}
         </h1>
@@ -111,6 +110,10 @@ export default async function ArticlePage({
           updated={article.updated}
           reviewed={reviewed}
           riskLevel={article.riskLevel}
+          sourceCount={article.sources?.length}
+          volatile={article.volatile}
+          volatileNote={article.volatileNote}
+          correction={article.correction}
         />
         <p className="mb-4 leading-relaxed text-foreground/80">{article.description}</p>
         <div className="my-5 border-l-[3px] border-ink bg-card px-4 py-3 text-[0.95rem]">

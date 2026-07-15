@@ -5,7 +5,8 @@ import Link from "next/link";
 import { AlertTriangle, Check, Info } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
 import { currency } from "@/lib/checkup";
-import { MEDICARE_2026, acaSubsidyCliffMagi, rothConversionCost } from "@/lib/facts-2026";
+import { MEDICARE_2026, acaSubsidyCliffMagi, rmdStartAge, rothConversionCost } from "@/lib/facts-2026";
+import { ToolField } from "./ToolField";
 
 export function RothConversionTool() {
   const [filing, setFiling] = useState<"single" | "mfj">("single");
@@ -38,72 +39,56 @@ export function RothConversionTool() {
 
   const cliffMagi = acaSubsidyCliffMagi(householdSize);
   const preMedicare = age < MEDICARE_2026.eligibilityAge;
+  const estimatedBirthYear = 2026 - age;
+  const rmdAge = rmdStartAge(estimatedBirthYear);
+  const calendarEndAge = Math.min(99, Math.max(age, 75, age + 10));
+  const calendarRows = Array.from({ length: calendarEndAge - age + 1 }, (_, index) => {
+    const rowAge = age + index;
+    return {
+      year: 2026 + index,
+      age: rowAge,
+      coverage: rowAge < 65 ? "Marketplace / employer / other pre-Medicare coverage" : "Medicare",
+      conversionEffect: rowAge < 65
+        ? "Conversion counts in ACA MAGI if using Marketplace coverage"
+        : rowAge >= 63
+          ? `Income can affect Medicare premiums at ${rowAge + MEDICARE_2026.irmaaLookbackYears}`
+          : "No ACA credit; Medicare rules apply",
+      socialSecurity: rowAge < 62 ? "Before earliest retirement-benefit claim age" : rowAge < 70 ? "Social Security claiming window" : "Delayed retirement credits no longer increase after 70",
+      rmd: rowAge < rmdAge ? `Before RMD age ${rmdAge}` : rowAge === rmdAge ? "First RMD year under current law" : "RMD years",
+    };
+  });
   // Gate the all-clear on where they LAND, not on what this conversion changed. Someone
   // already over the cliff used to see "this keeps you under the cliff" — false, and it
   // buried the one thing they needed to hear (see the already-over panel below).
   const allClear = !cost.overAcaCliffAfter && !cost.overIrmaaTier1After;
 
   const field =
-    "rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground";
+    "min-h-11 min-w-0 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40";
 
   return (
     <div className="grid gap-5">
-      <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
-        <div className="grid content-start gap-4" onChange={track}>
+      <div className="grid min-w-0 gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_minmax(0,1fr)]">
+        <fieldset className="calculator-inputs grid min-w-0 content-start gap-4">
+          <legend className="sr-only">Roth conversion inputs</legend>
           <label className="grid gap-1.5 text-sm font-medium">
             Filing status
             <select
               value={filing}
-              onChange={(e) => setFiling(e.target.value as "single" | "mfj")}
+              onChange={(e) => {
+                track();
+                setFiling(e.target.value as "single" | "mfj");
+              }}
               className={field}
             >
               <option value="single">Single</option>
               <option value="mfj">Married, filing jointly</option>
             </select>
           </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Your age
-            <input
-              type="number"
-              min={18}
-              max={99}
-              value={age}
-              onChange={(e) => setAge(Number(e.target.value))}
-              className={field}
-            />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Household size
-            <input
-              type="number"
-              min={1}
-              value={householdSize}
-              onChange={(e) => setHouseholdSize(Math.max(1, Number(e.target.value)))}
-              className={field}
-            />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Income before converting
-            <input
-              type="number"
-              min={0}
-              value={grossIncome}
-              onChange={(e) => setGrossIncome(Math.max(0, Number(e.target.value)))}
-              className={field}
-            />
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium">
-            Amount to convert to Roth
-            <input
-              type="number"
-              min={0}
-              step={1000}
-              value={conversion}
-              onChange={(e) => setConversion(Math.max(0, Number(e.target.value)))}
-              className={field}
-            />
-          </label>
-        </div>
+          <ToolField label="Your age" value={age} min={18} max={99} onChange={(value) => { track(); setAge(value); }} />
+          <ToolField label="Household size" value={householdSize} min={1} max={20} onChange={(value) => { track(); setHouseholdSize(value); }} />
+          <ToolField label="Income before converting" value={grossIncome} min={0} max={5_000_000} onChange={(value) => { track(); setGrossIncome(value); }} />
+          <ToolField label="Amount to convert to Roth" value={conversion} min={0} max={5_000_000} step={1000} onChange={(value) => { track(); setConversion(value); }} />
+        </fieldset>
 
         <div className="grid content-start gap-4">
           <div>
@@ -226,6 +211,27 @@ export function RothConversionTool() {
           )}
         </div>
       </div>
+
+      <section aria-labelledby="roth-conversion-calendar-heading" className="rounded-xl border border-border bg-card p-5">
+        <h2 id="roth-conversion-calendar-heading" className="text-lg font-semibold tracking-tight">Roth conversion calendar: what each year touches</h2>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">This is a coordination map, not a schedule telling you to convert. It uses age {age} in 2026 to estimate birth year {estimatedBirthYear}; confirm exact birthday-based rules before acting.</p>
+        <div className="mt-4 overflow-x-auto" role="region" aria-label="Roth conversion planning calendar" tabIndex={0}>
+          <table className="min-w-[880px] w-full text-left text-sm">
+            <caption className="sr-only">Annual Roth conversion considerations for ACA coverage, Medicare, Social Security, and required minimum distributions</caption>
+            <thead><tr className="border-b border-border"><th className="p-2">Year / age</th><th className="p-2">Coverage</th><th className="p-2">Income interaction</th><th className="p-2">Social Security</th><th className="p-2">RMD context</th></tr></thead>
+            <tbody>{calendarRows.map((row) => (
+              <tr key={row.year} className={`border-b border-border last:border-0 ${row.age === 63 || row.age === 65 || row.age === rmdAge ? "bg-secondary/70" : ""}`}>
+                <td className="p-2 font-semibold tabular-nums">{row.year}<span className="block text-xs font-normal text-muted-foreground">Age {row.age}</span></td>
+                <td className="p-2">{row.coverage}</td>
+                <td className="p-2">{row.conversionEffect}</td>
+                <td className="p-2">{row.socialSecurity}</td>
+                <td className="p-2">{row.rmd}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Highlighted transition rows include age 63 (the tax year generally used for age-65 IRMAA), age 65 (Medicare eligibility), and the estimated RMD start age. Actual Marketplace enrollment, employer coverage, filing status, Social Security timing, and workplace-plan exceptions can change the relevance of a row.</p>
+      </section>
 
       <div className="grid gap-2 rounded-xl border border-border bg-card p-5 text-sm leading-relaxed text-muted-foreground">
         <p>

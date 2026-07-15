@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { isSeededQuestionSlug, seededQuestions } from "@/lib/forum-seeds";
 import { site, pageMeta } from "@/lib/site";
@@ -38,9 +39,7 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
         ]}
       />
       <article className="max-w-[760px]">
-        <div className="mb-4 text-sm text-muted-foreground">
-          <Link href="/forum/questions">Curated questions</Link> / {question.pillar.replace("-", " ")}
-        </div>
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Curated questions", href: "/forum/questions" }, { label: question.title }]} />
         <Badge variant="secondary" className="mb-4 font-normal">
           Moderated answer hub
         </Badge>
@@ -66,4 +65,3 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
     </AppShell>
   );
 }
-

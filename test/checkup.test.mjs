@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { runRetirementCheckup } from "../src/lib/checkup.ts";
+import { compareCheckupScenarios, runRetirementCheckup } from "../src/lib/checkup.ts";
 import { SWR, portfolioTarget } from "../src/lib/facts-2026.ts";
 
 /** A 52-year-old with a $52k gap: 78,000 spending + 6,000 debt − 32,000 Social Security. */
@@ -43,6 +43,27 @@ test("retiring before 65 raises the healthcare-gap score (ACA bridge exposure)",
   const before = runRetirementCheckup({ ...baseline, retireBefore65: true }).scores.healthcareGap;
   const after = runRetirementCheckup({ ...baseline, retireBefore65: false }).scores.healthcareGap;
   assert.ok(before > after, "pre-Medicare retirement must score as more healthcare exposure");
+  const derived = runRetirementCheckup({
+    ...baseline,
+    targetRetirementAge: 62,
+    retireBefore65: false,
+  }).scores.healthcareGap;
+  assert.equal(derived, before, "a visible target age below 65 must not be contradicted by a stale flag");
+});
+
+test("the checkup recommends one next action based on the dominant constraint", () => {
+  const underfunded = runRetirementCheckup({ ...baseline, retirementSavings: 10_000 });
+  assert.equal(underfunded.recommendedStep.href, "/tools/am-i-on-track");
+  assert.equal(underfunded.nextSteps.length, 1);
+
+  const preMedicare = runRetirementCheckup({
+    ...baseline,
+    retirementSavings: 2_000_000,
+    targetRetirementAge: 62,
+    retireBefore65: true,
+  });
+  assert.equal(preMedicare.recommendedStep.href, "/tools/aca-bridge");
+  assert.equal(preMedicare.supportingArticle.href, "/topics/retirement/health-care-before-medicare");
 });
 
 test("output never crosses the investment-advice line", () => {
@@ -53,6 +74,8 @@ test("output never crosses the investment-advice line", () => {
     result.summary,
     ...result.topRisks,
     ...result.nextSteps.flatMap((s) => [s.label, s.reason]),
+    result.supportingArticle.label,
+    result.supportingArticle.reason,
   ]
     .join(" ")
     .toLowerCase();
@@ -60,4 +83,34 @@ test("output never crosses the investment-advice line", () => {
   for (const banned of ["allocation", "stocks", "bonds", "etf", "fund", "portfolio mix", "60/40", "invest in"]) {
     assert.ok(!text.includes(banned), `checkup output must not contain "${banned}"`);
   }
+});
+
+test("snapshot comparison reports current-minus-saved scenario deltas", () => {
+  const current = {
+    ...baseline,
+    targetRetirementAge: 68,
+    retirementSavings: 350_000,
+    annualContribution: 30_000,
+    annualSpending: 75_000,
+    socialSecurityAnnual: 35_000,
+  };
+  const comparison = compareCheckupScenarios(current, baseline);
+
+  assert.equal(comparison.targetRetirementAge, 1);
+  assert.equal(comparison.retirementSavings, 25_000);
+  assert.equal(comparison.annualContribution, 6_000);
+  assert.equal(comparison.annualSpending, -3_000);
+  assert.equal(comparison.incomeFloor, 3_000);
+  assert.ok(Number.isFinite(comparison.projectedMidpoint));
+  assert.ok(Number.isFinite(comparison.targetMidpoint));
+});
+
+test("rough estimates are carried into the result as disclosure metadata", () => {
+  const result = runRetirementCheckup({
+    ...baseline,
+    estimatedFields: ["annualSpending", "socialSecurityAnnual"],
+  });
+
+  assert.deepEqual(result.estimatedFields, ["annualSpending", "socialSecurityAnnual"]);
+  assert.equal(result.annualGap, 52_000, "marking provenance must not silently change the entered value");
 });

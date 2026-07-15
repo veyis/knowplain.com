@@ -1,9 +1,11 @@
 "use client";
 
 import { track } from "@vercel/analytics";
-
-type AnalyticsValue = string | number | boolean | null | undefined;
-type AnalyticsProperties = Record<string, AnalyticsValue>;
+import {
+  sanitizeAnalyticsEvent,
+  type AnalyticsEventName,
+  type AnalyticsProperties,
+} from "./analytics-policy";
 
 export function isGlobalPrivacyControlEnabled() {
   if (typeof navigator === "undefined") return false;
@@ -11,7 +13,9 @@ export function isGlobalPrivacyControlEnabled() {
   return nav.globalPrivacyControl === true;
 }
 
-export function trackProductEvent(name: string, properties?: AnalyticsProperties) {
+export function trackProductEvent(name: AnalyticsEventName, properties?: AnalyticsProperties) {
   if (isGlobalPrivacyControlEnabled()) return;
-  track(name, properties);
+  const event = sanitizeAnalyticsEvent(name, properties);
+  if (!event) return;
+  track(event.name, event.properties);
 }

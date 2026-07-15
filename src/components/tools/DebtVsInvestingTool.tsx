@@ -97,7 +97,7 @@ export function DebtVsInvestingTool() {
   return (
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
-        <div className="grid content-start gap-4" onChange={track}>
+        <div className="calculator-inputs grid content-start gap-4" onChange={track}>
           <ToolField label="Debt balance"
             min={0}
             max={5000000} value={debtBalance} onChange={setDebtBalance} step={500} />

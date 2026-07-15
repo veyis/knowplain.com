@@ -13,9 +13,12 @@ export const mdxComponents = {
   // GFM tables. Every top-ranking finance page has one, and table-shaped answers are what
   // Google lifts for featured snippets. Wrapped so wide tables scroll instead of blowing
   // out the page on mobile.
-  table: (props: ComponentPropsWithoutRef<"table">) => (
-    <div className="my-6 overflow-x-auto">
-      <table className="w-full border-collapse text-left text-[0.9rem]" {...props} />
+  table: ({ children, ...props }: ComponentPropsWithoutRef<"table">) => (
+    <div className="my-6 overflow-x-auto" role="region" aria-label="Article comparison table" tabIndex={0}>
+      <table className="w-full border-collapse text-left text-[0.9rem]" {...props}>
+        <caption className="sr-only">Comparison table in this article</caption>
+        {children}
+      </table>
     </div>
   ),
   thead: (props: ComponentPropsWithoutRef<"thead">) => (

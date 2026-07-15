@@ -35,12 +35,12 @@ export default function HomePage() {
     <AppShell active="home">
       <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
 
-      <section className="grid justify-items-center gap-5 py-12 text-center md:py-16">
+      <section className="grid min-w-0 grid-cols-[minmax(0,1fr)] justify-items-center gap-5 py-12 text-center md:py-16">
         <Badge variant="secondary" className="gap-1.5 font-normal text-muted-foreground">
           <span className="size-1.5 rounded-full bg-success" />
           Big ideas, known plain
         </Badge>
-        <h1 className="text-[clamp(2rem,5vw,3rem)] font-semibold leading-[1.1] tracking-tight">
+        <h1 className="max-w-full text-[clamp(2rem,5vw,3rem)] font-semibold leading-[1.1] tracking-tight">
           Retirement &amp; money,
           <br className="hidden sm:block" /> without the jargon.
         </h1>

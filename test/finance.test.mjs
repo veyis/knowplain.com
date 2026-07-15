@@ -8,6 +8,7 @@ import {
   SOCIAL_SECURITY_2026,
   ssBenefitFactor,
   ssBreakEvenAge,
+  survivorBenefitAtFra,
   catchUpContribution2026,
   catchUpPlan2026,
   inheritedIraAnnualRmdRequired,
@@ -67,6 +68,12 @@ test("Social Security break-even ages match published rules of thumb", () => {
   assert.equal(ssBreakEvenAge(2500, 67, 70, 70), Infinity); // no difference
 });
 
+test("survivor benefits preserve delayed credits and the early-claim widow floor", () => {
+  assert.equal(survivorBenefitAtFra(2500, 67, 62), 2063);
+  assert.equal(survivorBenefitAtFra(2500, 67, 67), 2500);
+  assert.equal(survivorBenefitAtFra(2500, 67, 70), 3100);
+});
+
 test("2026 catch-up contributions (SECURE 2.0 super catch-up 60–63)", () => {
   assert.equal(catchUpContribution2026(45), 0);
   assert.equal(catchUpContribution2026(50), 8_000);
@@ -111,6 +118,10 @@ test("2026 Social Security constants include average benefit and WEP/GPO repeal 
 });
 
 test("RMD start age (SECURE 2.0)", () => {
+  assert.equal(rmdStartAge(1948), 70.5);
+  assert.equal(rmdStartAge(1949, 6), 70.5);
+  assert.equal(rmdStartAge(1949, 7), 72);
+  assert.equal(rmdStartAge(1950), 72);
   assert.equal(rmdStartAge(1955), 73);
   assert.equal(rmdStartAge(1959), 73);
   assert.equal(rmdStartAge(1960), 75);

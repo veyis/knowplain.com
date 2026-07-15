@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { pageMeta } from "@/lib/site";
 import { Simulator } from "./Simulator";
-import { createClient } from "@/lib/supabase/server";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const metadata = pageMeta(
   "/tools/withdrawal-simulator",
@@ -10,15 +9,11 @@ export const metadata = pageMeta(
   "Interactive tool to stress-test your retirement withdrawals against inflation and growth.",
 );
 
-export default async function WithdrawalSimulatorPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
+export default function WithdrawalSimulatorPage() {
   return (
     <AppShell active="tools">
-      <div className="mb-4 text-sm text-muted-foreground">
-        <Link href="/tools">Tools</Link> › Withdrawal Simulator
-      </div>
+      <div className="tool-page">
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Tools", href: "/tools" }, { label: "Withdrawal Simulator" }]} />
       <div className="mb-8">
         <h1 className="mb-2 text-[1.5rem] font-semibold tracking-tight">Withdrawal Simulator</h1>
         <p className="max-w-[52ch] text-muted-foreground">
@@ -26,7 +21,7 @@ export default async function WithdrawalSimulatorPage() {
         </p>
       </div>
 
-      <Simulator user={user} />
+      <Simulator />
 
       <p className="mt-8 rounded-xl border border-dashed border-line bg-card p-4 text-sm text-muted-foreground">
         Educational tool only. Real market returns do not follow a flat straight line.
@@ -35,6 +30,7 @@ export default async function WithdrawalSimulatorPage() {
           Boldin
         </a>.
       </p>
+      </div>
     </AppShell>
   );
 }

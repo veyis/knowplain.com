@@ -40,9 +40,9 @@ const exact = (n: number) =>
 
 type Row = [label: string, value: string, note?: string];
 
-function Group({ heading, source, rows }: { heading: string; source: FactSource; rows: Row[] }) {
+function Group({ id, heading, source, rows }: { id: string; heading: string; source: FactSource; rows: Row[] }) {
   return (
-    <section className="mb-8 overflow-hidden rounded-xl border border-border bg-card">
+    <section id={id} className="mb-8 scroll-mt-24 overflow-hidden rounded-xl border border-border bg-card">
       <header className="border-b border-border p-5">
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <h2 className="text-base font-semibold tracking-tight">{heading}</h2>
@@ -108,6 +108,7 @@ export default function SourcesPage() {
       </header>
 
       <Group
+        id="contribution-limits"
         heading="Contribution limits"
         source={FACT_SOURCES.contributions}
         rows={[
@@ -139,6 +140,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="federal-income-tax"
         heading="Federal income tax"
         source={FACT_SOURCES.tax}
         rows={[
@@ -163,6 +165,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="senior-deduction"
         heading="The senior deduction"
         source={FACT_SOURCES.seniorDeduction}
         rows={[
@@ -185,6 +188,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="social-security"
         heading="Social Security"
         source={FACT_SOURCES.socialSecurity}
         rows={[
@@ -212,6 +216,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="medicare"
         heading="Medicare"
         source={FACT_SOURCES.medicare}
         rows={[
@@ -234,6 +239,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="aca-cliff"
         heading="Health coverage before 65"
         source={FACT_SOURCES.aca}
         rows={[
@@ -257,6 +263,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="aca-premium-credits"
         heading="What you pay BELOW the cliff"
         source={FACT_SOURCES.acaApplicablePercentage}
         rows={[
@@ -277,6 +284,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="aca-credit-repayment"
         heading="Paying the credit back"
         source={FACT_SOURCES.aptcRepayment}
         rows={[
@@ -294,6 +302,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="aca-age-rating"
         heading="Why age changes the premium"
         source={FACT_SOURCES.ageCurve}
         rows={[
@@ -309,6 +318,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="rmd-start-age"
         heading="Required minimum distributions"
         source={FACT_SOURCES.rmd}
         rows={[
@@ -325,6 +335,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="rmd-calculation"
         heading="How the RMD is calculated"
         source={FACT_SOURCES.uniformLifetime}
         rows={[
@@ -344,6 +355,7 @@ export default function SourcesPage() {
       />
 
       <Group
+        id="withdrawal-rates"
         heading="Safe withdrawal rates"
         source={FACT_SOURCES.swr}
         rows={[

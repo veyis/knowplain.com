@@ -4,7 +4,14 @@ import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { trackProductEvent } from "@/lib/analytics";
 import { currency, runRetirementCheckup } from "@/lib/checkup";
-import { REAL_RETURN, SWR, ssBenefitFactor, ssBreakEvenAge } from "@/lib/facts-2026";
+import { REAL_RETURN, SWR, ssBenefitFactor, ssBreakEvenAge, survivorBenefitAtFra } from "@/lib/facts-2026";
+import { ToolField } from "./ToolField";
+import {
+  AssumptionPanel,
+  CurrencyRange,
+  ToolMetric,
+  ToolResultRegion,
+} from "./ToolPrimitives";
 
 export function OnTrackTool() {
   const [age, setAge] = useState(50);
@@ -45,9 +52,9 @@ export function OnTrackTool() {
       ]}
       result={
         <>
-          <Metric label="Annual portfolio gap" value={currency(result.annualGap)} />
-          <Metric label="Projected savings range" value={`${currency(result.projectedSavingsLow)} - ${currency(result.projectedSavingsHigh)}`} />
-          <Metric label="Planning target range" value={`${currency(result.targetPortfolioLow)} - ${currency(result.targetPortfolioHigh)}`} />
+          <ToolMetric label="Annual portfolio gap" value={currency(result.annualGap)} />
+          <ToolMetric label="Projected savings range" value={<CurrencyRange low={result.projectedSavingsLow} high={result.projectedSavingsHigh} />} />
+          <ToolMetric label="Planning target range" value={<CurrencyRange low={result.targetPortfolioLow} high={result.targetPortfolioHigh} />} />
           <p className="text-sm leading-relaxed text-muted-foreground">{result.summary}</p>
         </>
       }
@@ -98,7 +105,9 @@ export function RetirementAgeTradeoffTool() {
   const [contribution, setContribution] = useState(26000);
   const [spending, setSpending] = useState(82000);
   const [socialSecurity, setSocialSecurity] = useState(34000);
+  const [preferredAge, setPreferredAge] = useState(65);
   const ages = [60, 62, 65, 67, 70].filter((target) => target > age);
+  const worksheetAge = ages.includes(preferredAge) ? preferredAge : ages[0];
 
   return (
     <div className="grid gap-5">
@@ -122,8 +131,9 @@ export function RetirementAgeTradeoffTool() {
           the needle are the withdrawal rate and the order of returns, not the retirement date.
         </div>
       ) : (
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-xl border border-border bg-card" role="region" aria-label="Retirement age comparison" tabIndex={0}>
+        <table className="min-w-[640px] w-full text-left text-sm">
+          <caption className="sr-only">Projected savings and healthcare considerations at each retirement age</caption>
           <thead className="bg-secondary text-muted-foreground">
             <tr>
               <th className="p-3">Retire at</th>
@@ -160,6 +170,50 @@ export function RetirementAgeTradeoffTool() {
         </table>
       </div>
       )}
+      {worksheetAge !== undefined && <section id="retirement-age-worksheet" aria-labelledby="retirement-age-worksheet-heading" className="grid gap-5 rounded-xl border border-border bg-card p-5 print:border-0 print:p-0">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Decision worksheet</p>
+            <h2 id="retirement-age-worksheet-heading" className="text-xl font-semibold tracking-tight">Write down why this age works—not just what it produces.</h2>
+          </div>
+          <button type="button" onClick={() => window.print()} className="print-hidden min-h-11 rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent">Print worksheet</button>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="grid gap-1.5 text-sm font-medium">Age I am currently testing
+            <select value={worksheetAge} onChange={(event) => setPreferredAge(Number(event.target.value))} className="min-h-11 rounded-lg border border-border bg-background px-3 py-2">
+              {ages.map((targetAge) => <option key={targetAge} value={targetAge}>{targetAge}</option>)}
+            </select>
+          </label>
+          <div className="rounded-lg bg-secondary p-3 text-sm">
+            <p className="text-xs text-muted-foreground">Numerical context</p>
+            <p className="mt-1 font-medium tabular-nums">Current age {age}; testing retirement at {worksheetAge}; {Math.max(0, worksheetAge - age)} working years remain.</p>
+          </div>
+        </div>
+
+        <fieldset className="grid gap-3">
+          <legend className="font-semibold">Questions this date must answer</legend>
+          {[
+            "Health coverage is identified through Medicare eligibility.",
+            "Essential spending can be covered without relying on a best-case return.",
+            "The Social Security claiming choice is separate from the last day of work.",
+            "A market decline near retirement would not force an immediate sale of risky assets.",
+            "My partner or household agrees on work, caregiving, location, and daily life.",
+          ].map((item) => (
+            <label key={item} className="flex min-h-11 items-start gap-3 rounded-lg border border-border p-3 text-sm leading-relaxed">
+              <input type="checkbox" className="mt-1 size-4 shrink-0 accent-foreground" />
+              {item}
+            </label>
+          ))}
+        </fieldset>
+
+        <label className="grid gap-1.5 text-sm font-medium">What would make me move this date earlier or later?
+          <textarea rows={4} maxLength={1000} className="rounded-lg border border-border bg-background px-3 py-2 text-sm" placeholder="Health, caregiving, job conditions, spending, coverage, market conditions…" />
+          <span className="text-xs font-normal text-muted-foreground">This note stays in this browser and is not submitted.</span>
+        </label>
+
+        <p className="text-xs leading-relaxed text-muted-foreground">The savings projection is in today’s dollars and excludes taxes, fees, and sequence of returns. This worksheet records a planning decision, not a recommendation or guarantee.</p>
+      </section>}
     </div>
   );
 }
@@ -169,6 +223,7 @@ const breakEven = (age: number) => (Number.isFinite(age) ? `age ${age.toFixed(1)
 
 export function SocialSecurityBreakEvenTool() {
   const [fraBenefit, setFraBenefit] = useState(2500);
+  const [lowerEarnerBenefit, setLowerEarnerBenefit] = useState(1400);
   // FRA is not a free number — statute gives 65, 66, or 67 by birth year. It used to be a
   // bare number input, so clearing it (Number("") === 0) produced a 596% benefit factor.
   const [fra, setFra] = useState(67);
@@ -177,6 +232,20 @@ export function SocialSecurityBreakEvenTool() {
   const delayed = Math.round(fraBenefit * ssBenefitFactor(fra, 70));
   const breakEvenEarlyFra = ssBreakEvenAge(fraBenefit, fra, 62, fra);
   const breakEvenFraDelayed = ssBreakEvenAge(fraBenefit, fra, fra, 70);
+  const survivorRows = [62, fra, 70].map((claimAge) => {
+    const workerBenefit = Math.round(fraBenefit * ssBenefitFactor(fra, claimAge));
+    const survivorBenefit = Math.max(
+      lowerEarnerBenefit,
+      survivorBenefitAtFra(fraBenefit, fra, claimAge),
+    );
+    return {
+      claimAge,
+      workerBenefit,
+      bothAlive: workerBenefit + lowerEarnerBenefit,
+      survivorBenefit,
+      lostAtFirstDeath: workerBenefit + lowerEarnerBenefit - survivorBenefit,
+    };
+  });
 
   return (
     <ToolFrame
@@ -188,21 +257,38 @@ export function SocialSecurityBreakEvenTool() {
           setFraBenefit,
           { min: 0, max: 10_000 },
         ],
+        ["Lower earner’s own monthly benefit", lowerEarnerBenefit, setLowerEarnerBenefit, { min: 0, max: 10_000 }],
         ["Full retirement age (65–67)", fra, setFra, { min: 65, max: 67 }],
       ]}
       result={
         <>
-          <Metric label="Claim at 62 estimate" value={currency(early)} />
-          <Metric label="Claim at full retirement age" value={currency(fraBenefit)} />
-          <Metric label="Claim at 70 estimate" value={currency(delayed)} />
+          <ToolMetric label="Claim at 62 estimate" value={currency(early)} />
+          <ToolMetric label="Claim at full retirement age" value={currency(fraBenefit)} />
+          <ToolMetric label="Claim at 70 estimate" value={currency(delayed)} />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Rough break-even: {breakEven(breakEvenEarlyFra)} for 62 vs full retirement age, and{" "}
             {breakEven(breakEvenFraDelayed)} for full retirement age vs 70. This excludes taxes,
             survivor benefits, investment returns, and health.
           </p>
+          <div className="mt-2 overflow-x-auto" role="region" aria-label="Survivor benefit comparison" tabIndex={0}>
+            <table className="min-w-[580px] w-full text-left text-sm">
+              <caption className="mb-2 text-left font-semibold text-foreground">If the higher earner dies after both spouses reach survivor full retirement age</caption>
+              <thead><tr className="border-b border-border"><th className="p-2">Higher earner claims</th><th className="p-2">While both alive</th><th className="p-2">Survivor receives</th><th className="p-2">Monthly income lost</th></tr></thead>
+              <tbody>{survivorRows.map((row) => (
+                <tr key={row.claimAge} className="border-b border-border last:border-0">
+                  <td className="p-2 font-medium">Age {row.claimAge}</td>
+                  <td className="p-2 tabular-nums">{currency(row.bothAlive)}</td>
+                  <td className="p-2 tabular-nums">{currency(row.survivorBenefit)}</td>
+                  <td className="p-2 tabular-nums">{currency(row.lostAtFirstDeath)}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+          </div>
+          <p className="text-xs leading-relaxed text-muted-foreground">The survivor receives the higher eligible payment, not both payments added together. This simplified comparison assumes the survivor claims at survivor full retirement age and excludes spousal top-ups while both are alive, early survivor claiming, disability, family maximums, pensions, taxes, and earnings tests. Confirm an individual estimate with Social Security.</p>
         </>
       }
       footnote={
+        <div className="grid gap-2">
         <p>
           <strong className="text-foreground">Break-even is not the whole decision.</strong> It
           treats Social Security as an investment to be maximised, when its real job is insurance
@@ -215,6 +301,8 @@ export function SocialSecurityBreakEvenTool() {
           </Link>
           .
         </p>
+        <p className="text-xs">Survivor rules: <a href="https://www.ssa.gov/survivor/amount" target="_blank" rel="noopener noreferrer" className="underline">Social Security Administration — What you could get from Survivor benefits</a>.</p>
+        </div>
       }
     />
   );
@@ -254,46 +342,32 @@ function ToolFrame({
 
   return (
     <div className="grid gap-5">
-      <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[320px_1fr]">
-        <div className="grid gap-4">
+      <div className="grid min-w-0 gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <fieldset className="calculator-inputs grid min-w-0 gap-4">
+          <legend className="sr-only">Calculator inputs</legend>
           {inputs.map(([label, value, setValue, bounds]) => (
-            <label key={label} className="grid gap-1.5 text-sm font-medium">
-              {label}
-              <input
-                type="number"
-                value={value}
-                min={bounds.min}
-                max={bounds.max}
-                // Clamp on the way in. `min`/`max` are advisory in HTML — typing past them,
-                // or clearing the field (Number("") === 0), still reaches the model.
-                onChange={(e) => {
-                  trackUsed();
-                  const n = Number(e.target.value);
-                  setValue(
-                    Number.isFinite(n) ? Math.min(bounds.max, Math.max(bounds.min, n)) : bounds.min,
-                  );
-                }}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-              />
-            </label>
+            <ToolField
+              key={label}
+              label={label}
+              value={value}
+              min={bounds.min}
+              max={bounds.max}
+              onChange={(nextValue) => {
+                trackUsed();
+                setValue(nextValue);
+              }}
+            />
           ))}
-        </div>
-        <div className="grid content-start gap-3 rounded-lg bg-secondary/70 p-4">{result}</div>
+        </fieldset>
+        <ToolResultRegion id={`${analyticsName}-result`}>
+          {result}
+        </ToolResultRegion>
       </div>
       {footnote && (
-        <div className="rounded-xl border border-border bg-card p-5 text-sm leading-relaxed text-muted-foreground">
+        <AssumptionPanel>
           {footnote}
-        </div>
+        </AssumptionPanel>
       )}
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-lg font-semibold tracking-tight">{value}</p>
     </div>
   );
 }

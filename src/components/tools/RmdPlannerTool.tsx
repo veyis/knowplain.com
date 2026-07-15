@@ -30,6 +30,7 @@ const CURRENT_YEAR = 2026;
 
 export function RmdPlannerTool() {
   const [birthYear, setBirthYear] = useState(1962);
+  const [birthMonth, setBirthMonth] = useState(7);
   const [balance, setBalance] = useState(900_000);
   const [growth, setGrowth] = useState(5);
   const [otherIncome, setOtherIncome] = useState(40_000);
@@ -43,9 +44,11 @@ export function RmdPlannerTool() {
   };
 
   const currentAge = CURRENT_YEAR - birthYear;
-  const startAge = rmdStartAge(birthYear);
+  const startAge = rmdStartAge(birthYear, birthMonth);
   const yearsUntil = Math.max(0, startAge - currentAge);
-  const startYear = birthYear + startAge;
+  const startYear = Number.isInteger(startAge) ? birthYear + startAge : null;
+  const rmdsAlreadyStarted = currentAge >= startAge;
+  const illustrationStartAge = Math.max(72, rmdsAlreadyStarted ? currentAge : startAge);
 
   const rows = useMemo(
     () =>
@@ -53,10 +56,11 @@ export function RmdPlannerTool() {
         currentBalance: balance,
         currentAge,
         birthYear,
+        birthMonth,
         annualReturn: growth / 100,
         throughAge: 95,
       }),
-    [balance, currentAge, birthYear, growth],
+    [balance, currentAge, birthYear, birthMonth, growth],
   );
 
   const firstRmd = rows.find((r) => r.rmd > 0);
@@ -77,7 +81,7 @@ export function RmdPlannerTool() {
   return (
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
-        <div className="grid content-start gap-4" onChange={track}>
+        <div className="calculator-inputs grid content-start gap-4" onChange={track}>
           <ToolField
             label="Birth year"
             value={birthYear}
@@ -86,6 +90,17 @@ export function RmdPlannerTool() {
             max={2000}
             hint="This — not your age — decides when RMDs start."
           />
+          {birthYear === 1949 && (
+            <label className="grid gap-1.5 text-sm font-medium">
+              Birth month
+              <select value={birthMonth} onChange={(event) => setBirthMonth(Number(event.target.value))} className={field}>
+                {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => (
+                  <option key={month} value={month}>{new Date(2000, month - 1, 1).toLocaleString("en-US", { month: "long" })}</option>
+                ))}
+              </select>
+              <span className="text-xs font-normal text-muted-foreground">The cutoff is July 1, 1949. Confirm a June 30 or July 1 edge case using your full birth date.</span>
+            </label>
+          )}
           <ToolField
             label="Traditional IRA / 401(k) balance"
             value={balance}
@@ -127,12 +142,12 @@ export function RmdPlannerTool() {
         <div className="grid content-start gap-4">
           <div>
             <p className="text-sm font-medium text-muted-foreground">
-              Born in {birthYear}, your RMDs begin at {startAge} — in {startYear}
-              {yearsUntil > 0 ? `, ${yearsUntil} ${yearsUntil === 1 ? "year" : "years"} from now` : ""}.
+              Born in {birthYear}, your applicable RMD age is {startAge === 70.5 ? "70½" : startAge}
+              {!rmdsAlreadyStarted && startYear ? ` — in ${startYear}, ${yearsUntil} ${yearsUntil === 1 ? "year" : "years"} from now` : ""}.
             </p>
             <h2 className="mt-1 text-2xl font-semibold tracking-tight">
               {firstRmd
-                ? `Your first forced withdrawal is about ${currency(firstRmd.rmd)}.`
+                ? `${rmdsAlreadyStarted ? "Your estimated current-year RMD" : "Your first estimated RMD"} is about ${currency(firstRmd.rmd)}.`
                 : "No required distribution yet."}
             </h2>
           </div>
@@ -157,7 +172,7 @@ export function RmdPlannerTool() {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-lg bg-secondary p-3">
-              <p className="text-xs text-muted-foreground">First RMD, at {startAge}</p>
+              <p className="text-xs text-muted-foreground">{rmdsAlreadyStarted ? `Estimated RMD at ${currentAge}` : `First RMD, at ${startAge}`}</p>
               <strong>{firstRmd ? currency(firstRmd.rmd) : "—"}</strong>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {firstRmd ? `${(firstRmd.percentOfBalance * 100).toFixed(1)}% of the balance` : ""}
@@ -173,7 +188,7 @@ export function RmdPlannerTool() {
             <div className="rounded-lg bg-secondary p-3">
               <p className="text-xs text-muted-foreground">Divisor at {startAge} → 85</p>
               <strong>
-                {rmdDivisor(startAge).toFixed(1)} → {rmdDivisor(85).toFixed(1)}
+                {rmdDivisor(rmdsAlreadyStarted ? currentAge : startAge).toFixed(1)} → {rmdDivisor(85).toFixed(1)}
               </strong>
               <p className="mt-0.5 text-xs text-muted-foreground">smaller divisor, bigger forced cut</p>
             </div>
@@ -249,11 +264,29 @@ export function RmdPlannerTool() {
         </div>
       </div>
 
+      <section aria-labelledby="rmd-birth-year-timeline" className="rounded-xl border border-border bg-card p-5">
+        <h2 id="rmd-birth-year-timeline" className="text-lg font-semibold tracking-tight">RMD start age by birth cohort</h2>
+        <p className="mt-1 text-sm text-muted-foreground">The applicable age changed twice. Birth date—not the year you retire—selects the rule for IRA owners.</p>
+        <div className="mt-4 overflow-x-auto" role="region" aria-label="RMD birth-year timeline" tabIndex={0}>
+          <table className="min-w-[620px] w-full text-left text-sm">
+            <caption className="sr-only">Applicable required minimum distribution age for each birth cohort</caption>
+            <thead><tr className="border-b border-border"><th className="p-3">Birth cohort</th><th className="p-3">Applicable age</th><th className="p-3">Planning meaning</th></tr></thead>
+            <tbody>
+              <tr className="border-b border-border"><td className="p-3">Before July 1, 1949</td><td className="p-3 font-semibold tabular-nums">70½</td><td className="p-3 text-muted-foreground">Prior-law cohort; RMDs have already begun.</td></tr>
+              <tr className="border-b border-border"><td className="p-3">July 1, 1949–December 31, 1950</td><td className="p-3 font-semibold tabular-nums">72</td><td className="p-3 text-muted-foreground">SECURE Act cohort; RMDs have already begun.</td></tr>
+              <tr className="border-b border-border"><td className="p-3">1951–1959</td><td className="p-3 font-semibold tabular-nums">73</td><td className="p-3 text-muted-foreground">SECURE 2.0’s first cohort.</td></tr>
+              <tr><td className="p-3">1960 or later</td><td className="p-3 font-semibold tabular-nums">75</td><td className="p-3 text-muted-foreground">Two additional years of owner-controlled income versus age 73.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">Source: <a href="https://www.irs.gov/irb/2024-33_IRB" target="_blank" rel="noopener noreferrer" className="underline">IRS final RMD regulations, T.D. 10001</a>. Workplace plans can have a still-working exception; inherited accounts use different rules.</p>
+      </section>
+
       <div className="grid gap-2 rounded-xl border border-border bg-card p-5 text-sm leading-relaxed text-muted-foreground">
         <p>
           <strong className="text-foreground">Why the RMD keeps growing.</strong> It is the balance
           divided by a divisor from the IRS Uniform Lifetime Table, and that divisor shrinks every
-          year — {rmdDivisor(startAge).toFixed(1)} at {startAge}, {rmdDivisor(85).toFixed(1)} at 85,{" "}
+          year — {rmdDivisor(illustrationStartAge).toFixed(1)} at {illustrationStartAge}, {rmdDivisor(85).toFixed(1)} at 85,{" "}
           {rmdDivisor(90).toFixed(1)} at 90. So the forced withdrawal rises as a{" "}
           <em>share of the account</em>, not just in dollars, even while the balance compounds. A
           plan that ignores it lets the IRS choose your taxable income in your eighties.

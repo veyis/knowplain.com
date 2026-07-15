@@ -16,6 +16,12 @@ const articles = defineCollection({
     published: z.string().optional(),
     updated: z.string(),
     reviewed: z.string().optional(),
+    volatile: z.boolean().optional(),
+    volatileNote: z.string().optional(),
+    correction: z.object({
+      date: z.string(),
+      summary: z.string(),
+    }).optional(),
     author: z.string().optional(),
     reviewer: z.string().optional(),
     contentType: z
