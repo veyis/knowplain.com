@@ -4,38 +4,12 @@ import { useMemo, useRef, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
+import { ToolField } from "./ToolField";
 import { currency } from "@/lib/checkup";
 import { sequenceRiskComparison } from "@/lib/facts-2026";
 
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
-function Field({
-  label,
-  value,
-  onChange,
-  hint,
-  step = 1,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  hint?: string;
-  step?: number;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium">
-      {label}
-      <input
-        type="number"
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-      />
-      {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-    </label>
-  );
-}
 
 export function SequenceRiskTool() {
   const [balance, setBalance] = useState(1_000_000);
@@ -74,33 +48,75 @@ export function SequenceRiskTool() {
   );
 
   const ruined = result.badFirst.depletedInYear !== null;
+  const luckyAlsoRuined = result.goodFirst.depletedInYear !== null;
+  const bothRuined = ruined && luckyAlsoRuined;
+
+  /**
+   * The headline used to branch on `shortfall > 0`. When BOTH portfolios deplete they both
+   * end at $0, so shortfall is 0 — and the tool announced "the order makes no difference at
+   * all" while the banner below it simultaneously reported a year-9 wipeout. Two false and
+   * contradictory statements on one screen, at exactly the withdrawal rates where the tool's
+   * lesson matters most.
+   *
+   * When both run dry, the story isn't the ending balance (identical, zero) — it's how many
+   * years of solvency the order cost. Branch on the real condition.
+   */
+  const yearsSooner =
+    bothRuined && result.goodFirst.depletedInYear && result.badFirst.depletedInYear
+      ? result.goodFirst.depletedInYear - result.badFirst.depletedInYear
+      : 0;
+
+  const headline = (() => {
+    if (withdrawalRate === 0) return "With nothing withdrawn, the order makes no difference at all.";
+    if (badReturn === goodReturn)
+      return "Both decades are identical — there is no bad sequence to meet.";
+    if (bothRuined) {
+      return yearsSooner > 0
+        ? `Both run dry — but the bad decade first empties the portfolio ${yearsSooner} years sooner.`
+        : "Both portfolios run dry. At this withdrawal rate, the rate is the problem, not the order.";
+    }
+    if (result.shortfall > 0) return `Meeting the bad decade first costs ${currency(result.shortfall)}.`;
+    if (result.shortfall < 0)
+      return "Your “bad” return is higher than your “good” one — swap them to see the effect.";
+    return "The order makes no difference at these inputs.";
+  })();
 
   return (
     <div className="grid gap-5">
       <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[300px_1fr]">
-        <div className="grid content-start gap-4" onChange={track}>
-          <Field label="Starting portfolio" value={balance} onChange={setBalance} step={10_000} />
-          <Field
+        <div className="calculator-inputs grid content-start gap-4" onChange={track}>
+          <ToolField label="Starting portfolio"
+            min={0}
+            max={50000000} value={balance} onChange={setBalance} step={10_000} />
+          <ToolField
             label="First-year withdrawal rate (%)"
+            min={0}
+            max={20}
             value={withdrawalRate}
             onChange={setWithdrawalRate}
             step={0.1}
             hint="Rises with inflation each year after."
           />
-          <Field
+          <ToolField
             label="Return in the bad decade (%)"
+            min={-50}
+            max={50}
             value={badReturn}
             onChange={setBadReturn}
             step={0.5}
             hint="Applied to the first 10 years, or the last 10."
           />
-          <Field
+          <ToolField
             label="Return in the other 20 years (%)"
+            min={-50}
+            max={50}
             value={goodReturn}
             onChange={setGoodReturn}
             step={0.5}
           />
-          <Field label="Inflation (%)" value={inflation} onChange={setInflation} step={0.1} />
+          <ToolField label="Inflation (%)"
+            min={0}
+            max={20} value={inflation} onChange={setInflation} step={0.1} />
         </div>
 
         <div className="grid content-start gap-4">
@@ -108,11 +124,7 @@ export function SequenceRiskTool() {
             <p className="text-sm font-medium text-muted-foreground">
               Both retirees earn the same {pct(result.averageReturn)} average return over 30 years.
             </p>
-            <h2 className="mt-1 text-2xl font-semibold tracking-tight">
-              {result.shortfall > 0
-                ? `Meeting the bad decade first costs ${currency(result.shortfall)}.`
-                : "With nothing withdrawn, the order makes no difference at all."}
-            </h2>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight">{headline}</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Same returns. Same average. Only the <em>order</em> changed.
             </p>
@@ -180,8 +192,20 @@ export function SequenceRiskTool() {
                 <strong className="block">
                   The unlucky retiree runs out in year {result.badFirst.depletedInYear}.
                 </strong>{" "}
-                The lucky one, on exactly the same returns, does not. Nothing separates them but
-                timing — which is the one thing neither of them controls.
+                {/* Only claim the lucky one survived if they actually did. */}
+                {luckyAlsoRuined ? (
+                  <>
+                    The lucky one runs out too, in year {result.goodFirst.depletedInYear} — same
+                    returns, {yearsSooner > 0 ? `${yearsSooner} more years of solvency` : "no better off"}. When both
+                    orders fail, the withdrawal rate is too high for this portfolio, and no amount of
+                    good luck early on fixes that. Lower the rate and watch both lines survive.
+                  </>
+                ) : (
+                  <>
+                    The lucky one, on exactly the same returns, does not. Nothing separates them but
+                    timing — which is the one thing neither of them controls.
+                  </>
+                )}
               </div>
             </div>
           )}

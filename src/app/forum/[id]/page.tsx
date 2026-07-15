@@ -1,16 +1,18 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { createPost, toggleLike } from "../actions";
-import { Heart, Reply } from "lucide-react";
+import { createPost, reportContent, toggleLike } from "../actions";
+import { Flag, Heart, Reply } from "lucide-react";
 
 type Thread = {
   id: string;
   title: string;
   pillar: string;
   created_at: string;
+  status: "pending" | "published" | "hidden" | "locked";
   knowplain_profiles?: { display_name: string } | null;
   knowplain_forum_likes?: { count: number }[] | null;
 };
@@ -19,6 +21,7 @@ type Post = {
   id: string;
   content: string;
   created_at: string;
+  status: "pending" | "published" | "hidden";
   knowplain_profiles?: { display_name: string } | null;
 };
 
@@ -52,6 +55,7 @@ export default async function ThreadPage({
       title,
       pillar,
       created_at,
+      status,
       knowplain_profiles ( display_name ),
       knowplain_forum_likes ( count )
     `)
@@ -79,6 +83,7 @@ export default async function ThreadPage({
       id,
       content,
       created_at,
+      status,
       knowplain_profiles ( display_name )
     `)
     .eq("thread_id", id)
@@ -92,11 +97,7 @@ export default async function ThreadPage({
   return (
     <AppShell active="forum">
       <div className="mx-auto max-w-3xl">
-        <div className="mb-6 flex items-center text-sm text-muted-foreground">
-          <Link href="/forum" className="hover:text-ink">Forum</Link>
-          <span className="mx-2">›</span>
-          <span className="truncate">{thread.title}</span>
-        </div>
+        <Breadcrumbs className="mb-6" items={[{ label: "Home", href: "/" }, { label: "Forum", href: "/forum" }, { label: thread.title }]} />
 
         {/* Thread Header */}
         <div className="mb-8 border-b border-line pb-6">
@@ -104,6 +105,9 @@ export default async function ThreadPage({
             {thread.pillar.replace("-", " ")}
           </span>
           <h1 className="mb-4 text-3xl font-bold tracking-tight">{thread.title}</h1>
+          {thread.status === "pending" && (
+            <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">Pending moderation. Only you and moderators can view this discussion.</p>
+          )}
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>Posted by <strong className="text-ink">{thread.knowplain_profiles?.display_name || "Anonymous"}</strong></span>
             <span>•</span>
@@ -132,6 +136,16 @@ export default async function ThreadPage({
                 {likeCount} {likeCount === 1 ? 'Upvote' : 'Upvotes'}
               </Link>
             )}
+            {user && (
+              <form action={reportContent} className="flex items-center gap-2">
+                <input type="hidden" name="thread_id" value={thread.id} />
+                <label className="sr-only" htmlFor="report-thread-reason">Report reason</label>
+                <select id="report-thread-reason" name="reason" defaultValue="dangerous-advice" className="min-h-10 rounded-full border border-border bg-background px-3 text-xs">
+                  <option value="dangerous-advice">Dangerous advice</option><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="privacy">Private information</option><option value="other">Other</option>
+                </select>
+                <button type="submit" className="flex min-h-10 items-center gap-1.5 rounded-full border border-border px-3 text-xs"><Flag className="size-3.5" /> Report</button>
+              </form>
+            )}
           </div>
         </div>
 
@@ -151,19 +165,33 @@ export default async function ThreadPage({
               <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed text-secondary">
                 {p.content}
               </div>
+              <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-3">
+                {p.status === "pending" ? <span className="text-xs font-medium text-amber-700 dark:text-amber-300">Pending moderation · visible only to you</span> : <span />}
+                {user && (
+                  <form action={reportContent} className="flex items-center gap-2">
+                    <input type="hidden" name="post_id" value={p.id} />
+                    <label className="sr-only" htmlFor={`report-${p.id}`}>Report reason</label>
+                    <select id={`report-${p.id}`} name="reason" defaultValue="dangerous-advice" className="min-h-10 rounded-full border border-border bg-background px-3 text-xs">
+                      <option value="dangerous-advice">Dangerous advice</option><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="privacy">Private information</option><option value="other">Other</option>
+                    </select>
+                    <button type="submit" className="flex min-h-10 items-center gap-1.5 rounded-full border border-border px-3 text-xs"><Flag className="size-3.5" /> Report</button>
+                  </form>
+                )}
+              </div>
             </div>
           ))}
         </div>
 
         {/* Reply Form */}
         <div id="reply">
-          {user ? (
+          {user && thread.status !== "locked" ? (
             <div className="rounded-2xl border border-line bg-surface p-6 shadow-xs">
               <div className="mb-4 flex items-center gap-2 font-semibold">
                 <Reply className="h-5 w-5 text-blue-600" />
                 <h3>Write a Reply</h3>
               </div>
-              <form action={createPost} className="flex flex-col gap-4">
+                <form action={createPost} className="flex flex-col gap-4">
+                <p className="text-xs text-muted-foreground">Replies remain pending until moderation. Do not include private account or contact information.</p>
                 <input type="hidden" name="thread_id" value={thread.id} />
                 <textarea 
                   name="content" 
@@ -175,6 +203,8 @@ export default async function ThreadPage({
                 <Button type="submit" className="self-end">Post Reply</Button>
               </form>
             </div>
+          ) : thread.status === "locked" ? (
+            <div className="rounded-2xl border border-line bg-secondary p-6 text-center text-sm text-muted-foreground">This discussion is locked and no longer accepts replies.</div>
           ) : (
             <div className="rounded-2xl border border-line bg-blue-50 p-6 text-center dark:bg-blue-950/20">
               <h3 className="mb-2 font-semibold text-blue-900 dark:text-blue-100">Join the Discussion</h3>

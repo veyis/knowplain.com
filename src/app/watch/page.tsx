@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { pageMeta } from "@/lib/site";
-import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
-import { fallbackVideos, type KnowPlainVideo } from "@/lib/videos";
+import { fallbackVideos } from "@/lib/videos";
 
 export const metadata = pageMeta(
   "/watch",
@@ -11,20 +10,7 @@ export const metadata = pageMeta(
   "Know Plain YouTube explainers with chapters and transcript pages for SEO.",
 );
 
-export default async function WatchPage() {
-  let videos: KnowPlainVideo[] | null = null;
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("knowplain_videos")
-      .select("*")
-      .order("published_at", { ascending: false });
-    videos = data as KnowPlainVideo[] | null;
-  } catch {
-    videos = null;
-  }
-  const videoList = videos?.length ? videos : fallbackVideos;
-
+export default function WatchPage() {
   return (
     <AppShell active="watch">
       <div className="mb-3 flex items-baseline justify-between">
@@ -33,7 +19,7 @@ export default async function WatchPage() {
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2">
-        {videoList.map((video) => (
+        {fallbackVideos.map((video) => (
           <Link key={video.id} href={`/watch/${video.id}`} className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20 overflow-hidden !p-0">
             <div className="relative grid aspect-video w-full place-items-center bg-line text-sm font-medium text-muted-foreground">
               {video.thumbnail_url ? (

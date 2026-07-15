@@ -27,7 +27,7 @@ export default function GlossaryPage() {
   };
 
   return (
-    <AppShell active="home">
+    <AppShell active="glossary">
       <JsonLd
         data={[
           definedTermSet,

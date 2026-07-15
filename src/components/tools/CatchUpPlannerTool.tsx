@@ -6,6 +6,7 @@ import { AlertTriangle } from "lucide-react";
 import { trackProductEvent } from "@/lib/analytics";
 import { currency } from "@/lib/checkup";
 import { CONTRIBUTION_2026, catchUpPlan2026 } from "@/lib/facts-2026";
+import { ToolField } from "./ToolField";
 
 const tierLabel = {
   none: "No catch-up yet — it starts at 50",
@@ -43,53 +44,20 @@ export function CatchUpPlannerTool() {
   };
 
   return (
-    <div className="grid gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[320px_1fr]">
-      <div className="grid gap-4">
-        <label className="grid gap-1.5 text-sm font-medium">
-          Your age at the end of 2026
-          <input
-            type="number"
-            min={18}
-            max={99}
-            value={age}
-            onChange={(e) => {
-              trackUsed();
-              setAge(Number(e.target.value));
-            }}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-          />
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          2025 wages from this employer
-          <input
-            type="number"
-            min={0}
-            value={priorWages}
-            onChange={(e) => {
-              trackUsed();
-              setPriorWages(Math.max(0, Number(e.target.value)));
-            }}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-          />
-          <span className="text-xs font-normal text-muted-foreground">
-            Social Security (FICA) wages from the employer that sponsors your plan. If you had none
-            from them, enter 0.
-          </span>
-        </label>
-        <label className="grid gap-1.5 text-sm font-medium">
-          What you already contribute a year
-          <input
-            type="number"
-            min={0}
-            value={currentDeferral}
-            onChange={(e) => {
-              trackUsed();
-              setCurrentDeferral(Math.max(0, Number(e.target.value)));
-            }}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-          />
-        </label>
-      </div>
+    <div className="grid min-w-0 gap-5 rounded-xl border border-border bg-card p-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <fieldset className="calculator-inputs grid min-w-0 gap-4">
+        <legend className="sr-only">Catch-up contribution inputs</legend>
+        <ToolField label="Your age at the end of 2026" value={age} min={18} max={99} onChange={(value) => { trackUsed(); setAge(value); }} />
+        <ToolField
+          label="2025 wages from this employer"
+          value={priorWages}
+          min={0}
+          max={5_000_000}
+          hint="Social Security (FICA) wages from the employer that sponsors your plan. If you had none from them, enter 0."
+          onChange={(value) => { trackUsed(); setPriorWages(value); }}
+        />
+        <ToolField label="What you already contribute a year" value={currentDeferral} min={0} max={500_000} onChange={(value) => { trackUsed(); setCurrentDeferral(value); }} />
+      </fieldset>
 
       <div className="grid content-start gap-4">
         <div>

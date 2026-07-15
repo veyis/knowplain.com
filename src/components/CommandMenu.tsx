@@ -1,15 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BookOpen,
+  CheckCircle2,
   FileText,
   Home,
   MessagesSquare,
   PlayCircle,
   Search,
   Wrench,
+  GitCompareArrows,
 } from "lucide-react";
 import {
   CommandDialog,
@@ -20,15 +22,16 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { searchIndex } from "@/lib/content";
+import { commandDocs } from "@/lib/command-docs";
 import { glossary } from "@/lib/glossary";
 
 const nav = [
   { label: "Home", href: "/", Icon: Home },
-  { label: "Topics", href: "/topics/retirement", Icon: FileText },
-  { label: "Tools", href: "/tools", Icon: Wrench },
-  { label: "Videos", href: "/watch", Icon: PlayCircle },
-  { label: "Forum", href: "/forum", Icon: MessagesSquare },
+  { label: "Plan", href: "/checkup", Icon: CheckCircle2 },
+  { label: "Learn", href: "/topics/retirement", Icon: FileText },
+  { label: "Calculate", href: "/tools", Icon: Wrench },
+  { label: "Decide", href: "/decisions", Icon: GitCompareArrows },
+  { label: "Community", href: "/forum", Icon: MessagesSquare },
 ];
 
 const typeIcon = {
@@ -36,11 +39,19 @@ const typeIcon = {
   tool: Wrench,
   video: PlayCircle,
   thread: MessagesSquare,
+  decision: GitCompareArrows,
+  glossary: BookOpen,
 } as const;
 
 export function CommandMenu() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const handleOpenChange = useCallback((nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) requestAnimationFrame(() => triggerRef.current?.focus());
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -61,20 +72,21 @@ export function CommandMenu() {
     [router],
   );
 
-  const explainers = searchIndex.filter((d) => d.type === "explainer");
-  const tools = searchIndex.filter((d) => d.type === "tool");
+  const explainers = commandDocs.filter((d) => d.type === "explainer");
+  const tools = commandDocs.filter((d) => d.type === "tool");
 
   return (
     <>
       {/* Vercel-style search trigger that opens the ⌘K palette */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex h-9 w-full max-w-md items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm text-muted-foreground transition-colors hover:bg-accent"
+        className="group flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-sm text-muted-foreground transition-colors hover:bg-accent sm:h-9 sm:min-w-0 sm:flex-1 sm:justify-start sm:gap-2 sm:px-3"
         aria-label="Search (⌘K)"
       >
         <Search className="size-4 shrink-0 opacity-60" />
-        <span className="flex-1 text-left">Search explainers, tools, terms…</span>
+        <span className="hidden min-w-0 flex-1 truncate text-left sm:block">Search explainers, tools, terms…</span>
         <kbd className="hidden items-center gap-1 rounded border border-border bg-muted px-1.5 [font-family:system-ui,sans-serif] text-[0.65rem] text-muted-foreground sm:flex">
           ⌘K
         </kbd>
@@ -82,7 +94,7 @@ export function CommandMenu() {
 
       <CommandDialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={handleOpenChange}
         title="Search Know Plain"
         description="Find explainers, tools, and glossary terms"
       >

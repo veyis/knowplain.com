@@ -70,10 +70,13 @@ export default function ToolsPage() {
           <strong>Boldin</strong>
           <p className="text-sm text-muted-foreground">DIY stress-test planner.</p>
         </a>
+        {/* Was labelled "Coming" while fully live, indexable, and linked from two places. */}
         <Link href="/tools/withdrawal-simulator" className="group grid gap-1.5 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/20">
-          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Coming</div>
+          <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-muted-foreground">Tool</div>
           <strong>Withdrawal simulator</strong>
-          <p className="text-sm text-muted-foreground">Owned interactive tool.</p>
+          <p className="text-sm text-muted-foreground">
+            Watch a 30-year drawdown play out, and save the scenario.
+          </p>
         </Link>
       </div>
       <p className="mt-6 rounded-xl border border-dashed border-line bg-card p-4 text-sm text-muted-foreground">

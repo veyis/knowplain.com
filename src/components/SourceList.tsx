@@ -10,7 +10,7 @@ export function SourceList({ sources }: { sources?: readonly ArticleSource[] }) 
   if (!sources?.length) return null;
 
   return (
-    <section className="mt-8 rounded-xl border border-border bg-card p-4">
+    <section id="sources" className="mt-8 scroll-mt-24 rounded-xl border border-border bg-card p-4">
       <h2 className="mb-3 text-base font-semibold tracking-tight">Sources and notes</h2>
       <ol className="grid gap-3 text-sm text-muted-foreground">
         {sources.map((source) => (
@@ -33,4 +33,3 @@ export function SourceList({ sources }: { sources?: readonly ArticleSource[] }) 
     </section>
   );
 }
-

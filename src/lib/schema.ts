@@ -6,9 +6,15 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: site.name,
     url: site.url,
-    logo: `${site.url}/icon`,
+    logo: { "@type": "ImageObject", url: `${site.url}/opengraph-image` },
     description: site.description,
     sameAs: [site.youtube],
+    // The publisher-trust properties Google documents for YMYL. The pages were already
+    // written and simply never declared — a free signal we were throwing away.
+    publishingPrinciples: `${site.url}/editorial-policy`,
+    correctionsPolicy: `${site.url}/corrections`,
+    ethicsPolicy: `${site.url}/disclosure`,
+    actionableFeedbackPolicy: `${site.url}/corrections`,
   };
 }
 
@@ -27,6 +33,31 @@ export function websiteJsonLd() {
   };
 }
 
+/** Publisher node, with the logo Google's Article guidance asks for. */
+function publisher() {
+  return {
+    "@type": "Organization",
+    name: site.name,
+    url: site.url,
+    logo: { "@type": "ImageObject", url: `${site.url}/opengraph-image` },
+  };
+}
+
+/**
+ * Article + WebPage as an @graph.
+ *
+ * `reviewedBy` and `lastReviewed` are properties of **WebPage**, not Article — emitting them
+ * on an Article node is invalid and parsers may drop them. They are also the machine-readable
+ * E-E-A-T signals Google's Quality Rater Guidelines call out for YMYL money pages, so putting
+ * them on the wrong node meant doing the editorial work and discarding the signal.
+ *
+ * `lastReviewed` was previously never emitted at all, despite every article carrying a
+ * `reviewed:` date that the page already renders visibly to readers.
+ *
+ * The reviewer's `@type` is threaded rather than hardcoded to Organization: today it is an
+ * editorial board, and the day a named credentialed human reviews these pages the markup has
+ * to be able to say Person.
+ */
 export function articleJsonLd(input: {
   title: string;
   description: string;
@@ -34,33 +65,89 @@ export function articleJsonLd(input: {
   image: string;
   datePublished: string;
   dateModified: string;
+  lastReviewed?: string;
   author?: { name: string; url: string; type?: "Person" | "Organization" };
-  reviewer?: { name: string; url: string };
+  reviewer?: { name: string; url: string; type?: "Person" | "Organization" };
+}) {
+  const webPageId = `${input.url}#webpage`;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": webPageId,
+        url: input.url,
+        name: input.title,
+        description: input.description,
+        isPartOf: { "@type": "WebSite", name: site.name, url: site.url },
+        ...(input.lastReviewed ? { lastReviewed: input.lastReviewed } : {}),
+        ...(input.reviewer
+          ? {
+              reviewedBy: {
+                "@type": input.reviewer.type || "Organization",
+                name: input.reviewer.name,
+                url: input.reviewer.url,
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "Article",
+        headline: input.title,
+        description: input.description,
+        image: [input.image],
+        datePublished: input.datePublished,
+        dateModified: input.dateModified,
+        author: {
+          "@type": input.author?.type || "Organization",
+          name: input.author?.name || `${site.name} Editorial`,
+          url: input.author?.url || site.url,
+        },
+        publisher: publisher(),
+        mainEntityOfPage: { "@id": webPageId },
+        isPartOf: { "@id": webPageId },
+      },
+    ],
+  };
+}
+
+/**
+ * A plain WebPage node for calculator and decision pages.
+ *
+ * No rich result is expected or wanted here — SoftwareApplication needs offers.price and
+ * aggregateRating, and inventing ratings for a free calculator would be a spam violation
+ * (see the removal note below). But a YMYL page that outputs retirement numbers should still
+ * declare who is behind it and when it was last reviewed. That costs nothing and is the
+ * signal that actually matters.
+ */
+export function toolPageJsonLd(input: {
+  title: string;
+  description: string;
+  url: string;
+  dateModified: string;
+  lastReviewed?: string;
+  reviewer?: { name: string; url: string; type?: "Person" | "Organization" };
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: input.title,
+    "@type": "WebPage",
+    url: input.url,
+    name: input.title,
     description: input.description,
-    image: [input.image],
-    datePublished: input.datePublished,
     dateModified: input.dateModified,
-    author: {
-      "@type": input.author?.type || "Organization",
-      name: input.author?.name || `${site.name} Editorial`,
-      url: input.author?.url || site.url,
-    },
+    isPartOf: { "@type": "WebSite", name: site.name, url: site.url },
+    publisher: publisher(),
+    ...(input.lastReviewed ? { lastReviewed: input.lastReviewed } : {}),
     ...(input.reviewer
       ? {
           reviewedBy: {
-            "@type": "Organization",
+            "@type": input.reviewer.type || "Organization",
             name: input.reviewer.name,
             url: input.reviewer.url,
           },
         }
       : {}),
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
-    mainEntityOfPage: input.url,
   };
 }
 

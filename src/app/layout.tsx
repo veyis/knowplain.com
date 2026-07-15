@@ -5,6 +5,7 @@ import { site } from "@/lib/site";
 import { AppAnalytics } from "@/components/AppAnalytics";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { OperationalErrorMonitor } from "@/components/OperationalErrorMonitor";
 
 const sans = Geist({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+          <OperationalErrorMonitor />
         </ThemeProvider>
         {/* Cookieless analytics and vitals only; AppAnalytics suppresses loading/sending
             when Global Privacy Control is enabled. CSP hosts are allow-listed in next.config.ts. */}

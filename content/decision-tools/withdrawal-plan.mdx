@@ -1,25 +1,72 @@
 ---
 title: "A plain-English retirement withdrawal plan"
-description: "A simple, rules-based way to turn a portfolio into a paycheck — order, guardrails, and buffers."
-plainAnswer: "Draw from a cash buffer, follow a sensible account order, and use guardrails instead of a rigid percentage."
-updated: "2026-07-09"
+description: "Which account to spend first, why the textbook order is often wrong, and how guardrails beat a rigid withdrawal rate."
+plainAnswer: "A withdrawal plan has four parts: a cash buffer so you never sell stocks in a crash, an account order that smooths your tax bracket rather than emptying one account at a time, guardrails that flex spending after good and bad years, and a tax layer that watches the ACA cliff before 65 and Medicare surcharges from 63."
+updated: "2026-07-11"
 published: "2026-07-09"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
 contentType: "decision"
 riskLevel: "high"
+relatedTools:
+  - href: /tools/sequence-risk
+    label: "Stress-test the order your returns arrive in"
+  - href: /tools/rmd-planner
+    label: "See when the IRS starts choosing your income"
+  - href: /tools/roth-vs-traditional
+    label: "Price a conversion: tax, ACA cliff and IRMAA together"
+faqs:
+  - q: "What order should I withdraw from my retirement accounts?"
+    a: "The common default is taxable first, then tax-deferred, then Roth. It is a reasonable starting point and it is frequently wrong. Emptying one account at a time produces years of near-zero taxable income followed by years of high income. Drawing a blend that fills a low bracket every year usually costs less over a lifetime."
+  - q: "Is the 4% rule still right?"
+    a: "There is no single safe rate, and the credible numbers disagree because they answer different questions. Morningstar's forward-looking research points to about {{swr.morningstar}} for a rigid, inflation-adjusted paycheck at 90% confidence over 30 years; Bengen's historical worst case, with a more aggressive portfolio, points to {{swr.bengen}}. Neither is wrong, and they cannot be averaged."
+  - q: "What matters more than the exact percentage?"
+    a: "Flexibility. A retiree who can trim spending after a bad year can safely start higher than one who cannot. The static rate is essentially the price of refusing to adjust — and no amount of precision in choosing it substitutes for the ability to change it."
+  - q: "How much cash should I hold in retirement?"
+    a: "One to three years of spending is the common range. Its job is not return; it is to make selling stocks in a downturn optional. The cost is real — that slice earns cash yields instead of portfolio returns — but on a portfolio of 25 times spending, three years of cash is only about 12% of assets."
+  - q: "What are withdrawal guardrails?"
+    a: "Rules that adjust spending as the portfolio moves. Guyton and Klinger's version cuts the withdrawal by 10% if the current withdrawal rate drifts more than 20% above where it started, and raises it 10% if it falls 20% below. You accept a variable income in exchange for a much lower chance of running out."
+  - q: "When do RMDs start?"
+    a: "At {{rmd.ageBorn1951to1959}} if you were born between 1951 and 1959, and {{rmd.ageBorn1960OrLater}} if you were born in 1960 or later. SECURE 2.0 set two ages, not one. Most calculators and articles assume 73, which is wrong for everyone born after 1959."
+  - q: "Do Roth withdrawals affect my ACA subsidy or Medicare premium?"
+    a: "No. Qualified Roth withdrawals are not income for MAGI purposes, so they do not push you toward the ACA subsidy cliff before 65 or into an IRMAA tier afterwards. That is the single most useful property of a Roth account in the drawdown years, and it is why the order you withdraw in has consequences far beyond income tax."
 sources:
   - title: "What's a Safe Retirement Withdrawal Rate in 2026?"
     publisher: "Morningstar, State of Retirement Income (2025 edition)"
     url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026"
     accessed: "2026-07-11"
-    note: "3.9% starting rate: forward-looking, 30-year horizon, 90% success, 30-50% equity."
-faqs:
-  - q: "Is the 4% rule still right?"
-    a: "There is no single safe rate, and the honest answer is that the credible numbers disagree because they answer different questions. Morningstar's forward-looking research points to about 3.9% for a rigid, inflation-adjusted paycheck at 90% confidence over 30 years; Bengen's historical worst case, with a more aggressive portfolio, points to about 4.7%. Neither is wrong, and they cannot be averaged."
-  - q: "What matters more than the exact percentage?"
-    a: "Flexibility. A retiree who can trim spending after a bad year can safely start higher than one who cannot. The static rate is essentially the price of refusing to adjust."
+    note: "{{swr.morningstar}} starting rate: forward-looking, 30-year horizon, 90% success, 30-50% equity."
+  - title: "Decision Rules and Maximum Initial Withdrawal Rates"
+    publisher: "Guyton & Klinger, Journal of Financial Planning (March 2006)"
+    url: "https://www.financialplanningassociation.org/sites/default/files/2021-11/2006%20-%20Guyton%20and%20Klinger%20-%20Decision%20Rules%20and%20SWR%20(1).PDF"
+    accessed: "2026-07-11"
+    note: "The capital-preservation and prosperity rules (the 20% drift trigger and 10% adjustment), and the paper's claimed 5.2-5.6% initial rates for 65%+ equity portfolios over 40 years."
+  - title: "Rev. Proc. 2025-32 — 2026 inflation adjustments"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    accessed: "2026-07-11"
+    note: "The 2026 ordinary brackets and the 0% long-term capital gains ceiling used in the bracket-filling section."
+  - title: "Retirement plan and IRA required minimum distributions FAQs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs"
+    accessed: "2026-07-11"
+    note: "RMDs begin at {{rmd.ageBorn1951to1959}} or {{rmd.ageBorn1960OrLater}} depending on birth year."
+  - title: "Publication 590-B — Distributions from Individual Retirement Arrangements"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/publications/p590b"
+    accessed: "2026-07-11"
+    note: "Qualified charitable distributions: available from age 70½, excluded from income, and they count toward the RMD."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "IRMAA first-tier thresholds, the surcharge cost, and the two-year lookback."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "The enhanced credits expired 2025-12-31 and the {{aca.cliffPercent}}-of-FPL cliff returned for 2026."
 related:
   - href: /topics/decision-tools
     label: "Back to hub → Decision tools"
@@ -27,34 +74,107 @@ related:
     label: "The 4% rule in 2026"
   - href: /topics/retirement/sequence-of-returns
     label: "Sequence of returns risk"
-  - href: /tools
-    label: "Stress-test → Tools"
+  - href: /topics/retirement/roth-conversion-ladder
+    label: "The Roth conversion ladder"
 ---
 
-Saving for retirement gets all the attention; *spending* it is the part nobody explains plainly. A withdrawal plan is just a set of rules for turning a portfolio into a monthly paycheck without running out. This spoke sits under the [Decision tools hub](/topics/decision-tools).
+Saving for retirement gets all the attention; *spending* it is the part nobody explains plainly. A withdrawal plan is just a set of rules for turning a portfolio into a monthly paycheck without running out — and the rules that matter are about **order and flexibility**, not about finding the perfect percentage. This spoke sits under the [Decision tools hub](/topics/decision-tools).
 
 ## Step 1: a cash buffer
 
-Hold 1–3 years of spending in cash or short-term bonds. That buffer is what lets you *avoid selling stocks in a downturn* — the core defense against [sequence-of-returns risk](/topics/retirement/sequence-of-returns). You refill it from the portfolio in good years.
+Hold one to three years of spending in cash or short-term bonds. Its job is not return. Its job is to make selling stocks in a downturn **optional** — the core defence against [sequence-of-returns risk](/topics/retirement/sequence-of-returns), where the order your returns arrive in decides whether identical average returns leave you rich or broke. You refill the buffer from the portfolio in good years.
 
-## Step 2: a sensible withdrawal order
+Be honest about what it costs. Cash earns cash yields, not portfolio returns, so every year that slice sits out of the market you give up the difference. That is real money and it compounds. But size it: if your portfolio is around 25× your annual spending, then three years of spending is roughly **12% of the portfolio**, and one year is about 4%. The drag on the whole plan is the return gap applied to that slice — noticeable, not ruinous.
 
-Which accounts you tap first affects your lifetime tax bill. A common plain order is:
+And be honest about what it buys, because it is easy to oversell. A cash buffer does not conjure returns out of nowhere, and a rebalanced portfolio does something similar mechanically: after stocks fall, rebalancing means you are selling bonds, not stocks. The buffer's real value is that it makes the right behaviour possible for a human being. The retiree who has to log in and sell equities during a 35% drawdown to eat is the retiree who capitulates. The one with two years of groceries in cash can wait. That is not a small thing — it is most of what kills plans — but it is a behavioural benefit, not an arithmetic one, and you should buy it knowingly.
 
-1. **Taxable accounts** first (you've already paid tax on most of it).
-2. **Tax-deferred** accounts (traditional 401(k)/IRA) next — but note **required minimum distributions** start at age 73 under SECURE 2.0 ([IRS RMD FAQs](https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs)), so plan around them.
-3. **Roth** last, so tax-free growth compounds as long as possible.
+## Step 2: which account do you spend first?
 
-The order isn't rigid — blending across accounts to smooth your tax bracket each year is often smarter — but this is the plain starting point.
+You have up to three kinds of money and they are taxed completely differently on the way out. The order you tap them in decides how much of your own money you keep.
+
+| Account | Tax when you withdraw | Does it raise MAGI (ACA cliff, IRMAA)? | Subject to RMDs? |
+| --- | --- | --- | --- |
+| **Taxable brokerage** | Only the *gain*, at long-term capital gains rates if held over a year — potentially 0% | Yes — the realised gain does | No |
+| **Tax-deferred** (traditional 401(k)/IRA) | The whole withdrawal, at ordinary income rates | Yes — every dollar | Yes |
+| **Roth** | Nothing, if qualified | **No** | No (not the IRA; and since 2024, not the designated Roth 401(k) either) |
+
+The third column is the one most withdrawal guides never print, and before 65 it is worth more than the second.
+
+### The textbook order, and why it is often wrong
+
+The default advice is: **taxable → tax-deferred → Roth.** Spend the already-taxed money first, let the tax-deferred account keep compounding, and leave the Roth to grow tax-free as long as possible.
+
+It is a defensible starting point. It is also frequently the wrong plan, because it optimises one year at a time and your tax bill is a *lifetime* number. Follow it strictly and you produce a lumpy income profile: several years of near-zero taxable income while you live off the brokerage account, and then a cliff-edge of high income when the taxable money runs out and RMDs arrive on top of Social Security. You wasted the low brackets in the early years and then paid the high ones later.
+
+**Bracket-smoothing beats strict sequencing.** The better instinct is to ask, every year: what is the cheapest dollar available to me right now, and how much of it can I take before it stops being cheap? Usually that means drawing a *blend* — enough from the tax-deferred account to fill up a low bracket deliberately, topped up from taxable or Roth for the spending above it. You pay a little tax in years you could have paid none, and you avoid paying a lot in years when you would otherwise have had no choice.
+
+The rule of thumb that survives: sequence the *accounts* loosely, and manage the *bracket* tightly. Roth still goes last in the sense that it is the money you most want to leave alone — but "last" means last in priority, not untouched. A Roth withdrawal is the only lever you have that adds spending without adding a single dollar of income, which makes it the perfect thing to top up with in a year when one more dollar of MAGI would be expensive.
 
 ## Step 3: guardrails, not a rigid percentage
 
-The [4% rule](/topics/retirement/4-percent-rule-2026) assumes you withdraw the same inflation-adjusted amount no matter what. Real retirees do better with **guardrails**: raise spending a little after strong years, trim it a little after bad ones. That flexibility is the single biggest lever on whether the money lasts — and a withdrawal simulator makes the trade-off visible.
+The [4% rule](/topics/retirement/4-percent-rule-2026) assumes you take the same inflation-adjusted amount every year regardless of what markets do. No real retiree behaves that way, and the assumption is expensive: the "safe" rate is essentially **the price of promising never to adjust**.
+
+Guardrails price the alternative. The best-known version comes from Guyton and Klinger's 2006 decision-rules paper, and the mechanics are simple:
+
+| Rule | Trigger | Action |
+| --- | --- | --- |
+| **Capital preservation** | Your current withdrawal rate drifts more than **20% above** its starting rate (a 5% start becoming 6%+) — usually because the portfolio fell | Cut the withdrawal by **10%** |
+| **Prosperity** | Your current withdrawal rate falls **20% below** its start (5% becoming 4% or less) — the portfolio grew | Raise the withdrawal by **10%** |
+
+With rules like these attached, the paper reported sustainable *initial* rates of 5.2–5.6% for portfolios of at least 65% equities over a 40-year horizon. Treat that number carefully. It is not comparable to Morningstar's <Fact id="swr.morningstar" />, which is a forward-looking figure for someone who refuses to adjust at all; the two describe different retirees making different promises. The point is not the headline rate — it is the **direction of the trade**. You accept an income that moves in exchange for a much smaller chance of running out.
+
+The honest summary of the entire withdrawal-rate literature: **flexibility is worth more than precision in the rate.** A retiree who can absorb a 10% spending cut for a couple of years after a bad market has bought more safety than one who agonised between 3.9% and 4.1%. Decide in advance which parts of your budget are the flexible parts — that decision is the plan. The [sequence-risk stress test](/tools/sequence-risk) shows why: it runs identical returns in two orders, and the gap between the outcomes is what your flexibility is really being paid to close.
+
+## Step 4: the tax layer
+
+Everything above decides how much you take out. This decides how much you keep.
+
+### Fill a bracket on purpose
+
+In the years between stopping work and starting Social Security or RMDs, you are the only person choosing your taxable income. That is the whole opportunity, and it does not come back.
+
+The 12% bracket runs to <Fact id="tax.bracket12TopSingle" /> of taxable income for a single filer and <Fact id="tax.bracket12TopMfj" /> for a couple filing jointly. Deliberately realising income up to that ceiling — a traditional withdrawal you did not strictly need, or a [Roth conversion](/topics/retirement/roth-conversion-ladder) — takes the cheapest dollars that will ever be available to you. Leaving the bracket unfilled does not save that room for later; it expires.
+
+### The 0% capital gains bracket
+
+Separately, long-term capital gains are taxed at **0%** while taxable income stays below <Fact id="tax.ltcgZeroBracketSingle" /> (single) or <Fact id="tax.ltcgZeroBracketMfj" /> (married filing jointly). Not a low rate — zero. A retiree with a low-income year and a brokerage account holding appreciated shares can sell them, pay nothing, and buy them straight back at the new higher cost basis. There is no wash-sale rule on gains.
+
+The catch is that these two moves compete for the same space. Ordinary income — a conversion, a traditional withdrawal — stacks *underneath* capital gains and pushes them up out of the 0% band. You can fill the bracket with ordinary income or harvest gains at zero. Rarely both, at full size, in the same year.
+
+### Before 65: the ACA cliff sits above the tax bracket
+
+If you are buying health insurance on the marketplace, the binding constraint usually is not your tax bracket at all. The enhanced premium tax credits expired at the end of 2025, so household MAGI one dollar over <Fact id="aca.cliffPercent" /> of the poverty line — <Fact id="aca.cliffSingle" /> single, <Fact id="aca.cliffCouple" /> for a couple — forfeits the **entire** premium tax credit. Against a benchmark silver premium of roughly <Fact id="aca.benchmarkSilver" /> a year for a 60-year-old, that dwarfs any bracket-filling saving.
+
+So before 65, the order of operations inverts: find the cliff first, and *then* see how much bracket-filling fits underneath it. Check where you land with the [ACA bridge tool](/tools/aca-bridge), and read [the ACA subsidy cliff is back](/topics/retirement/aca-subsidy-cliff).
+
+### From 63: Medicare is already watching
+
+Medicare's income-related surcharge is set from your income **<Fact id="medicare.irmaaLookback" /> years earlier**. So a big withdrawal or conversion in the year you turn 63 shows up as a higher Part B and Part D premium at 65. Cross the first tier — <Fact id="medicare.irmaaTier1Single" /> single, <Fact id="medicare.irmaaTier1Joint" /> joint — and it costs about <Fact id="medicare.irmaaTier1Cost" /> for the year, **per person on Medicare**. It is a cliff, not a ramp: one dollar over triggers the whole tier. The [conversion cost checker](/tools/roth-vs-traditional) prices tax, ACA and IRMAA in one place.
+
+## When RMDs actually start — it is probably not 73
+
+SECURE 2.0 did not set one RMD age. It set two, and almost everyone reading this is in the later group:
+
+| Born | RMDs begin at |
+| --- | --- |
+| 1951–1959 | <Fact id="rmd.ageBorn1951to1959" /> |
+| 1960 or later | <Fact id="rmd.ageBorn1960OrLater" /> |
+
+If you were born in 1960 or later, you have **two more years** of RMD-free runway than the number most articles quote. That is not trivia — it is two extra years in which you control your own taxable income, which is exactly the window a [Roth conversion](/topics/retirement/roth-vs-traditional) plan gets built in. Source: [IRS RMD FAQs](https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs).
+
+The RMD is not a flat percentage, either. It is the prior-year balance divided by a life-expectancy factor that shrinks every year, so the forced withdrawal grows as a *share* of the account for as long as you live — which is what eventually drags Social Security into tax and lifts your Medicare premium. The [RMD planner](/tools/rmd-planner) projects yours.
+
+Two things blunt an RMD once it arrives:
+
+- **Qualified charitable distributions.** From age 70½ you can send up to <Fact id="ira.qcdLimit" /> a year straight from an IRA to a charity. It satisfies the RMD and never appears in your income — which means it also never lifts your Medicare IRMAA or your ACA MAGI. A charitable retiree who instead takes the RMD and donates the cash gets a far worse result.
+- **Converting early.** Every dollar moved to Roth before RMDs start is a dollar that never generates a forced distribution, for the rest of your life.
 
 ## Key takeaways
 
-- Spend from a 1–3 year cash buffer so you never sell stocks low.
-- Rough order: taxable → tax-deferred (mind RMDs at 73) → Roth.
-- Use guardrails instead of a rigid fixed withdrawal.
+- Hold one to three years of spending in cash so you never *have* to sell stocks low. Know that you are buying behaviour, not return.
+- Rough order: taxable → tax-deferred → Roth. But **manage the bracket, not the sequence** — emptying one account at a time wastes low-tax years and creates high-tax ones.
+- Roth withdrawals do not raise MAGI. Before 65 that is worth more than the income-tax saving.
+- Use guardrails instead of a rigid inflation-adjusted withdrawal. Flexibility is worth more than precision in the rate.
+- RMDs start at <Fact id="rmd.ageBorn1951to1959" /> if you were born 1951–1959, and <Fact id="rmd.ageBorn1960OrLater" /> if you were born in 1960 or later.
 
 Educational only — not financial or tax advice.

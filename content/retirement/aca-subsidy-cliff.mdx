@@ -1,0 +1,239 @@
+---
+title: "The ACA subsidy cliff is back for 2026"
+description: "The enhanced premium tax credits expired 2025-12-31. One dollar over {{aca.cliffPercent}} of the poverty line now costs an early retiree the entire subsidy — and the repayment cap is gone too."
+plainAnswer: "The enhanced premium tax credits expired on December 31, 2025, so the {{aca.cliffPercent}}-of-FPL subsidy cliff returned for 2026. One dollar of income above the line forfeits your entire premium tax credit — around {{aca.cliffEdgeCreditLost}} for a single 60-year-old. A separate repeal also removed the cap on repaying advance credits."
+published: "2026-07-11"
+updated: "2026-07-11"
+reviewed: "2026-07-11"
+volatile: true
+volatileNote: "The enhanced premium tax credits expired after 2025 and the {{aca.cliffPercent}}-of-poverty cliff returned under current 2026 law. Congress can change this rule, potentially during the coverage year; verify current law and a Marketplace quote before acting."
+author: "know-plain-editorial"
+reviewer: "retirement-review-board"
+contentType: "explainer"
+riskLevel: "high"
+relatedTools:
+  - href: /tools/aca-bridge
+    label: "See how much headroom you have to the cliff"
+  - href: /tools/roth-vs-traditional
+    label: "Check whether a conversion blows the cliff"
+faqs:
+  - q: "What is the ACA subsidy cliff?"
+    a: "It is the point where premium tax credits stop entirely rather than tapering. For 2026, a household with ACA MAGI one dollar above {{aca.cliffPercent}} of the federal poverty level gets a credit of zero. Below the line the credit can be worth thousands a year; above it, nothing. The cliff was suspended from 2021 to 2025 and returned on January 1, 2026."
+  - q: "Did the premium tax credit disappear entirely?"
+    a: "No, and this is the most common error. Below {{aca.cliffPercent}} of FPL the credit still exists and your benchmark silver premium is still capped — at {{aca.applicablePctMin}} of income at the bottom of the scale up to {{aca.applicablePctMax}} in the 300-{{aca.cliffPercent}} band. What expired was the softer 8.5% cap and eligibility for any credit above {{aca.cliffPercent}} FPL."
+  - q: "How much does the cliff actually cost?"
+    a: "For a single 60-year-old at exactly {{aca.cliffPercent}} of FPL ({{aca.cliffSingle}}), the benchmark silver plan costs about {{aca.cliffEdgeBenchmarkCost}} for the year. One dollar more of income and they owe the full {{aca.benchmarkSilver}} — roughly {{aca.cliffEdgeCreditLost}} of credit destroyed by one dollar. Real cost depends on your county's benchmark premium, which varies a lot."
+  - q: "Are there still repayment caps if I underestimate my income?"
+    a: "No. For tax years after 2025 there is no repayment cap at any income level. OBBBA section 71305 repealed the limitation in IRC 36B(f)(2)(B). If your advance credit payments exceed the credit you actually qualify for, you repay the full difference at filing. Many calculators still show the old capped table; it does not apply to 2026."
+  - q: "Can a Roth conversion push me over the cliff?"
+    a: "Yes. The full converted amount counts in ACA MAGI. A conversion that looks efficient on a pure tax spreadsheet can forfeit the entire premium tax credit, and from age 63 it can also raise your Medicare premium two years later through IRMAA. Between 60 and 65, price the conversion against the credit before you do it."
+  - q: "Is Congress going to bring the enhanced subsidies back?"
+    a: "Unresolved as of July 11, 2026. The House passed a three-year extension in January 2026 and the Senate has not acted; a bipartisan Senate compromise was under discussion. Nothing has been enacted, so current law is the cliff. If an extension passes it could apply retroactively to 2026, but you cannot plan on that."
+  - q: "What if my income is too low?"
+    a: "Below 100% of the federal poverty level you generally get no marketplace premium tax credit at all. In expansion states Medicaid picks you up below {{fpl.medicaidPercent}} of FPL. In the ten non-expansion states you can fall into the coverage gap and qualify for nothing. Do not cut your MAGI below the floor while trying to duck the cliff."
+sources:
+  - title: "Rev. Proc. 2025-25 — Applicable Percentage Table for 2026"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-25.pdf"
+    accessed: "2026-07-11"
+    note: "The 2026 applicable percentage table: {{aca.applicablePctMin}} below 133% FPL rising to {{aca.applicablePctMax}} in the 300-{{aca.cliffPercent}} band. This is what the credit reverted to."
+  - title: "Rev. Proc. 2025-32 — 2026 inflation adjustments"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf"
+    accessed: "2026-07-11"
+    note: "Section 3.04: 'Section 71305 of the OBBBA removes § 36B(f)(2)(B), which limited the tax increase from excess advance payments for certain households, effective for taxable years beginning after December 31, 2025.'"
+  - title: "Questions and Answers about the Premium Tax Credit (FS-2025-10)"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/taxpros/fs-2025-10.pdf"
+    accessed: "2026-07-11"
+    note: "Q31 (updated 2025-12-23): 'There is no repayment cap for tax years after 2025. For tax years after 2025, you must repay the full amount by which your advance credit payments exceed your Premium Tax Credit.'"
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "Age-60 national-average benchmark premiums and the cost of expiration for a 60-year-old at $65,000."
+  - title: "Enhanced Premium Tax Credit and 2026 Exchange Premiums: Frequently Asked Questions (R48290)"
+    publisher: "Congressional Research Service"
+    url: "https://www.congress.gov/crs-product/R48290"
+    accessed: "2026-07-11"
+    note: "Confirms that on expiration the {{aca.cliffPercent}}-of-FPL maximum income limit is reinstated and the applicable percentages revert to higher levels — they do not disappear."
+  - title: "HHS Poverty Guidelines"
+    publisher: "U.S. Department of Health and Human Services"
+    url: "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines"
+    accessed: "2026-07-11"
+    note: "Plan-year 2026 eligibility is measured against the 2025 guidelines."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "IRMAA thresholds and the two-year lookback that makes a conversion at 63 land on the premium at 65."
+related:
+  - href: /topics/retirement
+    label: "Back to hub → Retirement"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare — every coverage option"
+  - href: /topics/retirement/roth-vs-traditional
+    label: "Roth vs Traditional"
+  - href: /topics/decision-tools/withdrawal-plan
+    label: "A plain withdrawal plan"
+---
+
+For five years there was no subsidy cliff. There is one again. If you are retiring before <Fact id="medicare.eligibilityAge" /> and buying your own health insurance, this is the single highest-stakes number in your plan. This spoke sits under the [Retirement hub](/topics/retirement).
+
+For the full menu of coverage options — COBRA, a spouse's plan, Medicaid, part-time work — see [health care before Medicare](/topics/retirement/health-care-before-medicare). This page is about the cliff itself.
+
+## What expired, and what replaced it
+
+The American Rescue Plan Act (2021), extended by the Inflation Reduction Act, temporarily rewrote the premium tax credit. Those enhanced rules **expired on December 31, 2025** and were not extended. Plan year 2026 runs on the original, pre-2021 statute.
+
+Precisely two things changed:
+
+1. **The 400%-of-FPL income limit came back.** From 2021 to 2025 there was no upper income limit — a household above 400% of FPL could still receive a credit. Under current law, above that line the credit is **zero**.
+2. **The applicable percentages went back up.** The enhanced rules capped the benchmark silver premium at 0% of income at the bottom of the scale and 8.5% at the top. The reverted table runs from <Fact id="aca.applicablePctMin" /> to <Fact id="aca.applicablePctMax" />.
+
+What did **not** happen: the cap did not disappear. Below 400% of FPL you still have one. The Congressional Research Service puts it plainly — on expiration, "the maximum income limit of 400% of the FPL would be reinstated and the applicable percentages would revert to higher levels resulting in lower subsidy amounts." Reverted, not removed.
+
+| Household income (% of FPL) | Benchmark silver premium capped at |
+| --- | --- |
+| Under 133% | <Fact id="aca.applicablePct.under133" /> of income |
+| 133% – 150% | <Fact id="aca.applicablePct.133to150" /> |
+| 150% – 200% | <Fact id="aca.applicablePct.150to200" /> |
+| 200% – 250% | <Fact id="aca.applicablePct.200to250" /> |
+| 250% – 300% | <Fact id="aca.applicablePct.250to300" /> |
+| 300% – 400% | <Fact id="aca.applicablePct.300to400" /> |
+| **Over 400%** | **Nothing. No cap, no credit.** |
+
+Source: [IRS Rev. Proc. 2025-25](https://www.irs.gov/pub/irs-drop/rp-25-25.pdf).
+
+If you take one thing from this page: a household at 250% of FPL still gets help. Anyone telling them "the subsidy is gone" is costing them money.
+
+## The cliff in dollars
+
+Take a single 60-year-old. The cliff sits at <Fact id="aca.cliffSingle" /> of ACA MAGI.
+
+**At <Fact id="aca.cliffSingle" /> — exactly 400% of FPL.** They are in the top band, so their benchmark silver plan is capped at <Fact id="aca.applicablePct.300to400" /> of income. They pay <Fact id="aca.cliffEdgeBenchmarkCost" /> for the year. The premium tax credit covers the rest.
+
+**At one dollar more.** The credit is zero. They pay the full national-average benchmark premium: <Fact id="aca.benchmarkSilver" />.
+
+| | MAGI at the cliff | MAGI one dollar over |
+| --- | --- | --- |
+| Extra income | — | **$1** |
+| Premium tax credit | ~<Fact id="aca.cliffEdgeCreditLost" /> | **$0** |
+| What you pay for benchmark silver | <Fact id="aca.cliffEdgeBenchmarkCost" /> | <Fact id="aca.benchmarkSilver" /> |
+| Net change | — | **about <Fact id="aca.cliffEdgeCreditLost" /> worse off** |
+
+One dollar of income costs roughly <Fact id="aca.cliffEdgeCreditLost" />. The effective marginal tax rate on that dollar is not 22% or 37%. It is somewhere around **one million percent**. There is nothing else like it in the tax code.
+
+The practical consequence is a **dead zone** above the cliff. Cross it, and you are worse off than you were until your income climbs back by roughly the whole lost credit — about <Fact id="aca.cliffEdgeCreditLost" /> of extra MAGI, and more once you pay income tax on those extra dollars too. Earning an extra $4,000 in that zone makes you poorer. Not metaphorically. Arithmetically.
+
+A caution on precision: <Fact id="aca.benchmarkSilver" /> is a **national average** for a 60-year-old. Benchmark premiums vary substantially by county, and they rise steeply with age — a 64-year-old faces a bigger number than a 60-year-old, so a bigger cliff. Use [the bridge tool](/tools/aca-bridge) with your own figures, and get a real quote for your county. The shape of the problem is universal; the exact dollars are local.
+
+## The cliff by household size
+
+Plan-year 2026 is measured against the **2025** HHS poverty guidelines (48 states + DC).
+
+| Household size | 400% of FPL — your cliff |
+| --- | --- |
+| 1 person | <Fact id="aca.cliffSingle" /> |
+| 2 people | <Fact id="aca.cliffCouple" /> |
+| 4 people | <Fact id="aca.cliffFamily4" /> |
+
+Each additional person in the household adds <Fact id="fpl.perAdditional" /> to the poverty line, and therefore <Fact id="aca.cliffPerAdditionalPerson" /> of extra cliff headroom.
+
+The version of this that catches couples: **the year one spouse turns 65**, they move to Medicare and drop off the marketplace plan. The household's tax family may not change, but the coverage family does — and the plan you are buying gets cheaper while the cliff arithmetic shifts. Model that year separately. It is rarely the same answer as the year before it.
+
+## The repayment cap is gone — and almost nobody has noticed
+
+This is the part that is missing from essentially every article on the subject, including the ones that correctly explain the cliff.
+
+Premium tax credits are usually paid **in advance**, monthly, straight to your insurer, based on the income you *estimated* at enrolment. At tax time you reconcile the estimate against reality on Form 8962. Estimate too low, and you took credit you were not entitled to.
+
+Until 2025, a cap limited how much of that you had to pay back — a table of a few hundred to a few thousand dollars, depending on income and filing status, and it applied only below 400% of FPL. **That cap no longer exists.**
+
+The One Big Beautiful Bill Act, section 71305, repealed IRC §36B(f)(2)(B) for tax years beginning after December 31, 2025. The IRS says so twice, in two separate primary documents:
+
+> Section 71305 of the OBBBA removes § 36B(f)(2)(B), which limited the tax increase from excess advance payments for certain households, effective for taxable years beginning after December 31, 2025. Accordingly, the inflation adjustment to § 36B(f)(2)(B) is removed from this revenue procedure.
+>
+> — [IRS Rev. Proc. 2025-32](https://www.irs.gov/pub/irs-drop/rp-25-32.pdf), §3.04
+
+> There is no repayment cap for tax years after 2025. For tax years after 2025, you must repay the full amount by which your advance credit payments exceed your Premium Tax Credit.
+>
+> — [IRS Fact Sheet FS-2025-10](https://www.irs.gov/pub/taxpros/fs-2025-10.pdf), Q31, updated December 23, 2025
+
+Read those together with the cliff and you get the genuinely dangerous scenario:
+
+You estimate <Fact id="aca.cliffSingle" /> of income for 2026 and take the advance credit — roughly <Fact id="aca.cliffEdgeCreditLost" /> across the year, paid to your insurer month by month. In November a mutual fund throws off an unexpected capital gains distribution. Your actual MAGI lands just over the cliff. You were never eligible for **any** credit. So at filing you repay **all of it**, in one lump, with no cap. A fund distribution you did not choose and could not decline just produced a five-figure tax bill.
+
+Two defences:
+
+- **Update the marketplace when your income changes.** Not at year end — when it happens. The advance payment adjusts and the reconciliation shock shrinks.
+- **Consider taking no advance credit at all.** You may decline APTC and claim the whole credit on your return instead. You fund the premiums yourself during the year and get the credit as a refund, but you cannot be asked to repay something you never received. For anyone with lumpy or unpredictable income — a business sale, big taxable-account distributions, variable consulting work — this converts an uncapped clawback into a cash-flow problem. That is a trade many early retirees should take.
+
+If a calculator shows you a repayment capped at a few hundred dollars for 2026, it is running on pre-2026 law. Check it against Q31.
+
+## The playbook for 60 to 65
+
+The order matters, because the cheap levers should be exhausted before the expensive ones.
+
+**1. Know your two lines before you do anything.** The floor (100% of FPL) and the cliff (<Fact id="aca.cliffPercent" />). Everything below is about landing between them.
+
+**2. Spend from Roth and from basis first.** Neither touches MAGI. Selling $50,000 of a taxable holding with a $40,000 cost basis creates $10,000 of MAGI, not $50,000 — only the gain counts. Roth withdrawals create none at all. This is the cheapest lever there is and most people underuse it.
+
+**3. Harvest losses against gains.** You control realisation timing. Net capital losses offset gains fully and up to $3,000 of ordinary income per year, with the rest carried forward. Use specific-lot identification so you are choosing which gain you realise, not letting the broker choose for you.
+
+**4. Use the above-the-line deductions.** HSA contributions reduce MAGI dollar for dollar — and from January 1, 2026, bronze and catastrophic exchange plans count as HSA-qualified. Deductible IRA contributions and a SEP-IRA or solo 401(k), if you have any self-employment income, do the same at a larger scale.
+
+**5. Only then think about Roth conversions — and think hard.**
+
+### Roth conversions and the cliff
+
+A Roth conversion is MAGI, in full, in the year you do it. Convert $30,000 while sitting <Fact id="aca.cliffEdgeCreditLost" /> below the cliff and you have not made a tax-efficiency trade. You have bought a tax bill *and* forfeited the entire premium tax credit.
+
+The honest way to think about it: the conversion's real cost is the income tax **plus** the credit you destroy **plus**, from 63, the IRMAA surcharge two years later. Only compare that total against the future tax you are avoiding.
+
+Which produces a genuinely counter-intuitive rule. **If you are already over the cliff, converting more is comparatively cheap.** The credit is already gone; there is no second cliff to fall off. So the worst possible place to be is *just barely* over — you paid the full price of the cliff and got nothing for it. Either stay clearly under, or, if you are going over anyway, go over decisively and convert a meaningful amount while you are there.
+
+The [Roth conversion tool](/tools/roth-vs-traditional) prices the cliff and IRMAA together, which is the only way the comparison means anything.
+
+### IRMAA starts biting at 63
+
+Medicare's income-related surcharge looks back <Fact id="medicare.irmaaLookback" /> years. Your 2026 income sets your 2028 premium. So from **age 63**, a conversion is simultaneously an ACA-cliff decision and a Medicare-premium decision.
+
+The first IRMAA tier starts at <Fact id="medicare.irmaaTier1Single" /> of MAGI for a single filer and <Fact id="medicare.irmaaTier1Joint" /> jointly, and crossing it costs about <Fact id="medicare.irmaaTier1Cost" /> per person per year. IRMAA is a cliff too — a smaller one, and it repeats at each tier.
+
+Between 63 and 65 you are threading both needles at once. That is the hardest income-planning window most people will ever face, and it lasts exactly two years.
+
+## Do not fall off the other side
+
+The cliff pushes people to cut income. Cut too far and you hit the **floor**.
+
+Below **100% of FPL** — <Fact id="fpl.onePerson" /> for one person, <Fact id="fpl.twoPerson" /> for two — you generally get no marketplace premium tax credit at all. In the 40 states and DC that expanded Medicaid, you land on Medicaid instead, below <Fact id="fpl.medicaidPercent" /> of FPL. In the **ten states that have not expanded**, you can be too poor for a subsidy and too well-off for Medicaid, and qualify for nothing at all.
+
+An early retiree spending from Roth and basis can have a MAGI near zero while living comfortably. That is not a win. Full detail in [health care before Medicare](/topics/retirement/health-care-before-medicare).
+
+The target is a band, not a minimum.
+
+## This law is live — check it before you act
+
+Everything above is current law as verified on **2026-07-11**. It may not survive the year.
+
+- The enhanced credits lapsed **2025-12-31**.
+- In **January 2026** the House passed a three-year extension. The Senate did not take it up.
+- A bipartisan Senate compromise — shorter extension, income caps, minimum premium payments — was under discussion but had not passed.
+- **Nothing has been enacted.** The cliff is the law today.
+
+If an extension does pass, it could apply **retroactively** to plan year 2026, which would change the arithmetic on this page after you had already made decisions on it. That cuts both ways: it is an argument for not doing anything drastic and irreversible right now purely to duck the cliff, and it is emphatically *not* an argument for assuming rescue. Congress has already let the deadline pass once.
+
+We mark this figure volatile in our [source file](/sources) and re-check it at every publish. If you are reading this well after July 2026, verify against [KFF](https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/) and [HealthCare.gov](https://www.healthcare.gov/) before relying on it.
+
+## Key takeaways
+
+- **The cliff is real and it is back.** Above <Fact id="aca.cliffPercent" /> of FPL — <Fact id="aca.cliffSingle" /> single, <Fact id="aca.cliffCouple" /> for two — the premium tax credit is zero. One dollar destroys roughly <Fact id="aca.cliffEdgeCreditLost" /> for a single 60-year-old.
+- **But the credit did not vanish below the line.** The benchmark premium is still capped, from <Fact id="aca.applicablePctMin" /> to <Fact id="aca.applicablePctMax" /> of income. Do not let anyone tell you there is no help.
+- **The repayment cap is gone for 2026** (OBBBA §71305). Underestimate your income and you repay every dollar of advance credit, uncapped. Declining the advance credit removes that risk entirely.
+- **A Roth conversion is an ACA decision before 65 and a Medicare decision from 63.** Price all three costs, or do not price it at all.
+- **There is a floor as well as a cliff.** Aim for the band between them.
+
+*Last verified 2026-07-11. An extension of the enhanced credits was live in Congress and could change this page retroactively.*
+
+Educational only — not financial, tax, or medical advice.

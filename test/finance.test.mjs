@@ -8,6 +8,7 @@ import {
   SOCIAL_SECURITY_2026,
   ssBenefitFactor,
   ssBreakEvenAge,
+  survivorBenefitAtFra,
   catchUpContribution2026,
   catchUpPlan2026,
   inheritedIraAnnualRmdRequired,
@@ -24,6 +25,9 @@ import {
   withdrawalPath,
   maxEmployeeDeferral2026,
   rmdStartAge,
+  rmdDivisor,
+  requiredMinimumDistribution,
+  projectRmds,
   portfolioTarget,
   futureValue,
   federalPovertyLevel,
@@ -32,7 +36,15 @@ import {
   acaRestoredEnhancedBenchmarkCost,
   acaSubsidyCliffMagi,
   acaSubsidyStatus,
+  acaApplicablePercentage,
+  acaEnhancedApplicablePercentage,
+  ageCurveFactor,
+  benchmarkPremiumForAge,
+  benchmarkPremiumForAdults,
+  SWR,
+  REAL_RETURN,
 } from "../src/lib/facts-2026.ts";
+import { currency } from "../src/lib/checkup.ts";
 
 const near = (a, b, eps = 0.01) =>
   assert.ok(Math.abs(a - b) < eps, `expected ${a} ≈ ${b} (±${eps})`);
@@ -54,6 +66,12 @@ test("Social Security break-even ages match published rules of thumb", () => {
   near(ssBreakEvenAge(2500, 67, 62, 67), 78.67, 0.1); // ~late 70s
   near(ssBreakEvenAge(2500, 67, 67, 70), 82.5, 0.1); // ~early 80s
   assert.equal(ssBreakEvenAge(2500, 67, 70, 70), Infinity); // no difference
+});
+
+test("survivor benefits preserve delayed credits and the early-claim widow floor", () => {
+  assert.equal(survivorBenefitAtFra(2500, 67, 62), 2063);
+  assert.equal(survivorBenefitAtFra(2500, 67, 67), 2500);
+  assert.equal(survivorBenefitAtFra(2500, 67, 70), 3100);
 });
 
 test("2026 catch-up contributions (SECURE 2.0 super catch-up 60–63)", () => {
@@ -100,6 +118,10 @@ test("2026 Social Security constants include average benefit and WEP/GPO repeal 
 });
 
 test("RMD start age (SECURE 2.0)", () => {
+  assert.equal(rmdStartAge(1948), 70.5);
+  assert.equal(rmdStartAge(1949, 6), 70.5);
+  assert.equal(rmdStartAge(1949, 7), 72);
+  assert.equal(rmdStartAge(1950), 72);
   assert.equal(rmdStartAge(1955), 73);
   assert.equal(rmdStartAge(1959), 73);
   assert.equal(rmdStartAge(1960), 75);
@@ -113,6 +135,41 @@ test("inherited IRA annual RMD enforcement after final regs", () => {
   assert.equal(inheritedIraAnnualRmdRequired(true), true);
   assert.equal(inheritedIraAnnualRmdRequired(false), false);
   assert.equal(inheritedIraAnnualRmdRequired(true, true), false);
+});
+
+test("RMDs: the start age depends on BIRTH YEAR, and the forced share keeps climbing", () => {
+  // IRS Uniform Lifetime Table (Pub 590-B, Appendix B), extracted from the primary PDF.
+  assert.equal(rmdDivisor(73), 26.5);
+  assert.equal(rmdDivisor(75), 24.6);
+  assert.equal(rmdDivisor(85), 16.0);
+  assert.equal(rmdDivisor(120), 2.0);
+  assert.equal(rmdDivisor(60), rmdDivisor(72), "clamped to the table's floor");
+  assert.equal(rmdDivisor(130), rmdDivisor(120), "clamped to the table's ceiling");
+
+  // The thing nearly every RMD calculator online gets wrong: it defaults to 73 for everyone.
+  // Someone born in 1962 has NO RMD at 73 — they get two more years of controlling their own
+  // taxable income, which is the entire window a Roth conversion plan is built in.
+  assert.equal(requiredMinimumDistribution(900_000, 73, 1962), 0, "born 1960+: nothing yet at 73");
+  assert.equal(requiredMinimumDistribution(900_000, 75, 1962), Math.round(900_000 / 24.6));
+  assert.ok(requiredMinimumDistribution(900_000, 73, 1955) > 0, "born 1951-1959: starts at 73");
+
+  // The forced withdrawal grows as a SHARE of the account, not just in dollars — that is what
+  // drags Social Security into tax and lifts IRMAA, and it is why the tool projects forward.
+  const rows = projectRmds({
+    currentBalance: 900_000,
+    currentAge: 64,
+    birthYear: 1962,
+    annualReturn: 0.05,
+  });
+  const first = rows.find((r) => r.rmd > 0);
+  const at85 = rows.find((r) => r.age === 85);
+  assert.equal(first.age, 75, "first RMD lands at the birth-year start age");
+  assert.ok(at85.percentOfBalance > first.percentOfBalance, "the forced share rises with age");
+  assert.ok(first.percentOfBalance > 0.04 && first.percentOfBalance < 0.042); // 1/24.6
+  assert.ok(at85.percentOfBalance > 0.06); // 1/16.0
+
+  // No RMD before the start age at all.
+  assert.ok(rows.filter((r) => r.age < 75).every((r) => r.rmd === 0));
 });
 
 test("portfolio target from the 4% rule", () => {
@@ -133,6 +190,39 @@ test("ACA Federal Poverty Level (2025 guidelines, 48 states)", () => {
   near(fplPercent(31_300, 1), 200); // exactly 2× FPL
 });
 
+test("ACA premiums are rated per adult and by age, not flattened onto one 60-year-old", () => {
+  // Federal default standard age curve, 45 CFR 147.102 — extracted from the CMS appendix.
+  // Statutory 3:1 band: a 64-year-old pays exactly 3x a 21-year-old.
+  assert.equal(ageCurveFactor(21), 1.0);
+  assert.equal(ageCurveFactor(64), 3.0);
+  assert.equal(ageCurveFactor(60), 2.714);
+  assert.equal(ageCurveFactor(15), ageCurveFactor(21), "clamped below 21");
+  assert.equal(ageCurveFactor(80), ageCurveFactor(64), "clamped above 64");
+
+  // Our published benchmark is quoted at age 60, so that age must round-trip exactly.
+  assert.equal(benchmarkPremiumForAge(60), 15_914);
+  assert.ok(benchmarkPremiumForAge(45) < benchmarkPremiumForAge(60), "premiums rise with age");
+  assert.ok(benchmarkPremiumForAge(64) > benchmarkPremiumForAge(60));
+
+  // The regression. The tool priced EVERY user as a single 60-year-old, so a couple saw one
+  // person's premium — halving the cost of the cliff for the demographic most likely to hit it.
+  const couple = acaSubsidyStatus(90_000, 2, [62, 62]); // over the $84,600 cliff
+  assert.equal(couple.overCliff, true);
+  assert.equal(couple.currentLawBenchmarkCost, benchmarkPremiumForAdults([62, 62]));
+  assert.ok(
+    couple.currentLawBenchmarkCost > 2 * 15_914 * 0.9,
+    "two adults must cost roughly twice one, not the same",
+  );
+
+  // And a younger single filer is no longer quoted a 60-year-old's premium.
+  const young = acaSubsidyStatus(70_000, 1, [45]);
+  assert.ok(young.currentLawBenchmarkCost < 15_914);
+
+  // Default (no ages supplied) preserves the old single-60-year-old behaviour for callers
+  // like rothConversionCost, which only care about the cliff flags.
+  assert.equal(acaSubsidyStatus(70_000, 1).currentLawBenchmarkCost, 15_914);
+});
+
 test("ACA 2026 subsidy cliff (400% FPL) — enhanced subsidies expired", () => {
   assert.equal(acaSubsidyCliffMagi(1), 62_600); // 4 × 15,650
   assert.equal(acaSubsidyCliffMagi(2), 84_600); // 4 × 21,150
@@ -142,13 +232,48 @@ test("ACA 2026 subsidy cliff (400% FPL) — enhanced subsidies expired", () => {
   assert.equal(under.overCliff, false);
   assert.equal(under.belowFloor, false);
   assert.equal(under.headroomToCliff, 2_600); // $2,600 of MAGI room left
-  assert.equal(under.restoredEnhancedBenchmarkSavings, 0);
+
+  // This assertion used to read `=== 0`, and it was encoding the bug rather than catching it.
+  // Below the cliff, "current law" was computed with the EXPIRED 8.5% enhanced cap — the same
+  // value as the restored-enhanced scenario — so the two subtracted to zero and the bridge
+  // tool told every household under 400% FPL that the subsidy expiration cost them nothing.
+  //
+  // Under actual 2026 law this household sits in the 300-400% band and pays the top applicable
+  // percentage (9.96%): $60,000 × 9.96% = $5,976.
+  assert.equal(under.currentLawBenchmarkCost, 5_976);
+  assert.ok(under.restoredEnhancedBenchmarkSavings > 0, "the expiration DID cost them");
+
+  // The applicable percentage slides within each band and stops existing over the cliff.
+  assert.equal(acaApplicablePercentage(120), 0.021); // flat, under 133%
+  assert.equal(acaApplicablePercentage(350), 0.0996); // flat, 300-400% band
+  assert.equal(acaApplicablePercentage(401), null); // no credit at all — not a capped one
+  const mid = acaApplicablePercentage(175); // midpoint of the 150-200% band
+  assert.ok(mid > 0.0419 && mid < 0.066, "rises linearly inside the band");
+
+  // The ENHANCED (expired) side must use its own sliding 0%-8.5% schedule, not a flat 8.5%.
+  // 8.5% was only ever the cap ABOVE 400% FPL. Pricing the whole enhanced scenario at 8.5%
+  // made it look DEARER than current law for lower incomes, so the lost credit floored at $0
+  // for exactly the households the expiration hit hardest in percentage terms.
+  assert.equal(acaEnhancedApplicablePercentage(140), 0, "under 150% FPL paid nothing");
+  assert.equal(acaEnhancedApplicablePercentage(400), 0.085);
+  assert.equal(acaEnhancedApplicablePercentage(450), 0.085, "no cliff under the enhanced rules");
+
+  // Nobody below the cliff was left unharmed by the expiration. This is the regression.
+  for (const magi of [25_000, 30_000, 45_000, 60_000]) {
+    const s = acaSubsidyStatus(magi, 1);
+    assert.equal(s.overCliff, false);
+    assert.ok(
+      s.restoredEnhancedBenchmarkSavings > 0,
+      `MAGI ${magi} is under the cliff but must still show a real loss from the expiration`,
+    );
+    assert.ok(s.currentLawBenchmarkCost > s.restoredEnhancedBenchmarkCost);
+  }
 
   const over = acaSubsidyStatus(70_000, 1); // ~447% FPL ⇒ $0 credit
   assert.equal(over.overCliff, true);
   assert.equal(over.headroomToCliff, -7_400);
   assert.equal(over.currentLawBenchmarkCost, 15_914);
-  assert.equal(over.restoredEnhancedBenchmarkCost, 5_950); // 8.5% of $70k
+  assert.equal(over.restoredEnhancedBenchmarkCost, 5_950); // 8.5% of $70k — the cap DOES apply above 400%
   assert.equal(over.restoredEnhancedBenchmarkSavings, 9_964);
 
   const low = acaSubsidyStatus(10_000, 1); // ~64% FPL
@@ -349,11 +474,12 @@ test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () =
   // At 63 it shows up on the Part B premium at 65.
   const at63 = rothConversionCost({ ...base, age: 63 });
   assert.equal(at63.crossesIrmaa, true);
-  assert.equal(at63.irmaaAnnualCost, irmaaTier1AnnualSurcharge());
+  assert.equal(at63.irmaaAnnualCostPerPerson, irmaaTier1AnnualSurcharge());
   // (284.10 − 202.90 Part B) + 14.50 Part D = 95.70/mo ⇒ $1,148/yr.
   assert.equal(irmaaTier1AnnualSurcharge(), 1_148);
 
-  // A married couple pays it twice — both are on Medicare.
+  // Reported PER PERSON on Medicare. It used to be doubled for any MFJ filer, which
+  // overstated the cost by 2x whenever the spouse was under 65 and not yet enrolled.
   const couple = rothConversionCost({
     grossIncome: 210_000,
     conversionAmount: 20_000, // → $230k, over the $218k joint tier
@@ -363,7 +489,137 @@ test("Roth conversion: IRMAA bites from 63 (two-year lookback), not at 65", () =
     householdSize: 2,
   });
   assert.equal(couple.crossesIrmaa, true);
-  assert.equal(couple.irmaaAnnualCost, irmaaTier1AnnualSurcharge() * 2);
+  assert.equal(couple.irmaaAnnualCostPerPerson, irmaaTier1AnnualSurcharge());
+});
+
+test("Roth conversion: someone ALREADY over the cliff is not told they are under it", () => {
+  // The regression that shipped: both flags were transition checks (!before && after), so
+  // a user already over the cliff got `pushesOverAcaCliff: false` — indistinguishable from
+  // someone safely under — and the UI rendered "this conversion keeps you under the ACA
+  // cliff". They were $17k over it.
+  const alreadyOver = rothConversionCost({
+    grossIncome: 80_000, // 400% FPL for a household of 1 is $62,600
+    conversionAmount: 10_000,
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(alreadyOver.overAcaCliffAfter, true, "must report where they LAND");
+  assert.equal(alreadyOver.pushesOverAcaCliff, false, "this conversion is not what did it");
+
+  // Same shape for IRMAA: $150k single is already past the $109k tier-1 threshold.
+  const alreadyOverIrmaa = rothConversionCost({
+    grossIncome: 150_000,
+    conversionAmount: 50_000, // → $200k, deep into tier 3
+    filing: "single",
+    age: 63,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(alreadyOverIrmaa.overIrmaaTier1After, true);
+  assert.equal(alreadyOverIrmaa.crossesIrmaa, false);
+  // No tier-1 cost is *caused* by the conversion — they were already paying it.
+  assert.equal(alreadyOverIrmaa.irmaaAnnualCostPerPerson, 0);
+
+  // And the genuinely-clear case still reads clear.
+  const clear = rothConversionCost({
+    grossIncome: 40_000,
+    conversionAmount: 10_000, // → $50k, under the $62,600 cliff
+    filing: "single",
+    age: 61,
+    people65Plus: 0,
+    householdSize: 1,
+  });
+  assert.equal(clear.overAcaCliffAfter, false);
+  assert.equal(clear.overIrmaaTier1After, false);
+});
+
+test("Social Security: a garbage FRA cannot produce a garbage benefit", () => {
+  // The break-even tool's FRA field was an unbounded <input type="number">. Clearing it
+  // gives Number("") === 0, and an unclamped fra=0 returned a factor of 5.96 — a 596%
+  // benefit — plus a break-even age of Infinity rendered as the string "Infinity".
+  assert.equal(ssBenefitFactor(0, 62), ssBenefitFactor(65, 62), "fra=0 clamps to the 65 floor");
+  assert.equal(ssBenefitFactor(99, 70), ssBenefitFactor(67, 70), "fra=99 clamps to the 67 ceiling");
+  assert.ok(ssBenefitFactor(0, 62) < 1, "claiming early can never exceed the full benefit");
+
+  // The real table still holds after clamping.
+  assert.ok(Math.abs(ssBenefitFactor(67, 62) - 0.7) < 1e-9);
+  assert.ok(Math.abs(ssBenefitFactor(67, 70) - 1.24) < 1e-9);
+});
+
+test("debt: a payment that never clears the balance reports Infinity, not zero", () => {
+  // $10k at 24% accrues $200/mo in interest. A $150 payment never touches the principal.
+  // `monthsToPayoff` got this right; `currency()` then coerced Infinity to "$0" and the
+  // reader was shown "Interest if you add nothing: $0" on an unpayable debt.
+  const r = debtVsInvesting({
+    debtBalance: 10_000,
+    debtApr: 0.24,
+    monthlyPayment: 150,
+    extraMonthly: 200,
+    expectedReturn: 0.07,
+    salary: 80_000,
+    employerMatchRate: 0,
+    employerMatchLimit: 0,
+    currentContributionRate: 0,
+  });
+  assert.equal(r.interestIfMinimum, Infinity, "minimum alone never clears it");
+  assert.ok(Number.isFinite(r.interestIfExtra), "with the extra, it does clear");
+  assert.ok(Number.isFinite(r.monthsToPayoff));
+  assert.equal(currency(r.interestIfMinimum), "—", "must never render as $0");
+
+  // With no employer match on offer, the verdict must not be "take the free money".
+  assert.equal(r.matchLeftOnTable, 0);
+  assert.equal(r.verdict, "debt", "24% guaranteed beats 7% hoped for");
+});
+
+test("sequence risk: when BOTH orders run dry, the tool must not say order is irrelevant", () => {
+  // Both deplete ⇒ both end at $0 ⇒ shortfall === 0, which the UI read as "no difference".
+  // The difference is real and it is measured in YEARS of solvency, not ending balance.
+  const r = sequenceRiskComparison({
+    balance: 1_000_000,
+    withdrawalRate: 0.1,
+    badReturn: -0.03,
+    goodReturn: 0.08,
+    inflation: 0.03,
+  });
+  assert.equal(r.badFirst.endingBalance, 0);
+  assert.equal(r.goodFirst.endingBalance, 0);
+  assert.equal(r.shortfall, 0, "identical (zero) endings — this is why the old headline lied");
+  assert.ok(r.badFirst.depletedInYear !== null && r.goodFirst.depletedInYear !== null);
+  assert.ok(
+    r.goodFirst.depletedInYear > r.badFirst.depletedInYear,
+    "the lucky order still buys real years of solvency",
+  );
+
+  // The zero-withdrawal case is the ONLY one where order genuinely does not matter.
+  const noWithdrawals = sequenceRiskComparison({
+    balance: 1_000_000,
+    withdrawalRate: 0,
+    badReturn: -0.03,
+    goodReturn: 0.08,
+    inflation: 0.03,
+  });
+  assert.equal(noWithdrawals.shortfall, 0);
+  assert.equal(noWithdrawals.badFirst.endingBalance, noWithdrawals.goodFirst.endingBalance);
+});
+
+test("checkup: projection and target are denominated in the SAME dollars", () => {
+  // The unit bug. The target comes from TODAY'S spending, so it is a today's-dollars
+  // target; the projection therefore has to grow at a REAL rate. Growing it nominally and
+  // comparing against a real target overstated readiness by ~1.5x on the default inputs.
+  //
+  // The invariant: with zero real growth and zero contributions, a portfolio that exactly
+  // equals the target today must still exactly equal it at retirement. Any inflation
+  // leaking into one side and not the other breaks this.
+  const annualGap = 46_000;
+  const target = portfolioTarget(annualGap, SWR.morningstar2026);
+  assert.equal(futureValue(target, 0, 17, 0), target, "no real growth ⇒ no real change");
+
+  // And the shipped assumptions must be real, not nominal — a 6% *real* return would be an
+  // aggressive top of range, which is exactly why the band was lowered.
+  assert.ok(REAL_RETURN.conservative < REAL_RETURN.optimistic);
+  assert.ok(REAL_RETURN.optimistic <= 0.05, "a real return above 5% is not a planning assumption");
 });
 
 test("payoff maths: a payment below the interest NEVER clears the balance", () => {

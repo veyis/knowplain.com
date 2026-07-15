@@ -1,12 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DecisionCta } from "@/components/DecisionCta";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { decisions, isDecisionSlug } from "@/lib/decisions";
-import { site } from "@/lib/site";
+import { site, pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return Object.keys(decisions).map((slug) => ({ slug }));
@@ -16,11 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (!isDecisionSlug(slug)) return {};
   const decision = decisions[slug];
-  return {
-    title: decision.title,
-    description: decision.description,
-    alternates: { canonical: `/decisions/${slug}` },
-  };
+  return pageMeta(`/decisions/${slug}`, decision.title, decision.description);
 }
 
 export default async function DecisionPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -37,9 +33,7 @@ export default async function DecisionPage({ params }: { params: Promise<{ slug:
         ])}
       />
       <article className="max-w-[760px]">
-        <div className="mb-4 text-sm text-muted-foreground">
-          <Link href="/decisions">Decisions</Link> / Retirement
-        </div>
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Decisions", href: "/decisions" }, { label: decision.title }]} />
         <h1 className="mb-3 text-[clamp(1.8rem,4vw,2.5rem)] font-semibold tracking-tight">
           {decision.title}
         </h1>
@@ -70,4 +64,3 @@ export default async function DecisionPage({ params }: { params: Promise<{ slug:
     </AppShell>
   );
 }
-

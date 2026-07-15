@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { JsonLd } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { breadcrumbJsonLd } from "@/lib/schema";
 import { isSeededQuestionSlug, seededQuestions } from "@/lib/forum-seeds";
-import { site } from "@/lib/site";
+import { site, pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return Object.keys(seededQuestions).map((slug) => ({ slug }));
@@ -15,11 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (!isSeededQuestionSlug(slug)) return {};
   const question = seededQuestions[slug];
-  return {
-    title: question.title,
-    description: question.summary,
-    alternates: { canonical: `/forum/questions/${slug}` },
-  };
+  return pageMeta(`/forum/questions/${slug}`, question.title, question.summary);
 }
 
 export default async function SeededQuestionPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -42,9 +39,7 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
         ]}
       />
       <article className="max-w-[760px]">
-        <div className="mb-4 text-sm text-muted-foreground">
-          <Link href="/forum/questions">Curated questions</Link> / {question.pillar.replace("-", " ")}
-        </div>
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Curated questions", href: "/forum/questions" }, { label: question.title }]} />
         <Badge variant="secondary" className="mb-4 font-normal">
           Moderated answer hub
         </Badge>
@@ -70,4 +65,3 @@ export default async function SeededQuestionPage({ params }: { params: Promise<{
     </AppShell>
   );
 }
-

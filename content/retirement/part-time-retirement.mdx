@@ -1,54 +1,148 @@
 ---
-title: "Part-time retirement, known plain"
-description: "A little earned income early in retirement does far more good than its size suggests."
-plainAnswer: "Part-time work in early retirement cuts withdrawals when they're most dangerous, easing sequence risk and the funding gap."
-updated: "2026-07-09"
+title: "Working part-time in retirement"
+description: "What the Social Security earnings test really does, why withheld benefits are not lost, and how much part-time income is honestly worth."
+plainAnswer: "Part-time work in early retirement cuts withdrawals in the years they do the most damage. If you claim Social Security before full retirement age, the earnings test may withhold some benefit — but only earned income counts, the test ends at full retirement age, and the withheld money is given back as a permanently higher benefit."
 published: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
 contentType: "explainer"
 riskLevel: "medium"
+relatedTools:
+  - href: /tools/sequence-risk
+    label: "See what avoiding early withdrawals is worth"
+  - href: /tools/aca-bridge
+    label: "Check how earnings move you against the ACA cliff"
+faqs:
+  - q: "Will working reduce my Social Security?"
+    a: "Only if you claim before full retirement age. In 2026, earning above {{ss.earningsTestUnderFra}} withholds $1 of benefit for every $2 over the limit. In the year you reach full retirement age a higher limit of {{ss.earningsTestFraYear}} applies and only $1 per $3 is withheld, counting only the months before you reach it. From the month you reach full retirement age there is no limit at all."
+  - q: "Do I lose the benefits that are withheld?"
+    a: "No — and this is the most common misconception about the earnings test. SSA is explicit: benefits withheld are not lost. Once you reach full retirement age, your monthly benefit is recalculated upward, permanently, to credit the months in which benefits were withheld. The earnings test is a deferral, not a penalty."
+  - q: "Do IRA withdrawals or a pension count against the earnings limit?"
+    a: "No. SSA counts only wages from a job and net profit from self-employment, including bonuses, commissions and vacation pay. It does not count pensions, annuities, investment income, interest, capital gains, IRA or 401(k) withdrawals, or veterans benefits. Portfolio income cannot trigger the earnings test."
+  - q: "Does part-time work increase my Social Security benefit?"
+    a: "It can. Your benefit is based on the highest 35 years of indexed earnings. If a part-time year outearns one of the years currently in your top 35 — or replaces a zero — it raises the average and therefore the benefit. If it does not beat the 35th year, it adds nothing to the calculation."
+  - q: "How much is part-time income actually worth to the plan?"
+    a: "A dollar earned is a dollar not withdrawn, and dollars not withdrawn early in retirement stay invested through the recovery. That is genuinely valuable — but it is temporary income, not permanent capital. Five years of $15,000 is $75,000 of avoided withdrawals plus their growth, not the several hundred thousand of capital that would fund $15,000 a year forever."
+  - q: "Is part-time work a substitute for ACA coverage before 65?"
+    a: "Sometimes. Some part-time roles carry employer health coverage, which is often cheaper than a marketplace plan and — unlike a subsidised plan — is not destroyed by earning one dollar too much. But it cuts both ways: wages count toward the MAGI that the {{aca.cliffPercent}}-of-poverty-line subsidy cliff is measured against, so part-time earnings can also cost you a premium tax credit."
+  - q: "Should I delay claiming Social Security if I am working part-time?"
+    a: "Often, yes. If you are working anyway and earning above the limit, claiming early means having benefits withheld that you could instead convert into a permanently larger benefit by simply waiting — up to about 8% a year past full retirement age until {{ss.maxDelayAge}}."
 sources:
-  - title: "Retirement Earnings Test Exempt Amounts"
+  - title: "Receiving Benefits While Working"
     publisher: "Social Security Administration"
+    url: "https://www.ssa.gov/benefits/retirement/planner/whileworking.html"
+    accessed: "2026-07-11"
+    note: "The two earnings-test limits, the rule that only wages and self-employment net profit count, and: 'We will recalculate your benefit amount to give you credit for the months we reduced or withheld benefits due to your excess earnings.'"
+  - title: "Exempt Amounts Under the Earnings Test"
+    publisher: "Social Security Administration, Office of the Chief Actuary"
     url: "https://www.ssa.gov/oact/cola/rtea.html"
     accessed: "2026-07-11"
-    note: "2026: $24,480/yr under full retirement age ($1 withheld per $2 over)."
-faqs:
-  - q: "Why does a small amount of work help so much?"
-    a: "Because it cuts withdrawals in the years when withdrawals do the most damage. Money you do not take out during an early downturn stays invested to recover, which is why part-time income eases sequence risk far more than its size suggests."
-  - q: "Will working reduce my Social Security?"
-    a: "It can, if you claim before full retirement age. In 2026, earning above $24,480 withholds $1 of benefit for every $2 over the limit. The withheld amount is not lost forever, though: your benefit is recalculated upward once you reach full retirement age."
+    note: "2026 exempt amounts of {{ss.earningsTestUnderFra}} and {{ss.earningsTestFraYear}}, and: 'any benefits withheld while you continue to work are not lost… your monthly benefit will be increased permanently.'"
+  - title: "Social Security Benefit Amounts (AIME and the PIA formula)"
+    publisher: "Social Security Administration, Office of the Chief Actuary"
+    url: "https://www.ssa.gov/oact/cola/Benefits.html"
+    accessed: "2026-07-11"
+    note: "'Up to 35 years of earnings are needed to compute average indexed monthly earnings… we choose those years with the highest indexed earnings.'"
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "The {{aca.cliffPercent}}-of-FPL cliff returned for 2026, so wages from part-time work can forfeit a premium tax credit."
+  - title: "Health coverage for retirees"
+    publisher: "HealthCare.gov"
+    url: "https://www.healthcare.gov/retirees/"
+    accessed: "2026-07-11"
+    note: "Used for the pre-65 coverage options a part-time job's employer plan is being compared against."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
   - href: /topics/retirement/sequence-of-returns
     label: "Sequence of returns risk"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
   - href: /topics/decision-tools/retirement-age-framework
     label: "How to choose a retirement age"
-  - href: /topics/retirement/starting-retirement-savings-at-45
-    label: "Starting savings at 45"
 ---
 
-Retirement doesn't have to be a hard stop. A phased or part-time approach — sometimes called "barista FIRE" or a "victory lap" — is one of the most underrated levers in a plan, especially for a [late start](/topics/retirement/starting-retirement-savings-at-45). This spoke sits under the [Retirement hub](/topics/retirement).
+Retirement doesn't have to be a hard stop. A phased or part-time approach — sometimes called "barista FIRE" or a "victory lap" — is one of the most underrated levers in a plan, especially for a [late start](/topics/retirement/starting-retirement-savings-at-45). It is also surrounded by more wrong information than almost anything else in retirement, most of it about the Social Security earnings test. This spoke sits under the [Retirement hub](/topics/retirement).
 
-## Why a little income does a lot
+## The earnings test: two limits, and it ends
 
-Part-time earnings punch above their weight because of *when* they land. Every dollar you earn in the first years of retirement is a dollar you **don't withdraw** from the portfolio — exactly when withdrawals do the most damage. That makes part-time work a powerful cushion against [sequence-of-returns risk](/topics/retirement/sequence-of-returns): even modest income lets your investments recover instead of being sold into a downturn.
+If you claim Social Security **before** your full retirement age and keep earning, part of your benefit can be withheld. Almost every article stops there, quotes one number, and moves on. There are two limits, they work differently, and the test then disappears entirely.
 
-## It also shrinks the funding gap
+| When | 2026 limit | Withholding | Which earnings count |
+| --- | --- | --- | --- |
+| Any year **before** the year you reach FRA | <Fact id="ss.earningsTestUnderFra" /> | $1 withheld per **$2** over | The whole year |
+| The year you **reach** FRA | <Fact id="ss.earningsTestFraYear" /> | $1 withheld per **$3** over | **Only the months before** the month you reach FRA |
+| From the month you reach FRA | No limit | None | — |
 
-Working a few more years part-time does three things at once: it adds income, delays the start of full withdrawals, and can let you [delay Social Security](/topics/decision-tools/retirement-age-framework) for a larger guaranteed benefit. Combined, that can close a funding gap far faster than trying to save your way there.
+Read the third row again. From the month you hit full retirement age — <Fact id="ss.fra" /> for anyone born in 1960 or later — you can earn any amount and it does not touch your benefit. In SSA's words: "Beginning with the month you reach that age, your earnings no longer reduce your benefits, no matter how much you earn."
 
-## The Social Security earnings-test caveat
+The middle row matters more than its rarity suggests. In the year you reach FRA the limit jumps to <Fact id="ss.earningsTestFraYear" />, the withholding softens to $1 per $3, and only the earnings from the months *before* your birthday month count at all. Someone reaching FRA in March who works a full year is tested on January and February alone.
 
-One thing to plan around: if you claim Social Security **before** your full retirement age *and* keep working, part of your benefit may be temporarily withheld under the **retirement earnings test** ([SSA](https://www.ssa.gov/benefits/retirement/planner/whileworking.html)). It isn't lost — it's repaid later as a higher benefit — but it's a reason many part-time retirees delay claiming while they're still earning.
+## The withheld money is not lost
+
+This is the misconception the whole topic turns on, and most articles either get it wrong or leave it out.
+
+Withheld benefits are **not a penalty and not forfeited**. When you reach full retirement age, SSA recalculates your benefit to credit the months in which benefits were withheld, and the higher amount is permanent. The Office of the Chief Actuary states it plainly:
+
+> Any benefits withheld while you continue to work are not "lost". Once you reach NRA, your monthly benefit will be increased permanently to account for the months in which benefits were withheld.
+
+Mechanically it works like this: SSA treats those months as though you had never claimed in them, and applies the same early-claiming reduction to fewer months. A person who claimed at 62 and had, say, twelve months of benefits fully withheld ends up at FRA with the benefit of someone who had claimed at 63 instead.
+
+So the earnings test is a **deferral, not a tax**. That changes the decision entirely. It is a cash-flow problem — money you expected this year arrives later — rather than money destroyed. The real reason to think hard about claiming early while working is not the earnings test at all; it is that claiming early permanently reduces your benefit, and if you are earning enough to live on anyway, delaying is usually the better trade.
+
+## Only *earned* income counts
+
+The second-biggest misconception, and the one that causes needless panic in people who have already retired.
+
+SSA counts **wages from a job** and **net profit from self-employment**. That includes bonuses, commissions and vacation pay. It does not count:
+
+- pensions and annuities
+- investment income, interest and dividends
+- capital gains
+- withdrawals from an IRA, 401(k) or other retirement account
+- veterans benefits, or other government and military retirement benefits
+
+So a retiree drawing $60,000 a year from a portfolio, with no job, has zero earnings for the test — no matter how large the withdrawal. Selling appreciated stock does not trigger it. Taking an RMD does not trigger it. Only work does.
+
+(Beware the different question hiding behind this. Portfolio withdrawals *do not* affect the earnings test, but they very much do affect how much of your Social Security benefit gets **taxed**, and they affect ACA subsidies and Medicare surcharges. Different rules, different thresholds — see [a plain withdrawal plan](/topics/decision-tools/withdrawal-plan).)
+
+## Why a little income does a lot — and how much, honestly
+
+Part-time earnings punch above their weight because of *when* they land. Every dollar you earn in the first years of retirement is a dollar you do not withdraw, and an early withdrawal in a falling market is the most damaging thing that can happen to a portfolio: those shares are sold at the bottom, they are gone, and they cannot participate in the recovery. That is [sequence-of-returns risk](/topics/retirement/sequence-of-returns), and part-time work is one of the few genuine defences against it — along with a cash buffer and flexible spending.
+
+Now the honest sizing, because this is where the internet goes wrong.
+
+You will see claims of the form "$15,000 a year of part-time income is worth $375,000 in portfolio terms." That number comes from dividing $15,000 by 4% — the capital you would need to fund $15,000 **forever**. But part-time work in early retirement is not forever. It is a handful of years. Five years of $15,000 is $75,000 of withdrawals avoided, plus whatever those dollars go on to earn by staying invested. That is a meaningful sum, and in a bad first decade it is worth considerably more than $75,000 because of what it protects. It is not $375,000, and equating temporary income with perpetual capital is exactly the kind of false precision this site exists to avoid.
+
+The right way to see the size of the effect is to run it: the [sequence-risk stress test](/tools/sequence-risk) shows what a smaller early withdrawal does to a portfolio that meets its bad decade first. The answer is "a lot, and it depends" — which is the truth, and a specific dollar figure would not be.
+
+## The health-coverage angle, which cuts both ways
+
+If you retire before <Fact id="medicare.eligibilityAge" />, you buy your own health insurance until Medicare starts, and that bill is often the largest single reason people keep working. A part-time job that carries **employer coverage** can solve it — and it has one property a marketplace plan does not: employer coverage is not destroyed by earning a dollar too much.
+
+Because the marketplace version is now brutal. The enhanced premium tax credits expired at the end of 2025, so household MAGI one dollar above <Fact id="aca.cliffPercent" /> of the federal poverty line — <Fact id="aca.cliffSingle" /> single, <Fact id="aca.cliffCouple" /> for a couple — forfeits the entire premium tax credit. And **wages count toward that MAGI**. Part-time work that pushes a subsidised household over the line can cost far more in lost credit than the job pays. Check where you land with the [ACA bridge tool](/tools/aca-bridge) before you accept the shifts, and read [health care before Medicare](/topics/retirement/health-care-before-medicare).
+
+One caveat on employer plans: if the job's coverage is deemed affordable and adequate, you generally cannot claim a premium tax credit for a marketplace plan instead. That is usually fine — the point is to get covered at a price that does not depend on threading an income needle — but it means the two options are alternatives, not a menu you can mix.
+
+## Does the extra work raise your Social Security benefit?
+
+Sometimes. Your benefit is computed from the **highest 35 years** of your indexed earnings. Part-time earnings only help if the new year beats a year already in that top 35.
+
+- If you have **zeros** in your record — years you did not work, or worked very little — a part-time year replaces a zero and the effect is real.
+- If you had a full 35-year career at higher pay, a modest part-time year does not crack the top 35, and it changes your benefit by **nothing**.
+
+That is the plain answer, and it is less exciting than the pitch you will hear. Do not take a job for the benefit recomputation unless you know you have gaps. Take it for the income, the coverage, and the withdrawals it lets you skip.
 
 ## Key takeaways
 
-- Early-retirement income cuts withdrawals when they're most dangerous.
-- It adds income, delays withdrawals, and can let you delay Social Security.
-- Watch the SSA earnings test if you claim before full retirement age and work.
+- The earnings test has **two** limits — <Fact id="ss.earningsTestUnderFra" /> before the year you reach FRA, <Fact id="ss.earningsTestFraYear" /> in that year — and it **disappears** from the month you reach full retirement age.
+- Withheld benefits are **not lost**. SSA permanently increases your benefit at FRA to give them back.
+- **Only earned income counts.** Pensions, portfolio withdrawals, capital gains and IRA distributions do not trigger it.
+- Early part-time income defends against sequence risk by cutting withdrawals when they hurt most — but it is temporary income, not perpetual capital. Do not let anyone capitalise it for you.
+- Employer health coverage from a part-time job can be worth more than the wages, because wages themselves count toward the ACA cliff.
 
 Educational only — not financial advice.

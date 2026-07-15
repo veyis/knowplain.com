@@ -1,8 +1,36 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef } from "react";
+import { fact } from "@/lib/facts-display";
 
 /** Styles MDX article bodies to match the site's typography. */
 export const mdxComponents = {
+  /**
+   * `<Fact id="swr.morningstar" />` — the ONLY way an article may state a 2026 number.
+   * Resolves from facts-2026.ts, so prose cannot drift from what the calculators compute.
+   */
+  Fact: ({ id }: { id: string }) => <>{fact(id)}</>,
+
+  // GFM tables. Every top-ranking finance page has one, and table-shaped answers are what
+  // Google lifts for featured snippets. Wrapped so wide tables scroll instead of blowing
+  // out the page on mobile.
+  table: ({ children, ...props }: ComponentPropsWithoutRef<"table">) => (
+    <div className="my-6 overflow-x-auto" role="region" aria-label="Article comparison table" tabIndex={0}>
+      <table className="w-full border-collapse text-left text-[0.9rem]" {...props}>
+        <caption className="sr-only">Comparison table in this article</caption>
+        {children}
+      </table>
+    </div>
+  ),
+  thead: (props: ComponentPropsWithoutRef<"thead">) => (
+    <thead className="border-b-2 border-ink" {...props} />
+  ),
+  th: (props: ComponentPropsWithoutRef<"th">) => (
+    <th className="px-3 py-2 font-semibold text-ink" {...props} />
+  ),
+  td: (props: ComponentPropsWithoutRef<"td">) => (
+    <td className="border-b border-border px-3 py-2 text-foreground/80" {...props} />
+  ),
+
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
     <h2 className="mb-3 mt-8 text-xl font-semibold tracking-tight" {...props} />
   ),

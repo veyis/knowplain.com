@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, videoObjectJsonLd } from "@/lib/schema";
 import { site } from "@/lib/site";
-import { getFallbackVideo, videoClips, type KnowPlainVideo } from "@/lib/videos";
+import { fallbackVideos, getFallbackVideo, videoClips } from "@/lib/videos";
 import { decisions, isDecisionSlug } from "@/lib/decisions";
 import { isToolSlug, toolPages } from "@/lib/tools";
 
@@ -51,14 +51,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let video: KnowPlainVideo | null = getFallbackVideo(slug) || null;
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase.from("knowplain_videos").select("*").eq("id", slug).single();
-    video = (data as KnowPlainVideo | null) || video;
-  } catch {
-    // Fall back to static video content.
-  }
+  const video = getFallbackVideo(slug);
   if (!video) return {};
   
   return {
@@ -75,20 +68,17 @@ export async function generateMetadata({
   };
 }
 
+export function generateStaticParams() {
+  return fallbackVideos.map((video) => ({ slug: video.id }));
+}
+
 export default async function VideoPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let video: KnowPlainVideo | null = getFallbackVideo(slug) || null;
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase.from("knowplain_videos").select("*").eq("id", slug).single();
-    video = (data as KnowPlainVideo | null) || video;
-  } catch {
-    // Fall back to static video content.
-  }
+  const video = getFallbackVideo(slug);
   
   if (!video) notFound();
   const isYoutubeId = /^[a-zA-Z0-9_-]{11}$/.test(video.id);
@@ -121,9 +111,7 @@ export default async function VideoPage({
           }),
         ]}
       />
-      <div className="mb-4 text-sm text-muted-foreground">
-        <Link href="/watch">Videos</Link> › {video.title}
-      </div>
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Videos", href: "/watch" }, { label: video.title }]} />
       
       <div className="mb-6 grid aspect-video place-items-center rounded-[14px] bg-black text-white overflow-hidden">
         {isYoutubeId ? (

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/site";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
@@ -12,15 +13,17 @@ type ThreadList = {
   title: string;
   pillar: string;
   created_at: string;
+  status: "pending" | "published" | "hidden" | "locked";
   knowplain_profiles?: { display_name: string } | null;
   knowplain_forum_posts?: { count: number }[] | null;
   knowplain_forum_likes?: { count: number }[] | null;
 };
 
-export const metadata: Metadata = {
-  title: "Forum",
-  description: "Community Q&A for retirement and money psychology.",
-};
+export const metadata: Metadata = pageMeta(
+  "/forum",
+  "Forum",
+  "Community Q&A for retirement and money psychology.",
+);
 
 const pillarColors: Record<string, string> = {
   "retirement": "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
@@ -42,6 +45,7 @@ export default async function ForumPage() {
       title,
       pillar,
       created_at,
+      status,
       knowplain_profiles ( display_name ),
       knowplain_forum_posts ( count ),
       knowplain_forum_likes ( count )
@@ -61,6 +65,9 @@ export default async function ForumPage() {
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Community Forum</h1>
           <p className="text-muted-foreground">Discuss retirement strategies and money psychology.</p>
         </div>
+      </div>
+      <div className="mb-8 rounded-xl border border-border bg-secondary/60 p-4 text-sm leading-relaxed text-muted-foreground">
+        Open discussions are moderated and new posts remain pending until review. Do not share account numbers, contact details, or other private information. Community replies are educational conversation, not professional advice. <Link href="/forum/guidelines" className="font-medium text-foreground underline">Read the community guidelines</Link>.
       </div>
       
       {errorMsg && (
@@ -108,6 +115,9 @@ export default async function ForumPage() {
                   <h3 className="mb-1 text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     {t.title}
                   </h3>
+                  {t.status === "pending" && (
+                    <span className="mb-1 inline-block text-xs font-medium text-amber-700 dark:text-amber-300">Pending moderation · visible only to you</span>
+                  )}
                   <div className="text-sm text-muted-foreground">
                     Started by <span className="font-medium text-ink">{t.knowplain_profiles?.display_name || "Anonymous"}</span> • {new Date(t.created_at).toLocaleDateString()}
                   </div>
@@ -128,7 +138,8 @@ export default async function ForumPage() {
           })}
           {(!threads || threads.length === 0) && !errorMsg && (
             <div className="rounded-2xl border border-dashed border-line py-12 text-center text-muted-foreground">
-              No threads yet. Be the first to start a discussion!
+              <p className="font-medium text-foreground">Open community discussion is not active yet.</p>
+              <p className="mt-1 text-sm">Browse the moderated answer hubs above while review capacity is established.</p>
             </div>
           )}
         </div>
@@ -142,6 +153,7 @@ export default async function ForumPage() {
                 <h2 className="font-semibold tracking-tight">New Discussion</h2>
               </div>
               <form action={createThread} className="flex flex-col gap-4">
+                <p className="text-xs leading-relaxed text-muted-foreground">New discussions are held for moderation before public display.</p>
                 <input 
                   name="title" 
                   required 

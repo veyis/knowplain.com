@@ -50,3 +50,18 @@ export async function deleteSimulation(id: string) {
 
   revalidatePath("/profile");
 }
+
+export async function deleteSavedCheckup(id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid saved checkup.");
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("You must be logged in to delete saved checkups.");
+
+  const { error } = await supabase
+    .from("knowplain_saved_checkups")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) throw new Error("Failed to delete saved checkup.");
+  revalidatePath("/profile");
+}

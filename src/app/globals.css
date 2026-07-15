@@ -23,7 +23,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);   /* #737373 secondary text */
+  --muted-foreground: oklch(0.50 0 0);    /* AA-safe secondary text on canvas + muted panels */
   --accent: oklch(0.97 0 0);              /* subtle gray hover — shadcn owns this */
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -121,5 +121,93 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Financial comparisons must not visually jump as digits change. Apply this at the
+   product boundary so new calculators inherit it without relying on remembered utility
+   classes; proportional figures remain available for ordinary editorial prose. */
+:where(.tool-page, #checkup-result) :is(input[type="number"], table, [data-financial-value]),
+#checkup-result :is(strong, dd) {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  @page {
+    margin: 0.6in;
+  }
+
+  body,
+  main {
+    background: white !important;
+    color: black !important;
+  }
+
+  .app-shell {
+    display: block !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .tool-page .calculator-inputs {
+    display: none !important;
+  }
+
+  .tool-page .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  .tool-page table {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 9pt !important;
+  }
+
+  .tool-page section,
+  .tool-page article,
+  .tool-page [data-print-panel] {
+    break-inside: avoid;
+  }
+
+  .tool-page a {
+    color: black !important;
+    text-decoration: underline;
+  }
+
+  #checkup-result {
+    display: block !important;
+  }
+
+  #checkup-result > * {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+
+  #retirement-age-worksheet {
+    display: block !important;
+    break-inside: avoid;
   }
 }

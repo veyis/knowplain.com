@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { trackProductEvent } from "@/lib/analytics";
 
 type Props = {
   variant?: "hero" | "bar";
@@ -23,6 +24,8 @@ export function SearchForm({
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     const query = q.trim() || "retirement";
+    // Deliberately omit the query. Retirement searches can contain sensitive facts.
+    trackProductEvent("Search Submitted");
     router.push(`/search?q=${encodeURIComponent(query)}`);
   }
 

@@ -21,7 +21,11 @@ export function emailConfigured(): boolean {
   return Boolean(apiKey && from && contactEmail && postalAddress);
 }
 
-export async function sendCheckupSummary(to: string, summary: string): Promise<boolean> {
+export async function sendCheckupSummary(
+  to: string,
+  summary: string,
+  options: { resumeUrl?: string } = {},
+): Promise<boolean> {
   if (!emailConfigured()) return false;
 
   const unsubscribe = `mailto:${contactEmail}?subject=unsubscribe`;
@@ -39,8 +43,19 @@ export async function sendCheckupSummary(to: string, summary: string): Promise<b
         "",
         summary,
         "",
-        "Your ages, balances, and debts were never sent to us — the checkup runs entirely",
-        "in your browser. We only stored your email and the line above.",
+        ...(options.resumeUrl
+          ? [
+              "Resume your private account-saved scenario:",
+              options.resumeUrl,
+              "",
+              "The link contains only an opaque record ID. You must sign in to the same account",
+              "to open it; Know Plain's row-level access policy restricts the record to its owner.",
+              "This email contains no ages, balances, income, spending, or debt values.",
+            ]
+          : [
+              "Your ages, balances, and debts were never sent to us — the checkup runs entirely",
+              "in your browser. We only stored your email and the line above.",
+            ]),
         "",
         "This is educational information, not financial advice.",
         "",

@@ -1,9 +1,9 @@
 ---
 title: "The 4% rule in 2026"
-description: "The classic safe withdrawal rate is a starting point — not a guarantee."
-plainAnswer: "Use 4% as a planning heuristic, then adjust for fees, taxes, and sequence risk."
+description: "The two credible safe-withdrawal numbers disagree — {{swr.morningstar}} and 4.7%. Here is why, and which one your plan should use."
+plainAnswer: "The 4% rule is a 1994 historical finding, not a law. In 2026 the two credible sources disagree: Morningstar's forward-looking estimate is 3.9%, and Bengen's revised historical worst case is 4.7%. They answer different questions. Pick the one that matches yours."
 published: "2026-07-09"
-updated: "2026-07-09"
+updated: "2026-07-11"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
@@ -12,62 +12,175 @@ riskLevel: "high"
 relatedTools:
   - href: /tools/sequence-risk
     label: "Stress-test withdrawals"
+  - href: /tools/am-i-on-track
+    label: "Estimate if you are on track"
 faqs:
-  - q: "Is the 4% rule a guarantee?"
-    a: "No. It is a historical planning heuristic, not a promise. Taxes, fees, portfolio mix, inflation, and sequence risk can all change the result."
-  - q: "When should I use less than 4%?"
-    a: "A lower starting rate may be prudent when the plan has little flexibility, high fees, high early-retirement withdrawals, or a long retirement horizon."
+  - q: "Is the 4% rule still valid in 2026?"
+    a: "As a rough first pass, yes. As a precise number, no. The two most credible current estimates sit either side of 4%: Morningstar's forward-looking figure is 3.9%, and Bengen's own revised historical worst case is 4.7%. Both are defensible. They are not measuring the same thing, so the gap between them is not an error."
+  - q: "Why do Morningstar and Bengen disagree about the safe withdrawal rate?"
+    a: "Because they ask different questions. Morningstar runs a forward-looking simulation and reports the rate that survives 90% of paths given today's valuations and yields. Bengen backtests actual US market history and reports the rate that would have survived the single worst 30-year period on record, using a more diversified portfolio."
+  - q: "Should I just average {{swr.morningstar}} and {{swr.bengen}} and use 4.3%?"
+    a: "No. Averaging two answers to two different questions produces an answer to no question at all. Decide which framing fits your plan — a forward-looking probability, or a historical worst case — and use that number. Then test what happens if you are wrong."
+  - q: "Does the 4% rule account for taxes?"
+    a: "No. Both the original study and the modern updates model the portfolio, not the tax return. A 4% withdrawal from a traditional 401(k) or IRA is taxable income. Your spendable amount is lower than your withdrawal, and how much lower depends on your account mix and your other income."
+  - q: "How do fees change the safe withdrawal rate?"
+    a: "Almost one for one. A fee is a withdrawal you do not get to spend. If you draw 4% and pay 1% in fund and advisor fees, the portfolio is actually funding a 5% drain. Every published safe-rate figure assumes costs are low; none of them assume they are zero for you."
+  - q: "Is 4% safe for early retirement?"
+    a: "It was never tested for it. Bengen's SAFEMAX and Morningstar's base case both assume a 30-year horizon. A 50-year retirement is a materially different problem, and the sustainable rate is lower. There is no widely accepted single figure for it."
+  - q: "Do required minimum distributions override my withdrawal rate?"
+    a: "Eventually, yes — for pre-tax accounts. RMDs begin at 73 if you were born 1951-1959 and at 75 if you were born in 1960 or later. From then on the IRS sets a floor under your withdrawal whether your plan wanted one or not. You can reinvest the money in a taxable account, but you cannot leave it in the IRA."
 sources:
+  - title: "Determining Withdrawal Rates Using Historical Data (1994) — as documented in 'Revisiting William Bengen's SAFEMAX Portfolio Withdrawal Rate'"
+    publisher: "Journal of Financial Planning / Financial Planning Association"
+    url: "https://www.financialplanningassociation.org/learning/publications/journal/NOV23-revisiting-william-bengens-safemax-portfolio-withdrawal-rate-OPEN"
+    accessed: "2026-07-11"
+    note: "The origin of the rule, and the source for its actual assumptions: 1926-92 data, a 50/50 US large-cap and intermediate Treasury portfolio, annual rebalancing, a 30-year minimum, and inflation-adjusted constant-dollar withdrawals. Bengen's term was SAFEMAX; he did not call it the 4% rule."
   - title: "Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable"
-    publisher: "AAII Journal"
+    publisher: "AAII Journal (Cooley, Hubbard and Walz)"
     url: "https://www.aaii.com/journal/article/retirement-savings-choosing-a-withdrawal-rate-that-is-sustainable"
     accessed: "2026-07-11"
-    note: "Commonly known as the Trinity study."
-  - title: "Retirement topics - Required minimum distributions"
-    publisher: "Internal Revenue Service"
-    url: "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-required-minimum-distributions-rmds"
+    note: "The 1998 Trinity study. Used for the second-source confirmation of the original finding and for the success-rate framing."
+  - title: "What's a Safe Retirement Withdrawal Rate for 2026?"
+    publisher: "Morningstar (The State of Retirement Income, 2025 edition)"
+    url: "https://www.morningstar.com/retirement/whats-safe-retirement-withdrawal-rate-2026"
     accessed: "2026-07-11"
-    note: "Used for account-withdrawal rule context."
+    note: "Source for the {{swr.morningstar}} base case and its assumptions (30-year horizon, 90% success, 30-50% equity), for the prior editions' figures, for the finding that higher equity weightings lower the safe starting rate, and for the finding that flexible spending methods support a higher starting rate than fixed real withdrawals."
+  - title: "Bill Bengen Boosts the '4% Rule' to {{swr.bengen}}"
+    publisher: "Advisor Perspectives"
+    url: "https://www.advisorperspectives.com/articles/2025/08/29/bill-bengen-boosts-the-4-rule-to-4-7"
+    accessed: "2026-07-11"
+    note: "Secondary reporting on Bengen's 2025 book 'A Richer Retirement', which is the primary source for the revised {{swr.bengen}} SAFEMAX and the seven-asset-class portfolio behind it. We flag this as secondary because the underlying work is in the book, not in a public paper."
+  - title: "Retirement plan and IRA required minimum distributions FAQs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs"
+    accessed: "2026-07-11"
+    note: "Used for the RMD start ages that eventually override a chosen withdrawal rate in pre-tax accounts."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
   - href: /topics/retirement/how-much-is-enough
     label: "How much is enough?"
+  - href: /topics/retirement/is-1-million-enough
+    label: "Is $1 million enough?"
   - href: /topics/retirement/sequence-of-returns
     label: "Sequence of returns risk"
-  - href: /tools
-    label: "Test it → Roadmap Pack"
+  - href: /tools/sequence-risk
+    label: "Test it → Stress-test withdrawals"
 ---
 
-The 4% rule is the most-quoted number in retirement planning and the most-misunderstood. It's a useful **planning heuristic** — a first pass on [how much is enough](/topics/retirement/how-much-is-enough) — not a law. This spoke sits under the [Retirement hub](/topics/retirement).
+The 4% rule is the most-quoted number in retirement planning and the most misunderstood. It is a historical finding, not a law of finance. And in 2026 the two most credible people working on the question do not agree on what it should be.
+
+That disagreement is not a scandal, and it is not a reason to ignore both. It is the most useful thing on this page. This spoke sits under the [Retirement hub](/topics/retirement).
 
 ## Where the 4% rule comes from
 
-Financial planner William Bengen introduced it in a 1994 *Journal of Financial Planning* paper, testing withdrawal rates against historical US market data. The 1998 Trinity study (Cooley, Hubbard, and Walz) reached a similar conclusion: a portfolio withdrawing about 4% of its starting value, adjusted for inflation, survived most 30-year historical periods.
+William Bengen, a financial planner, published *Determining Withdrawal Rates Using Historical Data* in the *Journal of Financial Planning* in October 1994. He took US market history from 1926 to 1992, ran a portfolio through every rolling 30-year retirement in it, and asked one question: what is the highest starting withdrawal rate that would have survived even the worst of them?
 
-## What it actually assumes
+His answer was about <Fact id="swr.classic" />, on a 50/50 mix of US large-cap stocks and intermediate-term Treasuries, rebalanced annually, with the first year's dollar withdrawal increased by inflation every year after. He called it SAFEMAX — the maximum *safe* rate — and he never called it the 4% rule. The press did that.
 
-The headline hides its assumptions:
+The 1998 Trinity study (Cooley, Hubbard and Walz, *AAII Journal*) reached a compatible conclusion by a different route, reporting success rates across a grid of portfolios and horizons. Two independent findings pointing the same way is why the number stuck.
 
-- A **30-year** horizon (retire ~65, plan to ~95).
-- A **diversified stock/bond** mix (roughly 50–75% stocks).
-- **US historical** returns — a favorable sample by global standards.
-- A rigid, inflation-adjusted withdrawal that never flexes.
+Notice what SAFEMAX actually is. It is not a forecast, and it is not an average outcome. It is the worst case in one country's recorded history. For most historical retirees, a 4% start left a very large pile of unspent money.
 
-Change any of those — a longer retirement, higher fees, or a rougher return sequence — and the safe number moves.
+## What the rule assumes, and how each assumption moves the number
 
-## Why 2026 is different
+The headline hides its assumptions. Each one is a lever.
 
-Three things matter as much as the headline percentage:
+| The original rule assumes | If your reality is different | Effect on the sustainable rate |
+| --- | --- | --- |
+| A 30-year horizon | You retire at 55 and plan to 95 — 40 years | Lower |
+| A 30-year horizon | You retire at 70 | Higher |
+| A balanced stock/bond portfolio | Nearly all cash or bonds | Lower |
+| A balanced stock/bond portfolio | Nearly all stocks | Lower — volatility, not return, sets the safe *starting* rate |
+| US market history | Almost every other country's history was worse | Lower |
+| Costs are negligible | You pay 1% in fund and advisor fees | Lower, close to one for one |
+| Spending never flexes | You can cut in a bad year | Higher |
+| Taxes are not modelled at all | Your money is in a traditional 401(k) | The rate is unchanged; your *spendable* income is lower |
 
-1. **Valuations and yields.** Some updated research (e.g., Morningstar's annual work) has argued for a starting figure closer to 3.3–4% depending on conditions and horizon.
-2. **Fees.** Every 1% in fund or advisor fees comes straight out of your sustainable withdrawal.
-3. **Your flexibility.** Willingness to cut spending in bad years, or earn a little part-time, does more for success odds than chasing a perfect number — because the real risk is [sequence of returns](/topics/retirement/sequence-of-returns).
+The last row is the one nobody says out loud. Every published safe-withdrawal number describes the portfolio, not your bank account. A 4% withdrawal from a pre-tax IRA is 4% of taxable income, not 4% of spending money.
+
+## The disagreement: 3.9% and 4.7%
+
+Two credible, current numbers exist. Most sites pick one and sound confident. Here is what each one is actually claiming.
+
+| | Morningstar: <Fact id="swr.morningstar" /> | Bengen, revised: <Fact id="swr.bengen" /> |
+| --- | --- | --- |
+| **The question it answers** | What can a new retiree start at today and still have a 90% chance of money remaining after 30 years? | What is the highest rate that would have survived the single worst 30-year period in the US record? |
+| **Method** | Forward-looking simulation using projected asset-class returns and inflation | Backtest of actual historical returns |
+| **Evidence base** | Capital-market assumptions for the next 30 years | US market history since 1926 |
+| **Portfolio** | 30-50% equity, remainder bonds and cash | Seven asset classes — US large, mid, small and micro-cap, international, intermediate Treasuries, T-bills |
+| **What "safe" means** | 90% of simulated paths survive | 100% of actual historical paths survived, including the worst one |
+| **Horizon** | 30 years | 30 years |
+| **Spending rule** | Fixed, inflation-adjusted withdrawals | Fixed, inflation-adjusted withdrawals |
+| **What moves it** | Today's valuations and bond yields | Adding asset classes; new history accumulating |
+| **It fails if** | The next 30 years are worse than the assumptions | The future is worse than the worst thing that has ever happened |
+
+These are not two estimates of one quantity. They are answers to two different questions, computed on two different portfolios, under two different definitions of success.
+
+So: do not average them. <Fact id="swr.morningstar" /> and <Fact id="swr.bengen" /> do not bracket a "true" rate sitting between them, and the midpoint of two unrelated statistics is not a statistic. Decide which question is *your* question.
+
+- If your instinct is *"I want to know the odds, given what markets look like now"* — that is Morningstar's question.
+- If your instinct is *"I want a number that would have held through the worst thing that ever happened"* — that is Bengen's.
+
+Bengen's revision is worth understanding on its own terms, because it is easy to misread as bullishness. It is not. He raised the number by *diversifying the portfolio*, not by assuming better markets. Adding small-cap, micro-cap and international stocks to the original two-asset mix lifted the floor under the worst historical cohort. The pessimism is unchanged; the portfolio is better.
+
+## Morningstar's number is not a constant either
+
+The figure that most sites quote as *the* forward-looking rate has moved every single year, because it is downstream of valuations and yields. Its own history is the best argument against treating it as precise.
+
+| Report edition | Base-case starting rate (new retiree, 30 years, 90% success) |
+| --- | --- |
+| 2021 | 3.3% |
+| 2022 | 3.8% |
+| 2023 | 4.0% |
+| 2024 | 3.7% |
+| 2025 edition (the current one, for 2026) | <Fact id="swr.morningstar" /> |
+
+If you have seen "3.3%" quoted recently as Morningstar's view, that is the 2021 edition. It is five years stale.
+
+## Horizon and equity allocation
+
+Morningstar publishes a full grid of safe starting rates by asset allocation and time horizon. We do not reproduce its cells here, because we cannot verify them outside the report, and a fabricated table on a money page is worse than no table. What the report states in plain language is:
+
+- The <Fact id="swr.morningstar" /> base case is for a **30-year** horizon and a portfolio with **30-50% equity**.
+- **Shorter horizon, higher rate.** An older retiree planning for fewer than 30 years can reasonably spend well above the base case.
+- **More stocks does not mean a higher safe starting rate.** Above roughly 50% equity, the extra volatility *reduces* the safe starting withdrawal, because it raises the odds of a bad first decade. This is the finding most people get backwards.
+
+That third point only makes sense once you understand [sequence of returns risk](/topics/retirement/sequence-of-returns): a high-equity portfolio has a higher *average* outcome and a worse *unlucky* outcome, and a safe starting rate is a statement about the unlucky one.
+
+## Fees come straight off the top
+
+A fee is a withdrawal you do not get to spend.
+
+Draw <Fact id="swr.classic" /> and pay 1% a year in fund expenses and advisor fees, and the portfolio is funding a 5% drain — it just only sees 4% of it. There is no published safe-rate figure that is safe at that cost level, because none of them were computed with a 1% leak in them.
+
+This is the cheapest fix available to almost every retiree, and it is the one that requires no forecasting skill at all.
+
+## What actually beats picking a perfect number
+
+Flexibility. Morningstar tested the common flexible spending methods against a fixed inflation-adjusted withdrawal and found that **every one of them supported a higher starting rate than the rigid base case.** Not because flexibility conjures returns, but because it stops you from selling into a crash to fund a raise you gave yourself.
+
+That is the whole game. The rigid rule is what makes the number so low in the first place. A retiree who will skip an inflation increase after a bad year, or trim discretionary spending 10% when the portfolio is down, has already bought back more safety than the entire 3.9%-versus-4.7% argument is worth.
+
+Two things to do with that, in order:
+
+1. **See what a bad first decade actually does to you.** [Stress-test withdrawals](/tools/sequence-risk) shows the same average return in two different orders — the arithmetic is identical, the outcomes are not.
+2. **Decide, in advance, what you would cut.** A plan with a written flex rule is a different plan from one that hopes.
+
+## When the IRS picks your rate for you
+
+Your withdrawal rate is your choice right up until it is not. Required minimum distributions begin at age <Fact id="rmd.ageBorn1951to1959" /> if you were born between 1951 and 1959, and at age <Fact id="rmd.ageBorn1960OrLater" /> if you were born in 1960 or later — which is most people still planning. From that point the IRS sets a floor under withdrawals from pre-tax accounts, regardless of what your plan wanted.
+
+RMDs do not force you to *spend* the money. You can pay the tax and reinvest the rest in a taxable account. What they force is the taxable event, which is why the conversion and account-location decisions you make in your sixties matter more than the second decimal place of your withdrawal rate.
 
 ## Key takeaways
 
-- 4% is a historical heuristic from Bengen (1994) and the Trinity study — not a guarantee.
-- It assumes a 30-year horizon, a balanced portfolio, and rigid withdrawals.
-- Adjust down for fees and long horizons; flexibility beats precision.
+- The 4% rule is Bengen's 1994 SAFEMAX: the worst-case survivor of US history, on a 50/50 portfolio, over 30 years. It was never a forecast.
+- The two credible 2026 numbers are Morningstar's <Fact id="swr.morningstar" /> and Bengen's revised <Fact id="swr.bengen" />. They answer different questions. Do not average them, and do not treat either as precise.
+- Higher equity does not buy a higher safe starting rate. Above roughly 50% stocks, volatility works against you.
+- Fees come off the sustainable rate almost one for one. Taxes come off your spendable income on top of that.
+- Flexibility raises the sustainable rate more than any number-picking exercise does.
 
-Educational only — not financial advice. Pressure-test your own rate with the [Roadmap Pack](/tools).
+Next: turn a rate into a target on [how much is enough](/topics/retirement/how-much-is-enough), or test the round number on [is $1 million enough](/topics/retirement/is-1-million-enough).
+
+Educational only — not financial or tax advice.

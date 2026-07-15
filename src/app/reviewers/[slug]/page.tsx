@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Badge } from "@/components/ui/badge";
 import { editorialPeople, isEditorialPersonSlug } from "@/lib/editorial";
 import { profilePageJsonLd } from "@/lib/schema";
-import { site } from "@/lib/site";
+import { site, pageMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return Object.keys(editorialPeople).map((slug) => ({ slug }));
@@ -19,11 +19,7 @@ export async function generateMetadata({
   const { slug } = await params;
   if (!isEditorialPersonSlug(slug)) return {};
   const person = editorialPeople[slug];
-  return {
-    title: `${person.name} Review Profile`,
-    description: person.bio,
-    alternates: { canonical: `/reviewers/${slug}` },
-  };
+  return pageMeta(`/reviewers/${slug}`, `${person.name} Review Profile`, person.bio);
 }
 
 export default async function ReviewerPage({ params }: { params: Promise<{ slug: string }> }) {

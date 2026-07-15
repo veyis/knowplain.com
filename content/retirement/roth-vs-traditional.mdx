@@ -1,85 +1,220 @@
 ---
-title: "Roth vs Traditional, known plain"
-description: "The whole decision comes down to one question: are your taxes higher now, or in retirement?"
-plainAnswer: "Traditional saves tax now; Roth saves tax later. Pick based on whether your tax rate is higher today or in retirement."
-updated: "2026-07-09"
+title: "Roth vs Traditional 401(k) and IRA"
+description: "Traditional cuts your tax now, Roth cuts it later. The 2026 limits, the new mandatory Roth catch-up, and the costs the tax-rate question misses."
+plainAnswer: "Traditional gives you a deduction now and taxes withdrawals later; Roth does the opposite. Choose Traditional if your tax rate is higher today, Roth if it is lower. But the rate comparison is not the whole cost — conversions and pre-tax withdrawals also drive ACA subsidies before 65 and Medicare surcharges after."
+updated: "2026-07-11"
 published: "2026-07-09"
 reviewed: "2026-07-11"
 author: "know-plain-editorial"
 reviewer: "retirement-review-board"
 contentType: "decision"
 riskLevel: "high"
+relatedTools:
+  - href: /tools/roth-vs-traditional
+    label: "Check what a Roth conversion really costs"
+  - href: /tools/catch-up-contributions
+    label: "See what you can still put away at 50+"
+faqs:
+  - q: "Roth or Traditional, in one sentence?"
+    a: "Traditional if your tax rate is higher today than it will be in retirement; Roth if it is lower. When you genuinely cannot tell — which is most people — splitting between the two hedges the bet and gives you two tax pools to draw from later."
+  - q: "Can high earners still make catch-up contributions pre-tax?"
+    a: "Not from 2026. If your prior-year Social Security wages from the employer sponsoring your plan exceeded the wage threshold, SECURE 2.0 requires your catch-up contributions to be Roth. Pre-tax is not an option for that portion. The threshold is indexed, and the $145,000 figure still quoted widely is the statutory base, not the current number."
+  - q: "What if I earn too much to contribute to a Roth IRA?"
+    a: "Roth IRA contributions phase out at higher incomes and stop entirely above the top of the range. A Roth 401(k) has no income limit, so that route stays open. Some people use a backdoor Roth — a non-deductible IRA contribution converted to Roth — but the pro-rata rule taxes it in proportion to your existing pre-tax IRA balances."
+  - q: "Do Roth accounts have required minimum distributions?"
+    a: "Not during your lifetime. Roth IRAs never did, and since 2024 designated Roth 401(k) and 403(b) accounts no longer do either. Traditional accounts do, starting at 73 or 75 depending on your birth year. Beneficiaries who inherit a Roth account still face distribution rules."
+  - q: "Does the employer match go into the Roth side?"
+    a: "By default, no — the match is a pre-tax contribution even if all your own deferrals are Roth, so it lands in a traditional bucket. SECURE 2.0 lets a plan offer a Roth match if the contribution is fully vested, but the plan has to choose to offer it, and many have not. A Roth match is taxable income to you in the year it is allocated."
+  - q: "Does the new senior deduction mean my retirement tax rate will be lower?"
+    a: "It helps, but less than the headlines suggest, and not for long. It is a deduction for people 65 and older, it phases out at higher incomes, and it is scheduled to expire. It also did not change the thresholds that decide how much of your Social Security gets taxed, so it is not 'no tax on Social Security'."
+  - q: "Can I withdraw Roth money early without penalty?"
+    a: "From a Roth IRA, your regular contributions come out first and are always tax and penalty free. A Roth 401(k) works differently: a non-qualified withdrawal comes out pro-rata from contributions and earnings, so part of it is taxable. Converted amounts have their own separate five-year clock."
 sources:
-  - title: "Roth Comparison Chart"
-    publisher: "Internal Revenue Service"
-    url: "https://www.irs.gov/retirement-plans/roth-comparison-chart"
-    accessed: "2026-07-11"
-    note: "Official side-by-side of Roth vs pre-tax elective deferrals."
-  - title: "401(k) limit increases to $24,500 for 2026; IRA limit increases to $7,500"
+  - title: "401(k) limit increases to {{401k.deferral}} for 2026; IRA limit increases to {{ira.limit}}"
     publisher: "Internal Revenue Service (Notice 2025-67)"
     url: "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500"
     accessed: "2026-07-11"
-    note: "2026 limits, and the mandatory Roth catch-up for prior-year FICA wages over $150,000."
-relatedTools:
-  - href: /tools/roth-vs-traditional
-    label: "Check what a conversion really costs"
-faqs:
-  - q: "Roth or Traditional, in one sentence?"
-    a: "Traditional if your tax rate is higher today than it will be in retirement; Roth if it is lower today. When you genuinely cannot tell, splitting the difference buys you flexibility later."
-  - q: "Does the choice affect anything besides tax rates?"
-    a: "Yes, and this is the part most people miss. Traditional withdrawals and Roth conversions raise the income figure used for ACA subsidies before 65 and for Medicare IRMAA surcharges after. Roth withdrawals do not. Between 60 and 65 that difference can be worth thousands of dollars a year."
-  - q: "Can high earners still make catch-up contributions pre-tax?"
-    a: "Not from 2026. If your prior-year Social Security wages from the plan sponsor exceeded $150,000, SECURE 2.0 requires your catch-up contributions to be Roth."
+    note: "2026 deferral, catch-up, super catch-up and IRA limits, and the Roth IRA income phase-out ranges."
+  - title: "Notice 2025-67 — 2026 retirement plan cost-of-living adjustments"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/pub/irs-drop/n-25-67.pdf"
+    accessed: "2026-07-11"
+    note: "The indexed wage threshold above which the catch-up must be Roth — widely misquoted as the $145,000 statutory base."
+  - title: "Catch-up contributions — final regulations (T.D. 10033)"
+    publisher: "Federal Register"
+    url: "https://www.federalregister.gov/documents/2025/09/16/2025-17865/catch-up-contributions"
+    accessed: "2026-07-11"
+    note: "Final rules for the mandatory Roth catch-up, including that the wage test is per plan-sponsoring employer and uses prior-year FICA wages."
+  - title: "Publication 590-B — Distributions from Individual Retirement Arrangements"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/publications/p590b"
+    accessed: "2026-07-11"
+    note: "Roth ordering rules (contributions first), the separate five-year period for each conversion, and the pro-rata treatment of traditional IRA basis."
+  - title: "Retirement topics — designated Roth account"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-designated-roth-account"
+    accessed: "2026-07-11"
+    note: "A non-qualified distribution from a Roth 401(k) is 'treated as coming pro-rata from earnings and contributions (basis)' — unlike a Roth IRA."
+  - title: "Retirement plan and IRA required minimum distributions FAQs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs"
+    accessed: "2026-07-11"
+    note: "'The RMD rules do not apply to Roth IRAs or Designated Roth accounts while the owner is alive.' Designated Roth RMDs ended in 2024 under SECURE 2.0 section 325."
+  - title: "SECURE 2.0 Act changes affect how businesses complete Forms W-2"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/newsroom/secure-2-point-0-act-changes-affect-how-businesses-complete-forms-w-2"
+    accessed: "2026-07-11"
+    note: "Section 604: a plan may allow employees to designate fully vested employer matching and nonelective contributions as Roth."
+  - title: "Form 8606 — Nondeductible IRAs"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/forms-pubs/about-form-8606"
+    accessed: "2026-07-11"
+    note: "The form that applies the pro-rata rule to a backdoor Roth by aggregating all traditional, SEP and SIMPLE IRA balances."
+  - title: "2026 Medicare Parts A & B Premiums and Deductibles"
+    publisher: "Centers for Medicare & Medicaid Services"
+    url: "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-deductibles"
+    accessed: "2026-07-11"
+    note: "IRMAA first-tier income thresholds and the 2026 Part B premium, used to price the surcharge."
+  - title: "How will the loss of enhanced premium tax credits affect older adults?"
+    publisher: "KFF"
+    url: "https://www.kff.org/affordable-care-act/how-will-the-loss-of-enhanced-premium-tax-credits-affect-older-adults/"
+    accessed: "2026-07-11"
+    note: "The enhanced premium tax credits expired 2025-12-31 and the {{aca.cliffPercent}}-of-FPL cliff returned for plan year 2026."
+  - title: "One Big Beautiful Bill Act — tax deductions for seniors"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors"
+    accessed: "2026-07-11"
+    note: "The senior deduction: amount, income phase-out, and the fact that it expires."
+  - title: "Publication 915 — Social Security and Equivalent Railroad Retirement Benefits"
+    publisher: "Internal Revenue Service"
+    url: "https://www.irs.gov/publications/p915"
+    accessed: "2026-07-11"
+    note: "The combined-income base amounts that decide how much of a Social Security benefit is taxed. They are not indexed."
 related:
   - href: /topics/retirement
     label: "Back to hub → Retirement"
-  - href: /topics/retirement/how-much-is-enough
-    label: "How much is enough?"
+  - href: /topics/retirement/roth-conversion-ladder
+    label: "The Roth conversion ladder"
+  - href: /topics/retirement/health-care-before-medicare
+    label: "Health care before Medicare"
   - href: /topics/decision-tools/withdrawal-plan
     label: "A plain withdrawal plan"
-  - href: /topics/retirement/starting-retirement-savings-at-45
-    label: "Starting savings at 45"
 ---
 
-"Roth or Traditional?" sounds like a tax-code puzzle. Plainly, it's one question with two answers, and the whole thing turns on *when* you'd rather pay tax. This spoke sits under the [Retirement hub](/topics/retirement).
+"Roth or Traditional?" sounds like a tax-code puzzle. It is really one question with two answers, and the whole thing turns on *when* you would rather pay the tax. This spoke sits under the [Retirement hub](/topics/retirement).
+
+The short version is easy. The part almost every explainer leaves out is that your tax rate is not the only thing riding on the answer — and between 60 and 65, it is not even the expensive part.
 
 ## The core trade
 
-- **Traditional** (401(k)/IRA): you deduct the contribution now and pay income tax on withdrawals in retirement. Tax break *today*.
-- **Roth**: you contribute after-tax dollars now and withdrawals in retirement are generally tax-free. Tax break *later*. See the IRS [Roth comparison chart](https://www.irs.gov/retirement-plans/roth-comparison-chart).
+- **Traditional** (401(k) or IRA): you deduct the contribution now and pay ordinary income tax on every dollar you withdraw later. Tax break *today*.
+- **Roth**: you contribute after-tax dollars now, and qualified withdrawals later are tax-free. Tax break *later*.
 
-Same money, two different timing bets on your own tax rate.
+Same money, two different bets on your own future tax rate.
 
-## When each one wins
+## Side by side
 
-- **Roth wins** if you expect a **higher** tax rate in retirement than today — common for younger savers, people early in their careers, or anyone expecting tax rates to rise.
-- **Traditional wins** if you expect a **lower** rate later — common for high earners in their peak years who'll drop to a smaller bracket in retirement.
+The differences that actually change a decision, rather than the ones that fill a chart:
 
-Since you're guessing about future tax law and your own future income, the honest answer is "nobody knows for sure."
+| | Traditional 401(k) | Roth 401(k) | Traditional IRA | Roth IRA |
+| --- | --- | --- | --- | --- |
+| **2026 employee limit** | <Fact id="401k.deferral" /> (shared across both 401(k) types) | <Fact id="401k.deferral" /> (shared) | <Fact id="ira.limit" /> (shared across both IRA types) | <Fact id="ira.limit" /> (shared) |
+| **Catch-up at 50+** | <Fact id="401k.catchUp50" /> | <Fact id="401k.catchUp50" /> | <Fact id="ira.catchUp50" /> | <Fact id="ira.catchUp50" /> |
+| **Catch-up at 60–63** | <Fact id="401k.superCatchUp" /> *instead of*, not on top of | same | no change | no change |
+| **Tax going in** | Deducted | After-tax | Deducted if eligible | After-tax |
+| **Tax coming out** | Ordinary income, all of it | Tax-free if qualified | Ordinary income on pre-tax amounts | Tax-free if qualified |
+| **Income limit to contribute** | None | None | None to contribute; income limits affect deductibility | Phases out — see below |
+| **Lifetime RMDs** | Yes, at <Fact id="rmd.ageBorn1951to1959" /> or <Fact id="rmd.ageBorn1960OrLater" /> | **No** — ended in 2024 | Yes | **No** |
+| **Early withdrawal** | Taxable + 10% unless an exception applies | Non-qualified withdrawal is **pro-rata** across basis and earnings | Taxable + 10% unless an exception applies | Your contributions come out **first**, always tax and penalty free |
+| **Employer match** | Pre-tax by default | Pre-tax by default — a Roth match is optional for the plan, and taxable to you | n/a | n/a |
 
-## The 2026 wrinkle: it is not only about tax rates
+Three rows there are worth stopping on.
 
-Most explanations stop at "compare your tax rate now and later." That is incomplete, and the gap is expensive.
+**The 401(k) limit is shared.** <Fact id="401k.deferral" /> is the total across Roth and pre-tax deferrals, not each. Same for the IRA limit across Roth and traditional IRAs. Choosing Roth does not buy you more room.
 
-Traditional withdrawals and **Roth conversions** raise your reported income. Roth withdrawals do not. Two things key off that income figure:
+**The super catch-up replaces, it does not stack.** At 60 to 63 you get <Fact id="401k.superCatchUp" /> *instead of* <Fact id="401k.catchUp50" />, not in addition to it. That takes a 50-year-old's ceiling of <Fact id="401k.maxAt50" /> to <Fact id="401k.maxAt60" /> — a real increase, but not the two-catch-ups-added-together figure some articles print. The [catch-up planner](/tools/catch-up-contributions) works out yours.
 
-- **Before 65 — ACA subsidies.** For 2026, income one dollar over 400% of the federal poverty line wipes out your entire premium tax credit. A conversion done "to be efficient" at 61 can cost five figures. See [health care before Medicare](/topics/retirement/health-care-before-medicare).
-- **After 63 — Medicare IRMAA.** Medicare surcharges are based on your income from **two years earlier**, so a conversion at 63 shows up on your Part B premium at 65.
+**Roth accounts no longer have lifetime RMDs — including in a 401(k).** Roth IRAs never did. Designated Roth 401(k) and 403(b) accounts stopped in 2024 under SECURE 2.0. The IRS states it plainly: the RMD rules "do not apply to Roth IRAs or Designated Roth accounts while the owner is alive." Note that several IRS explainer pages still carry the pre-2024 language. The RMD FAQ is the one that is current.
 
-None of this means avoid conversions. It means the years between 60 and 65 are when the Roth question stops being theoretical and starts having a dollar value attached. Model it before you convert.
+## The case for paying tax now
 
-## One more rule if you are a high earner
+Roth wins when the rate you avoid later is higher than the rate you pay today.
 
-From 2026, if your prior-year Social Security wages from your plan's employer exceeded **$150,000**, SECURE 2.0 requires your **catch-up contributions to be Roth** — the pre-tax option is no longer available to you for that portion.
+- **You expect a higher rate in retirement.** Common for younger savers, people early in their careers, and anyone with a large pre-tax balance that will eventually be forced out as RMDs.
+- **You want no RMDs.** A traditional balance gets pulled out on the government's schedule starting at <Fact id="rmd.ageBorn1951to1959" /> or <Fact id="rmd.ageBorn1960OrLater" />, whether you need the money or not. Roth money has no such deadline, which is the single most underrated feature of the account.
+- **You want a lever on your own taxable income later.** A Roth withdrawal does not raise the income figures that drive ACA subsidies, Medicare surcharges, or how much of your Social Security gets taxed. That flexibility has a dollar value, and it is largest in exactly the years the next section is about.
+- **You think tax rates rise.** Nobody knows. But paying a known rate today beats a guess if the guess is bad.
+
+## The case for paying tax later
+
+Traditional wins when today's rate is the higher one.
+
+- **You are in your peak earning years** and will drop into a smaller bracket once the salary stops.
+- **The deduction is worth more than the exemption.** A dollar deducted at a high marginal rate is a real, immediate, certain saving. Roth's benefit is a forecast.
+- **You will retire into a low-income window.** If you stop work at 60 and have several years before Social Security and RMDs begin, you may be able to pull that money out — or convert it — at a much lower rate than you deducted it at. That window is the whole basis of the [Roth conversion ladder](/topics/retirement/roth-conversion-ladder).
+
+Since you are guessing about future tax law and your own future income, the honest answer is that nobody knows for sure. Which is why the default at the end of this page is a hedge, not a winner.
+
+## From 2026, high earners cannot make the catch-up pre-tax
+
+This is new, and it catches people out.
+
+If your **prior-year** Social Security (FICA) wages **from the employer sponsoring your plan** exceeded <Fact id="401k.mandatoryRothWageThreshold" />, SECURE 2.0 requires your catch-up contributions for 2026 to be **Roth**. Pre-tax is not an option for that portion.
+
+Two details matter. The wage test is per plan-sponsoring employer, not per household and not on your total income — so someone with no FICA wages from that employer (a self-employed partner, for instance) is not caught by it. And the widely quoted **$145,000** is the statutory base figure, not the live number: it is indexed, and Notice 2025-67 raised it. Final regulations arrived as T.D. 10033.
+
+## If you earn too much for a Roth IRA
+
+An article about Roth versus Traditional that never mentions this has a hole in the middle of its own topic: **you may not be allowed to contribute to a Roth IRA at all.**
+
+Direct Roth IRA contributions phase out between <Fact id="roth.phaseOutSingle" /> for single filers and <Fact id="roth.phaseOutJoint" /> for married couples filing jointly. Above the top of your range, the amount you can contribute is zero.
+
+Two things to know:
+
+- **A Roth 401(k) has no income limit.** If your plan offers one, that door stays open at any income. For most high earners this is the answer, and it is boring, which is why it gets less attention than the next bullet.
+- **The backdoor Roth** — making a non-deductible traditional IRA contribution and converting it — is not blocked by the income limits, because conversions have no income limit. But it is governed by the **pro-rata rule**, and this is where people get hurt.
+
+The pro-rata rule works like this. For tax purposes the IRS does not look at the one account you just funded. It aggregates *all* of your traditional, SEP and SIMPLE IRA balances and treats them as a single pot. Your after-tax basis is spread across the whole pot, so a conversion comes out proportionally taxable, no matter which account the money physically left. As Publication 590-B puts it: "Until all of your basis has been distributed, each distribution is partly nontaxable and partly taxable." Form 8606 does the arithmetic.
+
+The practical consequence: if you have a large pre-tax rollover IRA sitting there, a backdoor Roth is mostly a taxable event, not a free one. A 401(k) balance is not counted in the pro-rata pot, which is why people sometimes roll an IRA *into* a 401(k) first. That is a real strategy with real trade-offs, and it is beyond this page.
+
+## The tax-rate question is not the whole cost
+
+Most explanations stop at "compare your rate now and later." That is incomplete, and the gap is expensive.
+
+Traditional withdrawals and **Roth conversions** raise your reported income. Roth withdrawals do not. Several things key off that income figure, and two of them have a price tag.
+
+**Before 65 — the ACA subsidy cliff.** The enhanced premium tax credits expired on 31 December 2025. For 2026, household income one dollar over <Fact id="aca.cliffPercent" /> of the federal poverty line forfeits your **entire** premium tax credit — not a slice of it, all of it. For a single person that line is <Fact id="aca.cliffSingle" />. A conversion done "to be efficient" at 61 can cost the tax *plus* five figures of lost premium help. See [health care before Medicare](/topics/retirement/health-care-before-medicare) and the [ACA bridge tool](/tools/aca-bridge).
+
+**From 63 — Medicare IRMAA.** Medicare surcharges use your income from **<Fact id="medicare.irmaaLookback" /> years earlier**. So the return you file at 63 sets your premium at <Fact id="medicare.eligibilityAge" />. Cross the first tier — <Fact id="medicare.irmaaTier1Single" /> single, <Fact id="medicare.irmaaTier1Joint" /> joint — and it costs roughly <Fact id="medicare.irmaaTier1Cost" /> for that year, **per person on Medicare**. Higher incomes hit higher tiers, which cost considerably more.
+
+Neither of these means "avoid conversions." It means the years between 60 and 65 are when the Roth question stops being theoretical and starts having a dollar value attached. The [conversion cost checker](/tools/roth-vs-traditional) prices all three effects together.
+
+## The senior deduction changes the bet — until it does not
+
+This page is built on one premise: that you can compare today's rate with your retirement rate. The One Big Beautiful Bill Act made that comparison harder.
+
+From 2025, people aged 65 and over get an extra deduction of <Fact id="tax.seniorDeduction" /> each — <Fact id="tax.seniorDeductionCouple" /> for a couple where both qualify — available whether or not they itemise. It phases out at higher incomes and disappears entirely well before the top brackets.
+
+Two honest caveats, both of which cut against building a plan around it:
+
+1. **It expires.** The deduction is scheduled to end after <Fact id="tax.seniorDeductionLastYear" />. A saver choosing Roth today on the strength of a lower retirement rate should not assume this deduction is still there when they retire. It requires an act of Congress to survive.
+2. **It is not "no tax on Social Security."** The thresholds that decide how much of your benefit is taxed — combined income above <Fact id="ss.taxThresholdSingle" /> single, <Fact id="ss.taxThresholdJoint" /> joint — were **not** changed, and they have never been indexed. They are the same nominal dollars set in the 1980s and 1990s. Every year of inflation drags more retirees over them.
+
+So: the senior deduction genuinely lowers the retirement tax rate for a stretch of years, which strengthens the Traditional case for someone retiring soon. It does nothing for someone retiring in 2040. Do not let a temporary deduction settle a permanent question.
 
 ## The plain default: hedge
 
-Because the future is unknowable, many people **split** — some Traditional, some Roth — to hedge their tax bet and gain flexibility in retirement. Having both lets you manage your taxable income year by year (see [the withdrawal plan](/topics/decision-tools/withdrawal-plan)). And regardless of type: **capture the full employer match first** — that beats the Roth-vs-Traditional question entirely.
+Because the future is unknowable, most people are best served by holding **both**. Not as a compromise, but as an asset: two tax pools let you choose, year by year, which dollars to take — filling a low bracket with traditional withdrawals, then topping up from Roth without touching your ACA or IRMAA figures. That is the mechanism behind [a plain withdrawal plan](/topics/decision-tools/withdrawal-plan), and you cannot use it if everything you own is in one bucket.
+
+And before any of this: **capture the full employer match.** An instant 50–100% return beats the Roth-versus-Traditional question outright, and beats almost everything else in personal finance. Note that the match itself is pre-tax by default — a Roth match exists only if your plan chose to offer it, and it is taxable to you in the year it lands.
 
 ## Key takeaways
 
-- Traditional = tax break now; Roth = tax-free later.
-- Roth if your future rate is higher; Traditional if it's lower.
-- When unsure, split the difference — and always grab the match first.
+- Traditional is a tax break now; Roth is a tax break later. Pick the one that avoids your higher rate.
+- The 401(k) and IRA limits are **shared** across Roth and pre-tax. Choosing Roth buys no extra room, and the 60–63 super catch-up replaces the standard one rather than stacking on it.
+- From 2026, a 50+ saver with prior-year wages over <Fact id="401k.mandatoryRothWageThreshold" /> from the plan sponsor **must** make the catch-up as Roth.
+- High earners are phased out of direct Roth IRA contributions. The Roth 401(k) has no income limit; the backdoor route works but the pro-rata rule can make it expensive.
+- Before 65 a conversion can cost your whole ACA credit; from 63 it raises your Medicare premium <Fact id="medicare.irmaaLookback" /> years later. Model it in the [conversion cost checker](/tools/roth-vs-traditional) before you act.
 
 Educational only — not financial or tax advice.

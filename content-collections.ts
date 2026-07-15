@@ -1,5 +1,6 @@
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMDX } from "@content-collections/mdx";
+import remarkGfm from "remark-gfm";
 import { z } from "zod";
 
 const articles = defineCollection({
@@ -15,6 +16,12 @@ const articles = defineCollection({
     published: z.string().optional(),
     updated: z.string(),
     reviewed: z.string().optional(),
+    volatile: z.boolean().optional(),
+    volatileNote: z.string().optional(),
+    correction: z.object({
+      date: z.string(),
+      summary: z.string(),
+    }).optional(),
     author: z.string().optional(),
     reviewer: z.string().optional(),
     contentType: z
@@ -46,7 +53,9 @@ const articles = defineCollection({
       .optional(),
   }),
   transform: async (doc, context) => {
-    const mdx = await compileMDX(context, doc);
+    // remark-gfm: without it, markdown tables silently render as paragraphs.
+    // Comparison tables are the format that wins finance featured snippets.
+    const mdx = await compileMDX(context, doc, { remarkPlugins: [remarkGfm] });
     // content/<pillar>/<slug>.mdx  ->  _meta.path = "<pillar>/<slug>"
     const [pillar, slug] = doc._meta.path.split("/");
     return { ...doc, mdx, pillar, slug, url: `/topics/${pillar}/${slug}` };
