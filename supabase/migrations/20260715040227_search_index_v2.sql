@@ -3,14 +3,19 @@ alter table public.knowplain_search_index
   add column if not exists keywords text[] not null default '{}',
   add column if not exists body text not null default '';
 
+create or replace function public.immutable_array_to_string(arr text[], sep text)
+returns text language sql immutable as $$
+  select array_to_string(arr, sep);
+$$;
+
 alter table public.knowplain_search_index drop column if exists fts;
 alter table public.knowplain_search_index
   add column fts tsvector generated always as (
-    setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(aliases, ' '), '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(keywords, ' '), '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(snippet, '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(body, '')), 'D')
+    setweight(to_tsvector('english'::regconfig, coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(public.immutable_array_to_string(aliases, ' '), '')), 'A') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(public.immutable_array_to_string(keywords, ' '), '')), 'B') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(snippet, '')), 'B') ||
+    setweight(to_tsvector('english'::regconfig, coalesce(body, '')), 'D')
   ) stored;
 
 create index if not exists knowplain_search_index_fts_idx

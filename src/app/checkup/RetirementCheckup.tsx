@@ -869,8 +869,8 @@ export function RetirementCheckup() {
           </div>
         </div>
 
-        <form onSubmit={saveEmail} className="print-hidden flex flex-col gap-3 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center">
-          <div className="min-w-0 flex-1">
+        <form onSubmit={saveEmail} className="print-hidden flex flex-col gap-4 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1 sm:mr-4">
             <h3 className="font-semibold tracking-tight">Save this checkup</h3>
             <p className="text-sm text-muted-foreground">
               We store your email and the one-line verdict above — nothing else. Your ages, balances, and
@@ -878,24 +878,28 @@ export function RetirementCheckup() {
               checkup email summaries are available.
             </p>
           </div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground"
-          />
-          <Button type="submit" disabled={isPending} className="gap-2">
-            <Mail className="size-4" />
-            {isPending ? "Saving" : "Save"}
-          </Button>
-          {leadStatus === "sent" && (
-            <span className="text-sm text-emerald-600">Sent — check your inbox.</span>
-          )}
-          {leadStatus === "saved" && (
-            <span className="text-sm text-emerald-600">Email saved. No message was sent because transactional email is not configured.</span>
-          )}
-          {leadStatus === "error" && <span className="text-sm text-red-600">{leadError}</span>}
+          <div className="flex flex-col gap-2 shrink-0 sm:w-auto">
+            <div className="flex items-center gap-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-hidden focus:border-foreground sm:w-auto"
+              />
+              <Button type="submit" disabled={isPending} className="gap-2 shrink-0">
+                <Mail className="size-4" />
+                {isPending ? "Saving" : "Save"}
+              </Button>
+            </div>
+            {leadStatus === "sent" && (
+              <span className="text-sm text-emerald-600">Sent — check your inbox.</span>
+            )}
+            {leadStatus === "saved" && (
+              <span className="text-sm text-emerald-600 max-w-[280px]">Email saved. No message was sent because transactional email is not configured.</span>
+            )}
+            {leadStatus === "error" && <span className="text-sm text-red-600 max-w-[280px]">{leadError}</span>}
+          </div>
         </form>
       </section>
       ) : (

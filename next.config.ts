@@ -23,7 +23,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: https://i.ytimg.com",
   "font-src 'self' https://fonts.gstatic.com",
-  `connect-src 'self' ${VERCEL_ANALYTICS} ${VERCEL_VITALS}`,
+  `connect-src 'self' ${VERCEL_ANALYTICS} ${VERCEL_VITALS}${process.env.NEXT_PUBLIC_SUPABASE_URL ? ` ${process.env.NEXT_PUBLIC_SUPABASE_URL}` : ""}`,
   // /watch/[slug] embeds YouTube. Without frame-src the iframe falls back to
   // default-src 'self' and is BLOCKED — invisible today only because the fallback
   // videos use non-YouTube ids, but it would break every page once sync:youtube runs.

@@ -30,11 +30,13 @@ export async function captureCheckupLead(formData: FormData) {
     const supabase = await createClient();
     const { error } = await supabase
       .from("knowplain_leads")
-      .upsert(
-        { email, source: "retirement_checkup", notes: summary },
-        { onConflict: "email,source", ignoreDuplicates: true },
-      );
-    if (error) return { ok: false, sent: false, error: "We could not save that. Please try again." };
+      .insert({ email, source: "retirement_checkup", notes: summary });
+    
+    // 23505 is PostgreSQL's unique_violation. If they already submitted this lead, treat as success.
+    if (error && error.code !== "23505") {
+      console.error("captureCheckupLead error:", error);
+      return { ok: false, sent: false, error: "We could not save that. Please try again." };
+    }
   } catch {
     return { ok: false, sent: false, error: "We could not save that. Please try again." };
   }
