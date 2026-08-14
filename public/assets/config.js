@@ -7,8 +7,9 @@ window.EXPLAIN_STUDIO = {
   boldinUrl: "https://www.boldin.com/retirement/planner/",
   ynabUrl: "https://www.ynab.com",
   amazonTag: "explainstudio-20",
-  /* Paste Beehiiv/ConvertKit form action when ready. Empty = download-only mode. */
-  newsletterAction: "",
+  /* Empty = download-only mode, which silently discarded every address the form
+     collected. Points at the site's own route, which captures to PxlPeak. */
+  newsletterAction: "/api/newsletter",
   newsletterMethod: "POST",
   newsletterEmailField: "email",
   newsletterNameField: "first_name",

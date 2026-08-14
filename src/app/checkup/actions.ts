@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { sendCheckupSummary } from "@/lib/email";
+import { notifyPxlPeak } from "@/lib/pxlpeak";
 import { isCheckupInput } from "@/lib/checkup-storage";
 import { CHECKUP_SUMMARIES, runRetirementCheckup } from "@/lib/checkup";
 import { checkupResumePath } from "@/lib/checkup-resume";
@@ -40,6 +41,15 @@ export async function captureCheckupLead(formData: FormData) {
   } catch {
     return { ok: false, sent: false, error: "We could not save that. Please try again." };
   }
+
+  // Put the lead in front of a human. `knowplain_leads` has no admin view, no
+  // alert on insert, and RLS blocks the anon key from reading it, so until now
+  // every captured address went somewhere nobody would ever look.
+  await notifyPxlPeak({
+    email,
+    message: `Retirement checkup: ${summary}`,
+    source: "retirement_checkup",
+  });
 
   const sent = await sendCheckupSummary(email, summary);
   return { ok: true, sent };
