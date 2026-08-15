@@ -1,3 +1,14 @@
+# Declares this repo as a single-package pnpm workspace root.
+#
+# Without an explicit `packages` key, pnpm 11 on Vercel can abort the install with
+# "ERROR packages field missing or empty" before the build starts — which is how
+# genc-construction.com became undeployable for a week in Aug 2026, and how
+# pitahouselongisland.com failed on 2026-08-15, while their domains kept serving
+# stale builds. A green local install proves nothing: the local store is already
+# populated.
+#
+# An empty list is correct: there are no sub-packages, only the root.
+packages: []
 allowBuilds:
   esbuild: true
   sharp: true
