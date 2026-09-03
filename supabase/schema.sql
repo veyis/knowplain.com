@@ -21,6 +21,11 @@ revoke all on schema private from public, anon, authenticated;
 create or replace function private.knowplain_handle_new_user()
 returns trigger as $$
 begin
+  -- Shared auth.users with VoxArena: no-op if this project's table is gone
+  -- so a leftover trigger cannot abort every new-user insert (42P01).
+  if to_regclass('public.knowplain_profiles') is null then
+    return new;
+  end if;
   insert into public.knowplain_profiles (id, display_name)
   values (new.id, split_part(new.email, '@', 1));
   return new;
