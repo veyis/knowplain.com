@@ -121,7 +121,7 @@ test("Data API grants are explicit and least-privilege", () => {
 test("Postgres search preserves weighted fields and a tightly scoped RPC", () => {
   assert.match(searchMigration, /add column if not exists aliases text\[\]/);
   assert.match(searchMigration, /add column if not exists body text/);
-  assert.match(searchMigration, /setweight\(to_tsvector\('english', coalesce\(title/);
+  assert.match(searchMigration, /setweight\(to_tsvector\('english'::regconfig, coalesce\(title/);
   assert.match(searchMigration, /using gin \(fts\)/);
   assert.match(searchMigration, /security invoker\s+set search_path = ''/);
   assert.match(searchMigration, /char_length\(btrim\(search_query\)\) between 1 and 200/);
