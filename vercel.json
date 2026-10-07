@@ -1,7 +1,7 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install --frozen-lockfile",
   "ignoreCommand": "if [ -z \"${VERCEL_GIT_PREVIOUS_SHA:-}\" ] || ! git cat-file -e \"${VERCEL_GIT_PREVIOUS_SHA}^{commit}\" 2>/dev/null; then exit 1; fi; git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- . \":(exclude)*.md\" \":(exclude)docs/**\" \":(exclude).github/**\"",
   "git": {
     "deploymentEnabled": false
