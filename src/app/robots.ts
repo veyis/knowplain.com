@@ -7,7 +7,29 @@ export default function robots(): MetadataRoute.Robots {
     // metadata, and a Disallow would stop Google crawling the page — which means it would never
     // SEE the noindex, and the URL could still surface as a bare listing. Blocking and
     // noindexing the same URL are mutually exclusive; the noindex is the one that works.
-    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/profile", "/login", "/auth/"] },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/profile/", "/login", "/auth/"],
+      },
+      {
+        userAgent: [
+          "OAI-SearchBot",
+          "Claude-SearchBot",
+          "PerplexityBot",
+          "ChatGPT-User",
+          "Claude-User",
+          "Gemini-Deep-Research",
+          "GPTBot",
+          "ClaudeBot",
+          "anthropic-ai",
+          "Google-Extended",
+        ],
+        allow: "/",
+        disallow: ["/api/", "/profile/", "/login", "/auth/"],
+      },
+    ],
     sitemap: `${site.url}/sitemap.xml`,
   };
 }
