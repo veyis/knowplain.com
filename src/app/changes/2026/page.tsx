@@ -50,7 +50,7 @@ const changes: Change[] = [
     source: "medicare",
   },
   {
-    title: "The enhanced ACA credits expired and the subsidy cliff returned",
+    title: "Enhanced ACA credits expired and subsidy cliff returned",
     status: "volatile",
     summary: <>For 2026 coverage, premium-tax-credit eligibility again ends above {fact("aca.cliffPercent")} of the federal poverty level. The approximate one-person threshold is {fact("aca.cliffSingle")}.</>,
     action: "Recheck projected household income before conversions, capital gains, or large withdrawals—and verify the law again before acting.",
