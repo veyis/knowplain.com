@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { currency, runRetirementCheckup, type CheckupInput } from "@/lib/checkup";
 import { isCheckupInput } from "@/lib/checkup-storage";
 import { updateProfileName, deleteSimulation, deleteSavedCheckup } from "./actions";
@@ -29,6 +29,15 @@ export const metadata = {
 };
 
 export default async function ProfilePage() {
+  // No Supabase, no account — send people to the sign-in page instead of
+  // throwing. `createClient()` rejects undefined credentials, which made this
+  // route 500 rather than redirect. This page is noindex, so the cost was a
+  // broken visitor experience rather than a crawl error, but it is the same bug
+  // as /forum's.
+  if (!isSupabaseConfigured()) {
+    redirect("/login");
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

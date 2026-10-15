@@ -19,11 +19,11 @@ const csp = [
   "object-src 'none'",
   "frame-ancestors 'self'",
   "form-action 'self'",
-  `script-src 'self' 'unsafe-inline' ${VERCEL_ANALYTICS}${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${VERCEL_ANALYTICS} https://*.clarity.ms https://c.bing.com${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: https://i.ytimg.com",
+  "img-src 'self' data: https://i.ytimg.com https://*.clarity.ms https://c.bing.com",
   "font-src 'self' https://fonts.gstatic.com",
-  `connect-src 'self' ${VERCEL_ANALYTICS} ${VERCEL_VITALS}${process.env.NEXT_PUBLIC_SUPABASE_URL ? ` ${process.env.NEXT_PUBLIC_SUPABASE_URL}` : ""}`,
+  `connect-src 'self' ${VERCEL_ANALYTICS} ${VERCEL_VITALS} https://*.clarity.ms https://c.bing.com${process.env.NEXT_PUBLIC_SUPABASE_URL ? ` ${process.env.NEXT_PUBLIC_SUPABASE_URL}` : ""}`,
   // /watch/[slug] embeds YouTube. Without frame-src the iframe falls back to
   // default-src 'self' and is BLOCKED — invisible today only because the fallback
   // videos use non-YouTube ids, but it would break every page once sync:youtube runs.

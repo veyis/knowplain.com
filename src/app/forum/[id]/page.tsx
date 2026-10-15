@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { createPost, reportContent, toggleLike } from "../actions";
 import { Flag, Heart, Reply } from "lucide-react";
 
@@ -45,6 +45,14 @@ export default async function ThreadPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  // Threads live only in the database; with no database there is no thread to
+  // show. 404 is the honest answer and keeps this route from 500-ing the way
+  // /forum did. This page is already noindex, so nothing indexable changes.
+  if (!isSupabaseConfigured()) {
+    notFound();
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

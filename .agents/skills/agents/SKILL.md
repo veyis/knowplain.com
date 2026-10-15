@@ -78,29 +78,16 @@ const agent = await client.conversationalAi.agents.create({
 });
 ```
 
-### cURL
+### CLI
+
+The CLI reads `ELEVENLABS_API_KEY` from the environment automatically:
 
 ```bash
-curl -X POST "https://api.elevenlabs.io/v1/convai/agents/create" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"name": "My Assistant", "conversation_config": {"agent": {"first_message": "Hello!", "language": "en", "prompt": {"prompt": "You are helpful.", "llm": "gemini-2.0-flash"}}, "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}}}'
+elevenlabs agents create \
+  --json '{"name": "My Assistant", "conversation_config": {"agent": {"first_message": "Hello!", "language": "en", "prompt": {"prompt": "You are helpful.", "llm": "gemini-2.0-flash"}}, "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}}}'
 ```
 
 ## Starting Conversations
-
-### Temporary LiveKit WebSocket Pin
-
-Until the ElevenLabs LiveKit server supports `/rtc/v1`, browser clients using WebRTC can fail or stall during the underlying LiveKit WebSocket handshake with `livekit-client` versions newer than `2.16.1`. For React, Next.js, Electron, or other `@elevenlabs/client` / `@elevenlabs/react` integrations that use `connectionType: "webrtc"` or hit `wss://livekit.rtc.elevenlabs.io/rtc/v1`, add this temporary pin to `package.json`:
-
-```json
-{
-  "overrides": {
-    "livekit-client": "2.16.1"
-  }
-}
-```
-
-Use the pin when the app logs `/rtc/v1` 404s, `v1 RTC path not found`, or `could not establish pc connection` during session startup. This is a LiveKit server compatibility workaround for WebRTC sessions, not the ElevenLabs `connectionType: "websocket"` transport. Remove it after the upstream LiveKit server or SDK issue is fixed.
 
 **Authenticated WebRTC:** Request a session token from your backend. The response includes both
 the token and the conversation ID:
@@ -130,6 +117,8 @@ const conversation = await Conversation.startSession({
   onMessage: (msg) => console.log("Agent:", msg.message),
   onUserTranscript: (t) => console.log("User:", t.message),
   onPing: (event) => console.log("Estimated latency:", event.ping_ms),
+  onContextUsage: ({ model, context_tokens, context_limit_tokens }) =>
+    console.log(`${model}: ${context_tokens}/${context_limit_tokens} context tokens`),
   onError: (e) => console.error(e)
 });
 ```
@@ -165,6 +154,9 @@ function App({ signedUrl }: { signedUrl: string }) {
     <ConversationProvider
       onError={(error) => console.error("Conversation error:", error)}
       onPing={(event) => console.log("Estimated latency:", event.ping_ms)}
+      onContextUsage={({ model, context_tokens, context_limit_tokens }) =>
+        console.log(`${model}: ${context_tokens}/${context_limit_tokens} context tokens`)
+      }
     >
       <Agent signedUrl={signedUrl} />
     </ConversationProvider>
@@ -178,7 +170,7 @@ function App({ signedUrl }: { signedUrl: string }) {
 |----------|--------|
 | OpenAI | `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.5`, `gpt-5.5-2026-04-23`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-5.4-2026-03-05`, `gpt-5.4-mini-2026-03-17`, `gpt-5.4-nano-2026-03-17`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`, `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` |
 | Anthropic | `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-sonnet-4-5`, `claude-sonnet-4`, `claude-haiku-4-5`, `claude-3-7-sonnet`, `claude-3-5-sonnet`, `claude-3-haiku` |
-| Google | `gemini-3.1-flash-lite-preview`, `gemini-3.1-pro-preview`, `gemini-3-pro-preview`, `gemini-3-flash-preview`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.0-flash`, `gemini-2.0-flash-lite` |
+| Google | `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.1-flash-lite-preview`, `gemini-3.1-pro-preview`, `gemini-3-pro-preview`, `gemini-3-flash-preview`, `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-2.0-flash`, `gemini-2.0-flash-lite` |
 | ElevenLabs | `glm-45-air-fp8`, `qwen3-30b-a3b`, `qwen36-35b-a3b`, `qwen35-35b-a3b`, `qwen35-397b-a17b`, `gpt-oss-120b` |
 | Custom | `custom-llm` (bring your own endpoint) |
 
@@ -333,7 +325,7 @@ For nested agent transfers, set `enable_nesting` on a `standalone_agent` node an
 
 ## Procedures
 
-Reusable instruction blocks an agent runs when a trigger matches. A procedure is `free_form` (markdown guidance the agent adapts, and the only type that can reference knowledge base documents) or `deterministic` (ordered, typed steps for flows that must run consistently). Procedures are in Alpha. See [Using the Procedure API](references/using-procedure-api.md) for the full REST and SDK flow, and [Writing Procedures](references/writing-procedures.md) for the step schema and authoring rules.
+Reusable instruction blocks an agent runs when a trigger matches. A procedure is `free_form` (markdown guidance the agent adapts, and the only type that can reference knowledge base documents) or `deterministic` (ordered, typed steps for flows that must run consistently). See [Using the Procedure API](references/using-procedure-api.md) for the full CLI and SDK flow, and [Writing Procedures](references/writing-procedures.md) for the step schema and authoring rules.
 
 Procedures live on an agent branch, and every write stages a per-user draft:
 
@@ -352,6 +344,7 @@ Semantics worth knowing before writing any of these calls:
 - A draft update replaces the whole body. Read the draft first, then resend `name`, `type`, and `trigger` alongside the new `content`.
 - `content` is markdown for a `free_form` procedure, and a JSON-encoded object with a `trigger` and a `steps` array for a `deterministic` one. Serialize it; do not hand-escape quotes.
 - Routing is driven by the `trigger` text, not the procedure name. Write concrete, non-overlapping triggers that cover the phrasings a user would actually say.
+- To restrict the starting agent to selected procedures for one conversation, enable `platform_settings.overrides.enable_procedure_ids_from_client`, then pass their IDs as `procedure_ids` in conversation initiation data. An empty list disables all procedures for that starting agent.
 - Procedure APIs require `elevenlabs` (Python) or `@elevenlabs/elevenlabs-js` at `2.60.0` or newer.
 
 ## Guardrails
@@ -416,12 +409,11 @@ Three test types via `POST /v1/convai/agent-testing/create`, then attached with 
 
 Eval strategies: `exact`, `regex`, `llm`. Prompt evaluation criteria can use binary scoring or
 numeric scoring with `scoring_mode: "numeric_uniform"`, `max_score`, and `score_instructions`;
-numeric scores are normalized into the aggregate conversation success percentage. Attach via PATCH:
+numeric scores are normalized into the aggregate conversation success percentage. Attach via an agent update:
 
 ```bash
-curl -s -X PATCH "https://api.elevenlabs.io/v1/convai/agents/{agent_id}" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"platform_settings": {"testing": {"attached_tests": [{"test_id": "test_xxxx"}]}}}'
+elevenlabs agents update --agent-id "your-agent-id" \
+  --json '{"platform_settings": {"testing": {"attached_tests": [{"test_id": "test_xxxx"}]}}}'
 ```
 
 Run selected tests with `POST /v1/convai/agents/{agent_id}/run-tests`. The request
@@ -449,7 +441,7 @@ See [Widget Embedding Reference](references/widget-embedding.md) for all options
 
 Make outbound phone calls using your agent via Twilio or Exotel integration:
 
-The examples below use Twilio. See the reference for Exotel REST usage.
+The examples below use Twilio. See the reference for Exotel usage.
 
 ### Python
 
@@ -474,12 +466,14 @@ const response = await client.conversationalAi.twilio.outboundCall({
 });
 ```
 
-### cURL
+### CLI
 
 ```bash
-curl -X POST "https://api.elevenlabs.io/v1/convai/twilio/outbound-call" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"agent_id": "your-agent-id", "agent_phone_number_id": "your-phone-number-id", "to_number": "+1234567890", "call_recording_enabled": true}'
+elevenlabs agents twilio outbound_call \
+  --agent-id "your-agent-id" \
+  --agent-phone-number-id "your-phone-number-id" \
+  --to-number "+1234567890" \
+  --call-recording-enabled true
 ```
 
 See [Outbound Calls Reference](references/outbound-calls.md) for provider-specific endpoints, configuration overrides, and dynamic variables.
@@ -558,7 +552,7 @@ Common errors: **401** (invalid key), **404** (not found), **422** (invalid conf
 - [Installation Guide](references/installation.md) - SDK setup and migration
 - [Agent Configuration](references/agent-configuration.md) - All config options and CRUD examples
 - [Client Tools](references/client-tools.md) - Webhook, client, and system tools
-- [Using the Procedure API](references/using-procedure-api.md) - Procedure REST and SDK flow, compile and publish
+- [Using the Procedure API](references/using-procedure-api.md) - Procedure CLI and SDK flow, compile and publish
 - [Writing Procedures](references/writing-procedures.md) - Trigger and content authoring, step schema
 - [Widget Embedding](references/widget-embedding.md) - Website integration
 - [Outbound Calls](references/outbound-calls.md) - Phone call integrations

@@ -86,7 +86,7 @@ export default function HomePage() {
 
       <div className="mb-4 mt-10 flex items-baseline justify-between gap-4">
         <h2 className="text-base font-semibold tracking-tight">Topic hubs</h2>
-        <span className="text-sm text-muted-foreground">Pillars for topical authority</span>
+        <span className="text-sm text-muted-foreground">Explore your retirement decisions</span>
       </div>
       <div className="grid gap-3 md:grid-cols-3">
         {(Object.keys(pillars) as Array<keyof typeof pillars>).map((id) => {

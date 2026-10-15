@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { pageMeta } from "@/lib/site";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { seededQuestions } from "@/lib/forum-seeds";
 import { createThread } from "./actions";
 import { MessageSquare, Heart, PlusCircle } from "lucide-react";
@@ -32,30 +32,40 @@ const pillarColors: Record<string, string> = {
 };
 
 export default async function ForumPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
+  let user = null;
   let threads: ThreadList[] = [];
   let errorMsg = null;
 
-  const { data, error } = await supabase
-    .from("knowplain_forum_threads")
-    .select(`
-      id,
-      title,
-      pillar,
-      created_at,
-      status,
-      knowplain_profiles ( display_name ),
-      knowplain_forum_posts ( count ),
-      knowplain_forum_likes ( count )
-    `)
-    .order("created_at", { ascending: false });
+  // Everything below the thread list — the H1, the moderation notice, the
+  // curated answer hubs and their internal links — is static and must render
+  // even with no database behind it. Constructing the client unconditionally
+  // made this indexable, sitemapped URL throw a 500 whenever Supabase was not
+  // configured, which is how production is currently built. See
+  // `isSupabaseConfigured` in lib/supabase/server.ts.
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data: auth } = await supabase.auth.getUser();
+    user = auth.user;
 
-  if (error && error.code === 'PGRST205') {
-    errorMsg = "Forum tables haven't been created in the database yet.";
-  } else if (data) {
-    threads = data as unknown as ThreadList[];
+    const { data, error } = await supabase
+      .from("knowplain_forum_threads")
+      .select(`
+        id,
+        title,
+        pillar,
+        created_at,
+        status,
+        knowplain_profiles ( display_name ),
+        knowplain_forum_posts ( count ),
+        knowplain_forum_likes ( count )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error && error.code === 'PGRST205') {
+      errorMsg = "Forum tables haven't been created in the database yet.";
+    } else if (data) {
+      threads = data as unknown as ThreadList[];
+    }
   }
 
   return (

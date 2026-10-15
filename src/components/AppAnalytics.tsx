@@ -1,9 +1,15 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { BeforeSend as AnalyticsBeforeSend } from "@vercel/analytics/next";
+
+// Validated against a project id shape (lowercase alphanumeric); the env var is unset until
+// the owner creates the Clarity project, so this renders nothing by default.
+const clarityId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
+const validClarityId = clarityId && /^[a-z0-9]+$/i.test(clarityId) ? clarityId : undefined;
 
 function globalPrivacyControlEnabled() {
   if (typeof navigator === "undefined") return false;
@@ -38,6 +44,11 @@ export function AppAnalytics() {
     <>
       <Analytics beforeSend={suppressForGpc} />
       <SpeedInsights beforeSend={suppressVitalsForGpc} />
+      {validClarityId && (
+        <Script id="clarity-init" strategy="lazyOnload">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${validClarityId}");`}
+        </Script>
+      )}
     </>
   );
 }
